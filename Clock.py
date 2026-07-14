@@ -7,10 +7,10 @@ import ntplib
 import pystray
 import ctypes
 
-import random
-
 import os
 from PIL import Image, ImageTk
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 WINDOW_WIDTH = 150
 WINDOW_HEIGHT = 150
@@ -18,14 +18,11 @@ WINDOW_HEIGHT = 150
 CENTER_X = WINDOW_WIDTH // 2
 CENTER_Y = WINDOW_HEIGHT // 2
 
-TIME_OFFSET = -8
-DATE_OFFSET = 10
-
-IMAGE_EXTENSIONS = (".png")
-SKIN_SIZE = (150, 150)
+SPRITE_SIZE = (150, 150)
 
 TIMEZONE = ZoneInfo("Europe/Amsterdam") 
 SYNC_INTERVAL = 60   
+CLOCK_Y_OFFSET = 30
 
 NTP_SERVERS = [
     "time.cloudflare.com",
@@ -70,62 +67,28 @@ canvas.pack()
 
 canvas.bind("<B1-Motion>", move_window)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SKINS_FOLDER = os.path.join(BASE_DIR, "ClockSkins")
+sprite = Image.open(
+    os.path.join(BASE_DIR, "ClockSkins", "duck.png")
+).convert("RGBA")
 
-duck_photos = {}
-
-for filename in sorted(os.listdir(SKINS_FOLDER)):
-    if filename.lower().endswith(IMAGE_EXTENSIONS):
-        path = os.path.join(SKINS_FOLDER, filename)
-
-        image = Image.open(path).convert("RGBA")
-        image = image.resize(SKIN_SIZE, Image.Resampling.NEAREST)
-        photo = ImageTk.PhotoImage(image)
-
-        skin_name = os.path.splitext(filename)[0].replace("_", " ") 
-        duck_photos[skin_name] = photo
-
-if not duck_photos:
-    raise FileNotFoundError("No images found in ClockSkins.")
-
-current_skin = random.choice(list(duck_photos.keys()))
-
-duck_image_id = canvas.create_image(
-    WINDOW_WIDTH // 2,
-    WINDOW_HEIGHT // 2,
-    anchor="center",
-    image=duck_photos[current_skin],
+sprite = sprite.resize(
+    SPRITE_SIZE,
+    Image.Resampling.NEAREST
 )
 
-def set_skin(name):
-    global current_skin
+sprite_photo = ImageTk.PhotoImage(sprite)
 
-    current_skin = name
-    canvas.itemconfigure(
-        duck_image_id,
-        image=duck_photos[name]
-    )
-
-
-def create_skin_callback(name):
-    def callback(icon, item):
-        set_skin(name)
-    return callback
-
-skin_menu = [
-    pystray.MenuItem(
-        name,
-        create_skin_callback(name),
-        checked=lambda item, n=name: current_skin == n
-    )
-    for name in duck_photos
-]
+sprite_id = canvas.create_image(
+    CENTER_X,
+    CENTER_Y,
+    anchor="center",
+    image=sprite_photo
+)
 
 # Time text
 time_display = canvas.create_text(
     CENTER_X,
-    CENTER_Y + TIME_OFFSET,
+    CENTER_Y + CLOCK_Y_OFFSET - 10,
     text="--:--",
     font=("Segoe UI", 11, "bold"),
     fill="black",
@@ -136,7 +99,7 @@ time_display = canvas.create_text(
 # Date text
 date_display = canvas.create_text(
     CENTER_X,
-    CENTER_Y + DATE_OFFSET,
+    CENTER_Y + CLOCK_Y_OFFSET + 10,
     text="--/--",
     font=("Segoe UI", 8),
     fill="black",
@@ -157,17 +120,13 @@ def quit_app(icon, item):
 
 root.protocol("WM_DELETE_WINDOW", shutdown)
 
-tray_icon_image = Image.open(os.path.join(BASE_DIR, "Icon.png"))
+tray_icon = Image.open(os.path.join(BASE_DIR, "Icon.png"))
 
 icon = pystray.Icon(
     "Duck Clock",
-    tray_icon_image,
+    tray_icon,
     "Duck Clock",
     menu=pystray.Menu(
-        pystray.MenuItem(
-            "Clock Skins",
-            pystray.Menu(*skin_menu)
-        ),
         pystray.Menu.SEPARATOR,
         pystray.MenuItem("Quit", quit_app),
     ),
