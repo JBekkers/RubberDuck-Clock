@@ -157,7 +157,7 @@ def quit_app(icon, item):
 
 root.protocol("WM_DELETE_WINDOW", shutdown)
 
-tray_icon_image = Image.open(os.path.join(BASE_DIR, "DuckClockIcon.png"))
+tray_icon_image = Image.open(os.path.join(BASE_DIR, "Icon.png"))
 
 icon = pystray.Icon(
     "Duck Clock",
