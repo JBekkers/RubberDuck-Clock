@@ -95,6 +95,7 @@ Some ideas I'd like to add in the future:
 - Support for different hats
 - Animated events like sleeping, happy, idle and more..
 - Quack sound every full hour
+- Menu when clicking on the clock
 
 ---
 
