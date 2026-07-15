@@ -84,22 +84,34 @@ canvas.pack()
 canvas.bind("<Button-1>", start_move)
 canvas.bind("<B1-Motion>", move_window)
 
-sprite = Image.open(
-    os.path.join(SPRITES_DIR, "duck.png")
+SPRITE_WIDTH = 128
+SPRITE_HEIGHT = 120
+ANIMATION_SPEED = 120
+
+sprite_sheet = Image.open(
+    os.path.join(SPRITES_DIR, "Idle.png")
 ).convert("RGBA")
 
-sprite = sprite.resize(
-    SPRITE_SIZE,
-    Image.Resampling.NEAREST
-)
+frames = []
 
-sprite_photo = ImageTk.PhotoImage(sprite)
+for i in range(sprite_sheet.height // SPRITE_HEIGHT):
+    frame = sprite_sheet.crop((
+        0,
+        i * SPRITE_HEIGHT,
+        SPRITE_WIDTH,
+        (i + 1) * SPRITE_HEIGHT
+    ))
+
+    frame = frame.resize(SPRITE_SIZE, Image.Resampling.NEAREST)
+    frames.append(ImageTk.PhotoImage(frame))
+
+current_frame = 0
 
 sprite_id = canvas.create_image(
     CENTER_X,
     CENTER_Y,
-    anchor="center",
-    image=sprite_photo
+    image=frames[current_frame],
+    anchor="center"
 )
 
 # TIME TEXT 
@@ -122,6 +134,18 @@ date_display = canvas.create_text(
     fill="black",
     anchor="center"
 )
+
+def animate_sprite():
+    global current_frame
+
+    current_frame = (current_frame + 1) % len(frames)
+
+    canvas.itemconfig(
+        sprite_id,
+        image=frames[current_frame]
+    )
+
+    root.after(ANIMATION_SPEED, animate_sprite)
 
 # TRAY ICON
 def shutdown():
@@ -223,6 +247,8 @@ def update_clock_display():
     root.after(200, update_clock_display)
 
 #Call functions
+animate_sprite()
+
 synchronize_time()
 update_clock_display()
 
