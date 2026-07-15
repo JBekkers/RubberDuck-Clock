@@ -10,7 +10,12 @@ import ctypes
 import os
 from PIL import Image, ImageTk
 
+##LOAD ASSETS
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ASSETS_DIR = os.path.join(BASE_DIR, "Assets")
+SPRITES_DIR = os.path.join(ASSETS_DIR, "Sprites")
+HATS_DIR = os.path.join(ASSETS_DIR, "Hats")
+SOUNDS_DIR = os.path.join(ASSETS_DIR, "Sounds")
 
 WINDOW_WIDTH = 150
 WINDOW_HEIGHT = 150
@@ -51,7 +56,7 @@ root.configure(bg="#010203")
 root.wm_attributes("-transparentcolor", "#010203")
 
 
-## CLICK AND DRAG THE WINDOW TO MOVE IT
+## CLICK AND DRAG TO MOVE
 drag_offset_x = 0
 drag_offset_y = 0
 
@@ -80,7 +85,7 @@ canvas.bind("<Button-1>", start_move)
 canvas.bind("<B1-Motion>", move_window)
 
 sprite = Image.open(
-    os.path.join(BASE_DIR, "ClockSkins", "duck.png")
+    os.path.join(SPRITES_DIR, "duck.png")
 ).convert("RGBA")
 
 sprite = sprite.resize(
@@ -97,7 +102,7 @@ sprite_id = canvas.create_image(
     image=sprite_photo
 )
 
-# Time text
+# TIME TEXT 
 time_display = canvas.create_text(
     CENTER_X,
     CENTER_Y + CLOCK_Y_OFFSET - 10,
@@ -108,7 +113,7 @@ time_display = canvas.create_text(
 )
 
 
-# Date text
+# DATE TEXT
 date_display = canvas.create_text(
     CENTER_X,
     CENTER_Y + CLOCK_Y_OFFSET + 10,
@@ -118,7 +123,7 @@ date_display = canvas.create_text(
     anchor="center"
 )
 
-# Tray Icon
+# TRAY ICON
 def shutdown():
     try:
         icon.stop()
@@ -132,7 +137,7 @@ def quit_app(icon, item):
 
 root.protocol("WM_DELETE_WINDOW", shutdown)
 
-tray_icon = Image.open(os.path.join(BASE_DIR, "Icon.png"))
+tray_icon = Image.open(os.path.join(ASSETS_DIR, "Icon.png"))
 
 icon = pystray.Icon(
     "Duck Clock",
@@ -152,7 +157,7 @@ network_time = None
 sync_monotonic = None
 
 
-# Synchronize Clock time with ntp server
+# SYNC CLOCK WITH NTP SERVERS
 def synchronize_time():
 
     global network_time, sync_monotonic
