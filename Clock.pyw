@@ -51,8 +51,19 @@ root.configure(bg="#010203")
 root.wm_attributes("-transparentcolor", "#010203")
 
 
+## CLICK AND DRAG THE WINDOW TO MOVE IT
+drag_offset_x = 0
+drag_offset_y = 0
+
+def start_move(event):
+    global drag_offset_x, drag_offset_y
+    drag_offset_x = event.x
+    drag_offset_y = event.y
+
 def move_window(event):
-    root.geometry(f"+{event.x_root}+{event.y_root}")
+    x = event.x_root - drag_offset_x
+    y = event.y_root - drag_offset_y
+    root.geometry(f"+{x}+{y}")
 
 
 canvas = tk.Canvas(
@@ -65,6 +76,7 @@ canvas = tk.Canvas(
 
 canvas.pack()
 
+canvas.bind("<Button-1>", start_move)
 canvas.bind("<B1-Motion>", move_window)
 
 sprite = Image.open(
