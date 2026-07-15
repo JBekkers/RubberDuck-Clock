@@ -1,4 +1,4 @@
 @echo off
 cd /d "%~dp0"
-start "" py.exe Clock.py
+start "" pyw.exe Clock.pyw
 exit
