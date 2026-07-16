@@ -69,7 +69,6 @@ except Exception:
 
 # Tkinter Window
 root = tk.Tk()
-root.title("Rubber Duck Clock")
 
 DEFAULT_CONFIG = {
     "position": {
@@ -92,7 +91,7 @@ def load_config():
         for section, values in DEFAULT_CONFIG.items():
 
             if section not in config:
-                config[section] = values
+                config[section] = copy.deepcopy(values)
 
             else:
                 for key, value in values.items():
@@ -216,15 +215,13 @@ with open(ANIMATION_FILE, "r") as f:
 
 default = animation_data["default"]
 
-FRAME_WIDTH = default["frame_width"]
-FRAME_HEIGHT = default["frame_height"]
 
 for name, data in animation_data["animations"].items():
 
     load_animation(
         name=name,
-        frame_width=FRAME_WIDTH,
-        frame_height=FRAME_HEIGHT,
+        frame_width=default["frame_width"],
+        frame_height=default["frame_height"],
         speed=data["speed"],
         looping=data.get("looping", False),
         loop_time=data.get("loop_time", 0),
@@ -309,7 +306,6 @@ def choose_random_animation():
     root.after(6000, choose_random_animation)
 
 
-# TIME TEXT 
 time_display = canvas.create_text(
     CENTER_X,
     CENTER_Y + CLOCK_Y_OFFSET - 10,
@@ -319,8 +315,6 @@ time_display = canvas.create_text(
     anchor="center"
 )
 
-
-# DATE TEXT
 date_display = canvas.create_text(
     CENTER_X,
     CENTER_Y + CLOCK_Y_OFFSET + 10,
@@ -380,7 +374,6 @@ def reset_position(icon, item):
         )
     )
 
-# TRAY ICON
 def shutdown():
 
     try:
@@ -396,10 +389,6 @@ def shutdown():
 
     except Exception:
         pass
-
-    except Exception:
-        pass
-
 
     try:
         icon.stop()
@@ -452,12 +441,10 @@ icon = pystray.Icon(
 threading.Thread(target=icon.run, daemon=True).start()
 
 
-# Clock Variables
 network_time = None
 sync_monotonic = None
 
 
-# SYNC CLOCK WITH NTP SERVERS
 def synchronize_time():
 
     global network_time, sync_monotonic
@@ -490,7 +477,6 @@ def synchronize_time():
     root.after(SYNC_INTERVAL * 1000, synchronize_time)
 
 
-# Update Display
 def update_clock_display():
 
     if network_time is not None:
