@@ -1,22 +1,46 @@
 import tkinter as tk
+
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
-import threading
 import time
 import ntplib
+
+import threading
 import pystray
+
 import ctypes
 import random
+
 import json
 import copy
 import winsound
 
 import os
+
 from PIL import Image, ImageTk
 
 last_hour_quacked = None
 
-##LOAD ASSETS
+# =======================
+#  WINDOW CONFIGURATION
+# =======================
+
+# =======================
+#   SETTINGS CONFIG
+# =======================
+
+# =======================
+#    ANIMATION ENGINE
+# =======================
+
+# =======================
+#       MENU CONFIG
+# =======================
+
+# =======================
+#       CLOCK CONFIG
+# =======================
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(BASE_DIR, "Assets")
 SPRITES_DIR = os.path.join(ASSETS_DIR, "Sprites")
@@ -59,7 +83,7 @@ CONFIG_FILE = os.path.join(
     "config.json"
 )
 
-# Hide console
+
 try:
     console = ctypes.windll.kernel32.GetConsoleWindow()
     if console:
@@ -67,7 +91,7 @@ try:
 except Exception:
     pass
 
-# Tkinter Window
+
 root = tk.Tk()
 
 DEFAULT_CONFIG = {
@@ -525,7 +549,9 @@ def update_clock_display():
         )
     root.after(200, update_clock_display)
 
-#Call functions
+# =======================
+#    START APPLICATION
+# =======================
 animate_sprite()
 choose_random_animation()
 
