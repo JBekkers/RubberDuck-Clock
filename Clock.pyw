@@ -127,7 +127,8 @@ def load_animation(
     speed,
     looping=False,
     loop_time=0,
-    next_animation="Idle"
+    next_animation="Idle",
+    weight=0
 ):
 
     sheet = Image.open(
@@ -157,7 +158,8 @@ def load_animation(
         "speed": speed,
         "looping": looping,
         "loop_time": loop_time,
-        "next": next_animation
+        "next": next_animation,
+        "weight": weight
     }
 
 with open(ANIMATION_FILE, "r") as f:
@@ -174,10 +176,11 @@ for name, data in animation_data["animations"].items():
         name=name,
         frame_width=FRAME_WIDTH,
         frame_height=FRAME_HEIGHT,
-        speed=data.get("speed", 120),
+        speed=data["speed"],
         looping=data.get("looping", False),
         loop_time=data.get("loop_time", 0),
-        next_animation=data.get("next", "Idle")
+        next_animation=data.get("next", "Idle"),
+        weight=data.get("weight", 0)
     )
 
 current_animation = "Idle"
@@ -236,15 +239,24 @@ def choose_random_animation():
         root.after(2000, choose_random_animation)
         return
 
-    roll = random.random()
+    choices = []
+    weights = []
 
-    if roll < 0.10:
-        play_animation("Blink")
+    for name, anim in animations.items():
+        if anim["weight"] > 0:
+            choices.append(name)
+            weights.append(anim["weight"])
 
-    elif roll < 0.30:
-        play_animation("TailWag")
+    if choices:
+        animation = random.choices(
+            choices,
+            weights=weights,
+            k=1
+        )[0]
 
-    root.after(2000, choose_random_animation)
+        play_animation(animation)
+
+    root.after(6000, choose_random_animation)
 
 
 # TIME TEXT 

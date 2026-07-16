@@ -7,34 +7,40 @@
     "animations": {
         "Idle": {
             "speed": 120,
-            "next": "Idle"
+            "next": "Idle",
+            "weight": 0
         },
 
         "Blink": {
             "speed": 50,
-            "next": "Idle"
+            "next": "Idle",
+            "weight": 40
         },
 
         "TailWag": {
             "speed": 120,
-            "next": "Idle"
+            "next": "Idle",
+            "weight": 30
         },
 
         "Sleeping_Start": {
-            "speed": 80,
-            "next": "Sleeping_Loop"
+            "speed": 1000,
+            "next": "Sleeping_Loop",
+            "weight": 1
         },
 
         "Sleeping_Loop": {
-            "speed": 120,
+            "speed": 400,
             "looping": true,
             "loop_time": 10,
-            "next": "Sleeping_End"
+            "next": "Sleeping_End",
+            "weight": 0
         },
 
         "Sleeping_End": {
-            "speed": 80,
-            "next": "Idle"
+            "speed": 300,
+            "next": "Idle",
+            "weight": 0
         }
     }
 }
