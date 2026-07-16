@@ -66,7 +66,6 @@ except Exception:
 # Tkinter Window
 root = tk.Tk()
 root.title("Rubber Duck Clock")
-##root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+915+0")
 def load_position():
     try:
         with open(POSITION_FILE, "r") as f:
@@ -219,7 +218,7 @@ def animate_sprite():
                 else 0
             )   
 
-            if elapsed >= animation["loop_time"]:
+            if elapsed >= animation["current_loop_time"]:
                 play_animation(animation["next"])
             else:
                 current_frame = 0
@@ -287,11 +286,20 @@ def play_animation(name):
 
     current_animation = name
     current_frame = 0
+    loop_start_time = time.monotonic()
 
-    if animations[name]["looping"]:
-        loop_start_time = time.monotonic()
-    else:
-        loop_start_time = None
+    animation = animations[current_animation]
+
+    if animation["looping"]:
+        loop_time = animation["loop_time"]
+
+        if isinstance(loop_time, list):
+            animation["current_loop_time"] = random.uniform(
+                loop_time[0],
+                loop_time[1]
+            )
+        else:
+            animation["current_loop_time"] = loop_time
 
 def reset_position(icon, item):
     default_x = 915

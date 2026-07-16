@@ -32,7 +32,7 @@
         "Sleeping_Loop": {
             "speed": 400,
             "looping": true,
-            "loop_time": 10,
+            "loop_time": [5, 20],
             "next": "Sleeping_End",
             "weight": 0
         },
