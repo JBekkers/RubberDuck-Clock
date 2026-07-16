@@ -17,6 +17,10 @@ ASSETS_DIR = os.path.join(BASE_DIR, "Assets")
 SPRITES_DIR = os.path.join(ASSETS_DIR, "Sprites")
 HATS_DIR = os.path.join(ASSETS_DIR, "Hats")
 SOUNDS_DIR = os.path.join(ASSETS_DIR, "Sounds")
+CONFIG_DIR = os.path.join(
+    os.getenv("APPDATA"),
+    "RubberDuckClock"
+)
 
 WINDOW_WIDTH = 150
 WINDOW_HEIGHT = 150
@@ -40,6 +44,13 @@ NTP_SERVERS = [
     "pool.ntp.org",
 ]
 
+os.makedirs(CONFIG_DIR, exist_ok=True)
+
+POSITION_FILE = os.path.join(
+    CONFIG_DIR,
+    "position.txt"
+)
+
 # Hide console
 try:
     console = ctypes.windll.kernel32.GetConsoleWindow()
@@ -51,7 +62,23 @@ except Exception:
 # Tkinter Window
 root = tk.Tk()
 root.title("Rubber Duck Clock")
-root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+915+0")
+##root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+915+0")
+def load_position():
+    try:
+        with open(POSITION_FILE, "r") as f:
+            x, y = f.read().split(",")
+            return int(x), int(y)
+
+    except Exception:
+        # Default first launch position
+        return 915, 0
+
+saved_x, saved_y = load_position()
+
+root.geometry(
+    f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{saved_x}+{saved_y}"
+)
+
 root.overrideredirect(True)
 root.attributes("-topmost", True)
 
@@ -194,9 +221,41 @@ def play_animation(name):
     current_animation = name
     current_frame = 0
 
+def reset_position(icon, item):
+    default_x = 915
+    default_y = 0
+
+    # Move window
+    root.after(
+        0,
+        lambda: root.geometry(
+            f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{default_x}+{default_y}"
+        )
+    )
+
+    # Save new position
+    try:
+        with open(POSITION_FILE, "w") as f:
+            f.write(f"{default_x},{default_y}")
+    except Exception:
+        pass
 
 # TRAY ICON
 def shutdown():
+
+    try:
+        root.update_idletasks()
+
+        x = root.winfo_x()
+        y = root.winfo_y()
+
+        with open(POSITION_FILE, "w") as f:
+            f.write(f"{x},{y}")
+
+    except Exception:
+        pass
+
+
     try:
         icon.stop()
     except Exception:
@@ -216,8 +275,15 @@ icon = pystray.Icon(
     tray_icon,
     "Duck Clock",
     menu=pystray.Menu(
+        pystray.MenuItem(
+            "Reset Position",
+            reset_position
+        ),
         pystray.Menu.SEPARATOR,
-        pystray.MenuItem("Quit", quit_app),
+        pystray.MenuItem(
+            "Quit",
+            quit_app
+        ),
     ),
 )
 
