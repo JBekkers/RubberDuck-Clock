@@ -8,9 +8,13 @@ import pystray
 import ctypes
 import random
 import json
+import copy
+import winsound
 
 import os
 from PIL import Image, ImageTk
+
+last_hour_quacked = None
 
 ##LOAD ASSETS
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -50,9 +54,9 @@ NTP_SERVERS = [
 
 os.makedirs(CONFIG_DIR, exist_ok=True)
 
-POSITION_FILE = os.path.join(
+CONFIG_FILE = os.path.join(
     CONFIG_DIR,
-    "position.txt"
+    "config.json"
 )
 
 # Hide console
@@ -66,17 +70,61 @@ except Exception:
 # Tkinter Window
 root = tk.Tk()
 root.title("Rubber Duck Clock")
-def load_position():
+
+DEFAULT_CONFIG = {
+    "position": {
+        "x": 915,
+        "y": 0
+    },
+    "settings": {
+        "hourly_quack": False
+    }
+}
+
+
+def load_config():
+
     try:
-        with open(POSITION_FILE, "r") as f:
-            x, y = f.read().split(",")
-            return int(x), int(y)
+        with open(CONFIG_FILE, "r") as f:
+            config = json.load(f)
+
+        # Add missing values if config changes in future
+        for section, values in DEFAULT_CONFIG.items():
+
+            if section not in config:
+                config[section] = values
+
+            else:
+                for key, value in values.items():
+                    if key not in config[section]:
+                        config[section][key] = value
+
+        return config
 
     except Exception:
-        # Default first launch position
-        return 915, 0
 
-saved_x, saved_y = load_position()
+        return copy.deepcopy(DEFAULT_CONFIG)
+
+
+def save_config():
+
+    try:
+        with open(CONFIG_FILE, "w") as f:
+            json.dump(
+                config,
+                f,
+                indent=4
+            )
+
+    except Exception:
+        pass
+
+config = load_config()
+
+saved_x = config["position"]["x"]
+saved_y = config["position"]["y"]
+
+settings = config["settings"]
 
 root.geometry(
     f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{saved_x}+{saved_y}"
@@ -127,7 +175,8 @@ def load_animation(
     looping=False,
     loop_time=0,
     next_animation="Idle",
-    weight=0
+    weight=0,
+    sound=None,
 ):
 
     sheet = Image.open(
@@ -158,7 +207,8 @@ def load_animation(
         "looping": looping,
         "loop_time": loop_time,
         "next": next_animation,
-        "weight": weight
+        "weight": weight,
+        "sound": sound,
     }
 
 with open(ANIMATION_FILE, "r") as f:
@@ -179,7 +229,8 @@ for name, data in animation_data["animations"].items():
         looping=data.get("looping", False),
         loop_time=data.get("loop_time", 0),
         next_animation=data.get("next", "Idle"),
-        weight=data.get("weight", 0)
+        weight=data.get("weight", 0),
+        sound=data.get("sound")
     )
 
 current_animation = "Idle"
@@ -300,25 +351,34 @@ def play_animation(name):
             )
         else:
             animation["current_loop_time"] = loop_time
+    
+    if animation["sound"]:
+        play_sound(animation["sound"])
+
+def play_sound(filename):
+    path = os.path.join(SOUNDS_DIR, filename)
+
+    winsound.PlaySound(
+        path,
+        winsound.SND_FILENAME | winsound.SND_ASYNC
+    )
 
 def reset_position(icon, item):
+
     default_x = 915
     default_y = 0
 
-    # Move window
+    config["position"]["x"] = default_x
+    config["position"]["y"] = default_y
+
+    save_config()
+
     root.after(
         0,
         lambda: root.geometry(
             f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{default_x}+{default_y}"
         )
     )
-
-    # Save new position
-    try:
-        with open(POSITION_FILE, "w") as f:
-            f.write(f"{default_x},{default_y}")
-    except Exception:
-        pass
 
 # TRAY ICON
 def shutdown():
@@ -329,8 +389,13 @@ def shutdown():
         x = root.winfo_x()
         y = root.winfo_y()
 
-        with open(POSITION_FILE, "w") as f:
-            f.write(f"{x},{y}")
+        config["position"]["x"] = x
+        config["position"]["y"] = y
+
+        save_config()
+
+    except Exception:
+        pass
 
     except Exception:
         pass
@@ -348,6 +413,14 @@ def quit_app(icon, item):
 
 root.protocol("WM_DELETE_WINDOW", shutdown)
 
+def toggle_hourly_quack(icon, item):
+
+    settings["hourly_quack"] = not settings["hourly_quack"]
+
+    save_config()
+
+    icon.update_menu()
+
 tray_icon = Image.open(os.path.join(ASSETS_DIR, "Icon.png"))
 
 icon = pystray.Icon(
@@ -355,11 +428,20 @@ icon = pystray.Icon(
     tray_icon,
     "Duck Clock",
     menu=pystray.Menu(
+
         pystray.MenuItem(
             "Reset Position",
             reset_position
         ),
+
+        pystray.MenuItem(
+            "Quack on full hour",
+            toggle_hourly_quack,
+            checked=lambda item: settings["hourly_quack"]
+        ),
+
         pystray.Menu.SEPARATOR,
+
         pystray.MenuItem(
             "Quit",
             quit_app
@@ -416,6 +498,23 @@ def update_clock_display():
         elapsed = time.monotonic() - sync_monotonic
 
         current_time = network_time + timedelta(seconds=elapsed)
+
+        global last_hour_quacked
+
+        if (
+            settings["hourly_quack"] and
+            current_time.minute == 0 and
+            current_animation == "Idle" and
+            last_hour_quacked != current_time.hour
+        ):
+            last_hour_quacked = current_time.hour
+            play_animation("Quack")
+
+        # Reset when we leave the top of the hour
+        elif current_time.minute != 0:
+            last_hour_quacked = None
+
+
 
         canvas.itemconfig(
             time_display,

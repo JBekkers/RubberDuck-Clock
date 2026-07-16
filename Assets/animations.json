@@ -23,6 +23,13 @@
             "weight": 30
         },
 
+        "Quack": {
+            "speed": 120,
+            "next": "Idle",
+            "weight": 0,
+            "sound": "quack.wav"
+        },
+
         "Sleeping_Start": {
             "speed": 1000,
             "next": "Sleeping_Loop",
