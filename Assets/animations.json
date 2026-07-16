@@ -1,0 +1,40 @@
+{
+    "default": {
+        "frame_width": 128,
+        "frame_height": 120
+    },
+
+    "animations": {
+        "Idle": {
+            "speed": 120,
+            "next": "Idle"
+        },
+
+        "Blink": {
+            "speed": 50,
+            "next": "Idle"
+        },
+
+        "TailWag": {
+            "speed": 120,
+            "next": "Idle"
+        },
+
+        "Sleeping_Start": {
+            "speed": 80,
+            "next": "Sleeping_Loop"
+        },
+
+        "Sleeping_Loop": {
+            "speed": 120,
+            "looping": true,
+            "loop_time": 10,
+            "next": "Sleeping_End"
+        },
+
+        "Sleeping_End": {
+            "speed": 80,
+            "next": "Idle"
+        }
+    }
+}

@@ -7,6 +7,7 @@ import ntplib
 import pystray
 import ctypes
 import random
+import json
 
 import os
 from PIL import Image, ImageTk
@@ -29,12 +30,15 @@ CENTER_X = WINDOW_WIDTH // 2
 CENTER_Y = WINDOW_HEIGHT // 2
 
 SPRITE_SIZE = (150, 150)
-FRAME_WIDTH = 128
-FRAME_HEIGHT = 120
 
 TIMEZONE = ZoneInfo("Europe/Amsterdam") 
 SYNC_INTERVAL = 60   
 CLOCK_Y_OFFSET = 30
+
+ANIMATION_FILE = os.path.join(
+    ASSETS_DIR,
+    "animations.json"
+)
 
 NTP_SERVERS = [
     "time.cloudflare.com",
@@ -116,7 +120,16 @@ canvas.bind("<B1-Motion>", move_window)
 
 animations = {}
 
-def load_animation(name, frame_width, frame_height,speed):
+def load_animation(
+    name,
+    frame_width,
+    frame_height,
+    speed,
+    looping=False,
+    loop_time=0,
+    next_animation="Idle"
+):
+
     sheet = Image.open(
         os.path.join(SPRITES_DIR, f"{name}.png")
     ).convert("RGBA")
@@ -124,6 +137,7 @@ def load_animation(name, frame_width, frame_height,speed):
     frames = []
 
     for i in range(sheet.height // frame_height):
+
         frame = sheet.crop((
             0,
             i * frame_height,
@@ -131,20 +145,44 @@ def load_animation(name, frame_width, frame_height,speed):
             (i + 1) * frame_height
         ))
 
-        frame = frame.resize(SPRITE_SIZE, Image.Resampling.NEAREST)
+        frame = frame.resize(
+            SPRITE_SIZE,
+            Image.Resampling.NEAREST
+        )
+
         frames.append(ImageTk.PhotoImage(frame))
 
     animations[name] = {
-    "frames": frames,
-    "speed": speed
+        "frames": frames,
+        "speed": speed,
+        "looping": looping,
+        "loop_time": loop_time,
+        "next": next_animation
     }
 
-load_animation("Idle", FRAME_WIDTH, FRAME_HEIGHT, 120)
-load_animation("Blink", FRAME_WIDTH, FRAME_HEIGHT, 50)
-load_animation("TailWag", FRAME_WIDTH, FRAME_HEIGHT, 120)
+with open(ANIMATION_FILE, "r") as f:
+    animation_data = json.load(f)
+
+default = animation_data["default"]
+
+FRAME_WIDTH = default["frame_width"]
+FRAME_HEIGHT = default["frame_height"]
+
+for name, data in animation_data["animations"].items():
+
+    load_animation(
+        name=name,
+        frame_width=FRAME_WIDTH,
+        frame_height=FRAME_HEIGHT,
+        speed=data.get("speed", 120),
+        looping=data.get("looping", False),
+        loop_time=data.get("loop_time", 0),
+        next_animation=data.get("next", "Idle")
+    )
 
 current_animation = "Idle"
 current_frame = 0
+loop_start_time = None
 
 sprite_id = canvas.create_image(
     CENTER_X,
@@ -154,28 +192,43 @@ sprite_id = canvas.create_image(
 )
 
 def animate_sprite():
-    global current_frame, current_animation
+
+    global current_animation
+    global current_frame
+
     animation = animations[current_animation]
     frames = animation["frames"]
-
-    current_frame += 1
-
-    if current_frame >= len(frames):
-
-        if current_animation != "Idle":
-            current_animation = "Idle"
-
-        current_frame = 0
-        animation = animations[current_animation]
-        frames = animation["frames"]
 
     canvas.itemconfig(
         sprite_id,
         image=frames[current_frame]
     )
 
-    speed = animation["speed"]
-    root.after(speed, animate_sprite)
+    current_frame += 1
+
+    if current_frame == len(frames):
+
+        if animation["looping"]:
+
+            elapsed = (
+                time.monotonic() - loop_start_time
+                if loop_start_time is not None
+                else 0
+            )   
+
+            if elapsed >= animation["loop_time"]:
+                play_animation(animation["next"])
+            else:
+                current_frame = 0
+
+        else:
+
+            play_animation(animation["next"])
+
+    root.after(
+        animation["speed"],
+        animate_sprite
+    )
 
 def choose_random_animation():
 
@@ -216,10 +269,17 @@ date_display = canvas.create_text(
 )
 
 def play_animation(name):
-    global current_animation, current_frame
+    global current_animation
+    global current_frame
+    global loop_start_time
 
     current_animation = name
     current_frame = 0
+
+    if animations[name]["looping"]:
+        loop_start_time = time.monotonic()
+    else:
+        loop_start_time = None
 
 def reset_position(icon, item):
     default_x = 915
