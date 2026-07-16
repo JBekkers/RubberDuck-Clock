@@ -2,17 +2,15 @@
 
 A small desktop clock written in Python using Tkinter.
 
-The application displays the current time and date inside a simple rubber duck widget that sits on your desktop. It synchronizes with public NTP servers to keep the displayed time accurate, can be dragged anywhere on the screen, and runs quietly in the system tray.
+The application displays the current time and date inside a simple rubber duck widget that sits on your desktop. It synchronizes with public NTP servers to keep the displayed time accurate, can be dragged anywhere on the screen.
 
 ---
 
 ## Features
 
-- Displays the current time and date
-- Synchronizes with multiple NTP servers for accurate time
+- Accuratly Displays the current time and date
 - Always stays on top of other windows
-- Draggable desktop widget
-- System tray icon with a menu
+- Cute animations and lots of hats to collect
 - Lightweight and simple
 
 ---
@@ -91,11 +89,11 @@ WINDOW_HEIGHT = 150
 
 Some ideas I'd like to add in the future:
 
-- Save the window position between launches
 - Support for different hats
-- Animated events like sleeping, happy, idle and more..
+- lootpackage to get a random hat ever 30m
+- Animated events like sleeping, happy, loving, and more..
 - Quack sound every full hour
-- Menu when clicking on the clock
+- Menu when clicking on the clock instead of in tray icon
 
 ---
 
