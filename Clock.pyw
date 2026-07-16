@@ -6,6 +6,7 @@ import time
 import ntplib
 import pystray
 import ctypes
+import random
 
 import os
 from PIL import Image, ImageTk
@@ -24,6 +25,8 @@ CENTER_X = WINDOW_WIDTH // 2
 CENTER_Y = WINDOW_HEIGHT // 2
 
 SPRITE_SIZE = (150, 150)
+FRAME_WIDTH = 128
+FRAME_HEIGHT = 120
 
 TIMEZONE = ZoneInfo("Europe/Amsterdam") 
 SYNC_INTERVAL = 60   
@@ -84,35 +87,85 @@ canvas.pack()
 canvas.bind("<Button-1>", start_move)
 canvas.bind("<B1-Motion>", move_window)
 
-SPRITE_WIDTH = 128
-SPRITE_HEIGHT = 120
-ANIMATION_SPEED = 120
+animations = {}
 
-sprite_sheet = Image.open(
-    os.path.join(SPRITES_DIR, "Idle.png")
-).convert("RGBA")
+def load_animation(name, frame_width, frame_height,speed):
+    sheet = Image.open(
+        os.path.join(SPRITES_DIR, f"{name}.png")
+    ).convert("RGBA")
 
-frames = []
+    frames = []
 
-for i in range(sprite_sheet.height // SPRITE_HEIGHT):
-    frame = sprite_sheet.crop((
-        0,
-        i * SPRITE_HEIGHT,
-        SPRITE_WIDTH,
-        (i + 1) * SPRITE_HEIGHT
-    ))
+    for i in range(sheet.height // frame_height):
+        frame = sheet.crop((
+            0,
+            i * frame_height,
+            frame_width,
+            (i + 1) * frame_height
+        ))
 
-    frame = frame.resize(SPRITE_SIZE, Image.Resampling.NEAREST)
-    frames.append(ImageTk.PhotoImage(frame))
+        frame = frame.resize(SPRITE_SIZE, Image.Resampling.NEAREST)
+        frames.append(ImageTk.PhotoImage(frame))
 
+    animations[name] = {
+    "frames": frames,
+    "speed": speed
+    }
+
+load_animation("Idle", FRAME_WIDTH, FRAME_HEIGHT, 120)
+load_animation("Blink", FRAME_WIDTH, FRAME_HEIGHT, 50)
+load_animation("TailWag", FRAME_WIDTH, FRAME_HEIGHT, 120)
+
+current_animation = "Idle"
 current_frame = 0
 
 sprite_id = canvas.create_image(
     CENTER_X,
     CENTER_Y,
-    image=frames[current_frame],
+    image=animations[current_animation]["frames"][0],
     anchor="center"
 )
+
+def animate_sprite():
+    global current_frame, current_animation
+    animation = animations[current_animation]
+    frames = animation["frames"]
+
+    current_frame += 1
+
+    if current_frame >= len(frames):
+
+        if current_animation != "Idle":
+            current_animation = "Idle"
+
+        current_frame = 0
+        animation = animations[current_animation]
+        frames = animation["frames"]
+
+    canvas.itemconfig(
+        sprite_id,
+        image=frames[current_frame]
+    )
+
+    speed = animation["speed"]
+    root.after(speed, animate_sprite)
+
+def choose_random_animation():
+
+    if current_animation != "Idle":
+        root.after(2000, choose_random_animation)
+        return
+
+    roll = random.random()
+
+    if roll < 0.10:
+        play_animation("Blink")
+
+    elif roll < 0.30:
+        play_animation("TailWag")
+
+    root.after(2000, choose_random_animation)
+
 
 # TIME TEXT 
 time_display = canvas.create_text(
@@ -135,17 +188,12 @@ date_display = canvas.create_text(
     anchor="center"
 )
 
-def animate_sprite():
-    global current_frame
+def play_animation(name):
+    global current_animation, current_frame
 
-    current_frame = (current_frame + 1) % len(frames)
+    current_animation = name
+    current_frame = 0
 
-    canvas.itemconfig(
-        sprite_id,
-        image=frames[current_frame]
-    )
-
-    root.after(ANIMATION_SPEED, animate_sprite)
 
 # TRAY ICON
 def shutdown():
@@ -248,6 +296,7 @@ def update_clock_display():
 
 #Call functions
 animate_sprite()
+choose_random_animation()
 
 synchronize_time()
 update_clock_display()
