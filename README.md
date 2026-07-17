@@ -92,8 +92,9 @@ Some ideas I'd like to add in the future:
 - Support for different hats
 - lootpackage to get a random hat ever 30m
 - Animated events like sleeping, happy, loving, and more..
-- Quack sound every full hour
+- duck slowly turn red and gets mad then cool down back to yellow again
 - Menu when clicking on the clock instead of in tray icon
+- link with google agenda - show notifications for meetings etc
 
 ---
 
