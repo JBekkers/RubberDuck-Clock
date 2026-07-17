@@ -19,28 +19,6 @@ import os
 
 from PIL import Image, ImageTk
 
-last_hour_quacked = None
-
-# =======================
-#  WINDOW CONFIGURATION
-# =======================
-
-# =======================
-#   SETTINGS CONFIG
-# =======================
-
-# =======================
-#    ANIMATION ENGINE
-# =======================
-
-# =======================
-#       MENU CONFIG
-# =======================
-
-# =======================
-#       CLOCK CONFIG
-# =======================
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(BASE_DIR, "Assets")
 SPRITES_DIR = os.path.join(ASSETS_DIR, "Sprites")
@@ -51,48 +29,15 @@ CONFIG_DIR = os.path.join(
     "RubberDuckClock"
 )
 
-WINDOW_WIDTH = 150
-WINDOW_HEIGHT = 150
-
-CENTER_X = WINDOW_WIDTH // 2
-CENTER_Y = WINDOW_HEIGHT // 2
-
-SPRITE_SIZE = (150, 150)
-
-TIMEZONE = ZoneInfo("Europe/Amsterdam") 
-SYNC_INTERVAL = 60   
-CLOCK_Y_OFFSET = 30
-
-ANIMATION_FILE = os.path.join(
-    ASSETS_DIR,
-    "animations.json"
-)
-
-NTP_SERVERS = [
-    "time.cloudflare.com",
-    "time.google.com",
-    "time.windows.com",
-    "time.apple.com",
-    "pool.ntp.org",
-]
-
+# =======================
+#   SETTINGS CONFIG
+# =======================
 os.makedirs(CONFIG_DIR, exist_ok=True)
 
 CONFIG_FILE = os.path.join(
     CONFIG_DIR,
     "config.json"
 )
-
-
-try:
-    console = ctypes.windll.kernel32.GetConsoleWindow()
-    if console:
-        ctypes.windll.user32.ShowWindow(console, 0)
-except Exception:
-    pass
-
-
-root = tk.Tk()
 
 DEFAULT_CONFIG = {
     "position": {
@@ -149,20 +94,24 @@ saved_y = config["position"]["y"]
 
 settings = config["settings"]
 
-root.geometry(
-    f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{saved_x}+{saved_y}"
-)
+# =======================
+#  WINDOW CONFIGURATION
+# =======================
+WINDOW_WIDTH = 150
+WINDOW_HEIGHT = 150
 
+CENTER_X = WINDOW_WIDTH // 2
+CENTER_Y = WINDOW_HEIGHT // 2
+
+drag_offset_x = 0
+drag_offset_y = 0
+
+root = tk.Tk()
 root.overrideredirect(True)
 root.attributes("-topmost", True)
 
 root.configure(bg="#010203")
 root.wm_attributes("-transparentcolor", "#010203")
-
-
-## CLICK AND DRAG TO MOVE
-drag_offset_x = 0
-drag_offset_y = 0
 
 def start_move(event):
     global drag_offset_x, drag_offset_y
@@ -173,7 +122,6 @@ def move_window(event):
     x = event.x_root - drag_offset_x
     y = event.y_root - drag_offset_y
     root.geometry(f"+{x}+{y}")
-
 
 canvas = tk.Canvas(
     root,
@@ -188,7 +136,33 @@ canvas.pack()
 canvas.bind("<Button-1>", start_move)
 canvas.bind("<B1-Motion>", move_window)
 
+try:
+    console = ctypes.windll.kernel32.GetConsoleWindow()
+    if console:
+        ctypes.windll.user32.ShowWindow(console, 0)
+except Exception:
+    pass
+
+root.geometry(
+    f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{saved_x}+{saved_y}"
+)
+
+
+# =======================
+#    ANIMATION ENGINE
+# =======================
+SPRITE_SIZE = (150, 150)
+
+ANIMATION_FILE = os.path.join(
+    ASSETS_DIR,
+    "animations.json"
+)
+
 animations = {}
+
+current_animation = "Idle"
+current_frame = 0
+loop_start_time = None
 
 def load_animation(
     name,
@@ -253,10 +227,6 @@ for name, data in animation_data["animations"].items():
         weight=data.get("weight", 0),
         sound=data.get("sound")
     )
-
-current_animation = "Idle"
-current_frame = 0
-loop_start_time = None
 
 sprite_id = canvas.create_image(
     CENTER_X,
@@ -329,25 +299,6 @@ def choose_random_animation():
 
     root.after(6000, choose_random_animation)
 
-
-time_display = canvas.create_text(
-    CENTER_X,
-    CENTER_Y + CLOCK_Y_OFFSET - 10,
-    text="--:--",
-    font=("Segoe UI", 11, "bold"),
-    fill="black",
-    anchor="center"
-)
-
-date_display = canvas.create_text(
-    CENTER_X,
-    CENTER_Y + CLOCK_Y_OFFSET + 10,
-    text="--/--",
-    font=("Segoe UI", 8),
-    fill="black",
-    anchor="center"
-)
-
 def play_animation(name):
     global current_animation
     global current_frame
@@ -373,6 +324,11 @@ def play_animation(name):
     if animation["sound"]:
         play_sound(animation["sound"])
 
+
+# =======================
+#   SOUND ENGINE
+# =======================
+
 def play_sound(filename):
     path = os.path.join(SOUNDS_DIR, filename)
 
@@ -381,6 +337,9 @@ def play_sound(filename):
         winsound.SND_FILENAME | winsound.SND_ASYNC
     )
 
+# =======================
+#       MENU CONFIG
+# =======================
 def reset_position(icon, item):
 
     default_x = 915
@@ -426,6 +385,43 @@ def quit_app(icon, item):
 
 root.protocol("WM_DELETE_WINDOW", shutdown)
 
+# =======================
+#       CLOCK CONFIG
+# =======================
+TIMEZONE = ZoneInfo("Europe/Amsterdam") 
+SYNC_INTERVAL = 60   
+CLOCK_Y_OFFSET = 30
+
+last_hour_quacked = None
+network_time = None
+sync_monotonic = None
+
+NTP_SERVERS = [
+    "time.cloudflare.com",
+    "time.google.com",
+    "time.windows.com",
+    "time.apple.com",
+    "pool.ntp.org",
+]
+
+time_display = canvas.create_text(
+    CENTER_X,
+    CENTER_Y + CLOCK_Y_OFFSET - 10,
+    text="--:--",
+    font=("Segoe UI", 11, "bold"),
+    fill="black",
+    anchor="center"
+)
+
+date_display = canvas.create_text(
+    CENTER_X,
+    CENTER_Y + CLOCK_Y_OFFSET + 10,
+    text="--/--",
+    font=("Segoe UI", 8),
+    fill="black",
+    anchor="center"
+)
+
 def toggle_hourly_quack(icon, item):
 
     settings["hourly_quack"] = not settings["hourly_quack"]
@@ -461,13 +457,6 @@ icon = pystray.Icon(
         ),
     ),
 )
-
-threading.Thread(target=icon.run, daemon=True).start()
-
-
-network_time = None
-sync_monotonic = None
-
 
 def synchronize_time():
 
@@ -520,7 +509,7 @@ def update_clock_display():
             last_hour_quacked = current_time.hour
             play_animation("Quack")
 
-        # Reset when we leave the top of the hour
+
         elif current_time.minute != 0:
             last_hour_quacked = None
 
@@ -549,9 +538,12 @@ def update_clock_display():
         )
     root.after(200, update_clock_display)
 
+
 # =======================
-#    START APPLICATION
+#    START LOOP
 # =======================
+threading.Thread(target=icon.run, daemon=True).start()
+
 animate_sprite()
 choose_random_animation()
 
