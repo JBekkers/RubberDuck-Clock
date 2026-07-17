@@ -21,6 +21,7 @@ from PIL import Image, ImageTk
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(BASE_DIR, "Assets")
+DATA_DIR = os.path.join(BASE_DIR, "Data")
 SPRITES_DIR = os.path.join(ASSETS_DIR, "Sprites")
 HATS_DIR = os.path.join(ASSETS_DIR, "Hats")
 SOUNDS_DIR = os.path.join(ASSETS_DIR, "Sounds")
@@ -89,8 +90,7 @@ def save_config():
 
 config = load_config()
 
-saved_x = config["position"]["x"]
-saved_y = config["position"]["y"]
+
 
 settings = config["settings"]
 
@@ -144,7 +144,9 @@ except Exception:
     pass
 
 root.geometry(
-    f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{saved_x}+{saved_y}"
+    f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}"
+    f"+{config['position']['x']}"
+    f"+{config['position']['y']}"
 )
 
 
@@ -154,7 +156,7 @@ root.geometry(
 SPRITE_SIZE = (150, 150)
 
 ANIMATION_FILE = os.path.join(
-    ASSETS_DIR,
+    DATA_DIR,
     "animations.json"
 )
 
@@ -338,54 +340,6 @@ def play_sound(filename):
     )
 
 # =======================
-#       MENU CONFIG
-# =======================
-def reset_position(icon, item):
-
-    default_x = 915
-    default_y = 0
-
-    config["position"]["x"] = default_x
-    config["position"]["y"] = default_y
-
-    save_config()
-
-    root.after(
-        0,
-        lambda: root.geometry(
-            f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{default_x}+{default_y}"
-        )
-    )
-
-def shutdown():
-
-    try:
-        root.update_idletasks()
-
-        x = root.winfo_x()
-        y = root.winfo_y()
-
-        config["position"]["x"] = x
-        config["position"]["y"] = y
-
-        save_config()
-
-    except Exception:
-        pass
-
-    try:
-        icon.stop()
-    except Exception:
-        pass
-
-    root.destroy()
-
-def quit_app(icon, item):
-    root.after(0, shutdown)
-
-root.protocol("WM_DELETE_WINDOW", shutdown)
-
-# =======================
 #       CLOCK CONFIG
 # =======================
 TIMEZONE = ZoneInfo("Europe/Amsterdam") 
@@ -429,34 +383,6 @@ def toggle_hourly_quack(icon, item):
     save_config()
 
     icon.update_menu()
-
-tray_icon = Image.open(os.path.join(ASSETS_DIR, "Icon.png"))
-
-icon = pystray.Icon(
-    "Duck Clock",
-    tray_icon,
-    "Duck Clock",
-    menu=pystray.Menu(
-
-        pystray.MenuItem(
-            "Reset Position",
-            reset_position
-        ),
-
-        pystray.MenuItem(
-            "Quack on full hour",
-            toggle_hourly_quack,
-            checked=lambda item: settings["hourly_quack"]
-        ),
-
-        pystray.Menu.SEPARATOR,
-
-        pystray.MenuItem(
-            "Quit",
-            quit_app
-        ),
-    ),
-)
 
 def synchronize_time():
 
@@ -538,6 +464,92 @@ def update_clock_display():
         )
     root.after(200, update_clock_display)
 
+# =======================
+#       MENU CONFIG
+# =======================
+def reset_position(icon, item):
+
+    default_x = 915
+    default_y = 0
+
+    config["position"]["x"] = default_x
+    config["position"]["y"] = default_y
+
+    save_config()
+
+    root.after(
+        0,
+        lambda: root.geometry(
+            f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{default_x}+{default_y}"
+        )
+    )
+
+def shutdown():
+
+    try:
+        root.update_idletasks()
+
+        x = root.winfo_x()
+        y = root.winfo_y()
+
+        config["position"]["x"] = x
+        config["position"]["y"] = y
+
+        save_config()
+
+    except Exception:
+        pass
+
+    try:
+        icon.stop()
+    except Exception:
+        pass
+
+    root.destroy()
+
+def quit_app(icon, item):
+    root.after(0, shutdown)
+
+tray_icon = Image.open(os.path.join(ASSETS_DIR, "Icon.png"))
+
+icon = pystray.Icon(
+    "Duck Clock",
+    tray_icon,
+    "Duck Clock",
+    menu=pystray.Menu(
+
+        pystray.MenuItem(
+            "Reset Position",
+            reset_position
+        ),
+
+        pystray.MenuItem(
+            "Quack on full hour",
+            toggle_hourly_quack,
+            checked=lambda item: settings["hourly_quack"]
+        ),
+
+        pystray.Menu.SEPARATOR,
+
+        pystray.MenuItem(
+            "Quit",
+            quit_app
+        ),
+    ),
+)
+
+def show_context_menu(event):
+    menu.tk_popup(event.x_root, event.y_root)
+
+menu = tk.Menu(root, tearoff=1)
+
+menu.add_command(label="Sleep", command=lambda: play_animation("Sleeping_Start"))
+menu.add_separator()
+menu.add_command(label="Quit", command=shutdown)
+
+canvas.bind("<Button-3>", show_context_menu)
+
+root.protocol("WM_DELETE_WINDOW", shutdown)
 
 # =======================
 #    START LOOP
