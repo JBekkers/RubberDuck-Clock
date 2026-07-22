@@ -195,5 +195,11 @@ def play_animation(name):
     if animation.sound:
         play_sound(animation.sound)
 
+def duck_clicked(event):
+
+    if current_animation.startswith("Sleeping"):
+        play_animation("Mad_Start")
+        return
+
 def is_idle():
     return current_animation == "Idle"

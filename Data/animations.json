@@ -53,7 +53,7 @@
         "Mad_Start": {
             "speed": 500,
             "next": "Mad_Loop",
-            "weight": 1
+            "weight": 0
         },
 
         "Mad_Loop": {
