@@ -50,6 +50,20 @@
             "weight": 0
         },
 
+        "Mad_Start": {
+            "speed": 300,
+            "next": "Mad_Loop",
+            "weight": 100
+        },
+
+        "Mad_Loop": {
+            "speed": 400,
+            "looping": true,
+            "loop_time": [5, 20],
+            "next": "Idle",
+            "weight": 0
+        },
+
         "RBGmode": {
             "speed": 90,
             "looping": true,
