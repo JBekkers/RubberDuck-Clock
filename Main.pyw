@@ -1,7 +1,7 @@
 from Source.Config import load_config
 from Source.Animation_Manager import animate_sprite, choose_random_animation, duck_clicked
 from Source.Menu import setup_menu
-from Source.Window_Manager import root, canvas, set_position
+from Source.Window_Manager import root, canvas, set_position, start_move,move_window
 from Source.Clock import setup_clock,start_clock
 
 config = load_config()
@@ -15,6 +15,8 @@ set_position(
 )
 
 canvas.bind("<Button-1>", duck_clicked)
+canvas.bind("<Button-1>", start_move)
+canvas.bind("<B1-Motion>", move_window)
 
 setup_clock()
 start_clock(settings)

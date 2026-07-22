@@ -34,9 +34,6 @@ canvas = tk.Canvas(
 
 canvas.pack()
 
-canvas.bind("<Button-1>", start_move)
-canvas.bind("<B1-Motion>", move_window)
-
 try:
     console = ctypes.windll.kernel32.GetConsoleWindow()
     if console:
