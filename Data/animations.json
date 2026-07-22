@@ -51,15 +51,22 @@
         },
 
         "Mad_Start": {
-            "speed": 300,
+            "speed": 500,
             "next": "Mad_Loop",
             "weight": 1
         },
 
         "Mad_Loop": {
-            "speed": 400,
+            "speed": 200,
             "looping": true,
-            "loop_time": [5, 20],
+            "loop_time": [10,20],
+            "next": "Mad_End",
+            "weight": 0
+        },
+
+        "Mad_End": {
+            "speed": 500,
+            "looping": true,
             "next": "Idle",
             "weight": 0
         },
