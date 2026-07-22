@@ -48,6 +48,14 @@
             "speed": 300,
             "next": "Idle",
             "weight": 0
+        },
+
+        "RBGmode": {
+            "speed": 90,
+            "looping": true,
+            "loop_time": 60,
+            "next": "Idle",
+            "weight": 0.001
         }
     }
 }
