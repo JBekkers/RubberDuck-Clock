@@ -14,9 +14,15 @@ set_position(
     config["position"]["y"]
 )
 
-canvas.bind("<Button-1>", duck_clicked)
-canvas.bind("<Button-1>", start_move)
-canvas.bind("<B1-Motion>", move_window)
+def on_click(event):
+    start_move(event)
+    duck_clicked(event)
+
+def on_Move(event):
+    move_window(event)
+
+canvas.bind("<Button-1>", on_click)
+canvas.bind("<B1-Motion>", on_Move)
 
 setup_clock()
 start_clock(settings)
