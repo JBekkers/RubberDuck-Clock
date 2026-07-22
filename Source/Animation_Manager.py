@@ -1,5 +1,8 @@
 from Source.Constants import CENTER_X, CENTER_Y
-from Source.Window import root, canvas
+from Source.Window_Manager import root, canvas
+from Source.Paths import SPRITES_DIR, DATA_DIR
+
+from dataclasses import dataclass
 
 import random
 import json
@@ -12,21 +15,24 @@ import time
 
 SPRITE_SIZE = (150, 150)
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(BASE_DIR, "Data")
-ASSETS_DIR = os.path.join(BASE_DIR, "Assets")
-SPRITES_DIR = os.path.join(ASSETS_DIR, "Sprites")
+ANIMATION_FILE = os.path.join(DATA_DIR, "animations.json")
 
-ANIMATION_FILE = os.path.join(
-    DATA_DIR,
-    "animations.json"
-)
+@dataclass
+class Animation:
+    frames:list[ImageTk.PhotoImage]
+    speed:int
+    looping:bool
+    loop_time:float |int | list[float]
+    next_animation:str
+    weight:float
+    sound: str | None = None 
+    current_loop_time: float = 0
 
-animations = {}
-
+animations: dict[str, Animation] = {}
 current_animation = "Idle"
 current_frame = 0
 loop_start_time = None
+
 
 def load_animation(
     name,
@@ -62,15 +68,16 @@ def load_animation(
 
         frames.append(ImageTk.PhotoImage(frame))
 
-    animations[name] = {
-        "frames": frames,
-        "speed": speed,
-        "looping": looping,
-        "loop_time": loop_time,
-        "next": next_animation,
-        "weight": weight,
-        "sound": sound,
-    }
+
+    animations[name] = Animation(
+        frames=frames,
+        speed=speed,
+        looping=looping,
+        loop_time=loop_time,
+        next_animation=next_animation,
+        weight=weight,
+        sound=sound,
+    )
 
 with open(ANIMATION_FILE, "r") as f:
     animation_data = json.load(f)
@@ -95,7 +102,7 @@ for name, data in animation_data["animations"].items():
 sprite_id = canvas.create_image(
     CENTER_X,
     CENTER_Y,
-    image=animations[current_animation]["frames"][0],
+    image=animations[current_animation].frames[0],
     anchor="center"
 )
 
@@ -105,7 +112,7 @@ def animate_sprite():
     global current_frame
 
     animation = animations[current_animation]
-    frames = animation["frames"]
+    frames = animation.frames
 
     canvas.itemconfig(
         sprite_id,
@@ -116,7 +123,7 @@ def animate_sprite():
 
     if current_frame == len(frames):
 
-        if animation["looping"]:
+        if animation.looping:
 
             elapsed = (
                 time.monotonic() - loop_start_time
@@ -124,17 +131,17 @@ def animate_sprite():
                 else 0
             )   
 
-            if elapsed >= animation["current_loop_time"]:
-                play_animation(animation["next"])
+            if elapsed >= animation.current_loop_time:
+                play_animation(animation.next_animation)
             else:
                 current_frame = 0
 
         else:
 
-            play_animation(animation["next"])
+            play_animation(animation.next_animation)
 
     root.after(
-        animation["speed"],
+        animation.speed,
         animate_sprite
     )
 
@@ -148,9 +155,9 @@ def choose_random_animation():
     weights = []
 
     for name, anim in animations.items():
-        if anim["weight"] > 0:
+        if anim.weight > 0:
             choices.append(name)
-            weights.append(anim["weight"])
+            weights.append(anim.weight)
 
     if choices:
         animation = random.choices(
@@ -174,19 +181,19 @@ def play_animation(name):
 
     animation = animations[current_animation]
 
-    if animation["looping"]:
-        loop_time = animation["loop_time"]
+    if animation.looping:
+        loop_time = animation.loop_time
 
         if isinstance(loop_time, list):
-            animation["current_loop_time"] = random.uniform(
+            animation.current_loop_time = random.uniform(
                 loop_time[0],
                 loop_time[1]
             )
         else:
-            animation["current_loop_time"] = loop_time
+            animation.current_loop_time = loop_time
     
-    if animation["sound"]:
-        play_sound(animation["sound"])
+    if animation.sound:
+        play_sound(animation.sound)
 
 def is_idle():
     return current_animation == "Idle"

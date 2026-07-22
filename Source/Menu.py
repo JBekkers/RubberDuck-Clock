@@ -1,5 +1,6 @@
 import pystray
-from Source.Window import root, canvas
+from Source.Window_Manager import root, canvas
+from Source.Paths import ASSETS_DIR
 from Source.Constants import WINDOW_HEIGHT, WINDOW_WIDTH
 
 from Source.Config import save_config
@@ -9,10 +10,7 @@ import os
 import tkinter as tk
 import threading
 
-from Source.Animation import play_animation
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ASSETS_DIR = os.path.join(BASE_DIR, "Assets")
+from Source.Animation_Manager import play_animation
 
 settings = None
 config = None
@@ -22,6 +20,13 @@ def setup_menu(app_settings, app_config):
 
     settings = app_settings
     config = app_config
+
+    create_tray_icon()
+
+    threading.Thread(
+        target=icon.run,
+        daemon=True
+    ).start()
 
 def reset_position(icon, item):
 
@@ -77,31 +82,38 @@ def toggle_hourly_quack(icon, item):
 
 tray_icon = Image.open(os.path.join(ASSETS_DIR, "Icon.png"))
 
-icon = pystray.Icon(
-    "Duck Clock",
-    tray_icon,
-    "Duck Clock",
-    menu=pystray.Menu(
+icon = None
 
-        pystray.MenuItem(
-            "Reset Position",
-            reset_position
+
+def create_tray_icon():
+
+    global icon
+
+    icon = pystray.Icon(
+        "Duck Clock",
+        tray_icon,
+        "Duck Clock",
+        menu=pystray.Menu(
+
+            pystray.MenuItem(
+                "Reset Position",
+                reset_position
+            ),
+
+            pystray.MenuItem(
+                "Quack on full hour",
+                toggle_hourly_quack,
+                checked=lambda item: settings["hourly_quack"]
+            ),
+
+            pystray.Menu.SEPARATOR,
+
+            pystray.MenuItem(
+                "Quit",
+                quit_app
+            ),
         ),
-
-        pystray.MenuItem(
-            "Quack on full hour",
-            toggle_hourly_quack,
-            checked=lambda item: settings["hourly_quack"]
-        ),
-
-        pystray.Menu.SEPARATOR,
-
-        pystray.MenuItem(
-            "Quit",
-            quit_app
-        ),
-    ),
-)
+    )
 
 def show_context_menu(event):
     menu.tk_popup(event.x_root, event.y_root)
@@ -113,5 +125,3 @@ menu.add_separator()
 menu.add_command(label="Quit", command=shutdown)
 
 canvas.bind("<Button-3>", show_context_menu)
-
-threading.Thread(target=icon.run, daemon=True).start()

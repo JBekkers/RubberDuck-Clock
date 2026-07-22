@@ -1,5 +1,4 @@
 from Source.Constants import WINDOW_HEIGHT, WINDOW_WIDTH
-from Source.Config import load_config
 
 import ctypes
 import tkinter as tk

@@ -1,6 +1,6 @@
 from Source.Constants import CENTER_X, CENTER_Y
-from Source.Window import root, canvas
-from Source.Animation import play_animation, is_idle
+from Source.Window_Manager import root, canvas
+from Source.Animation_Manager import play_animation, is_idle
 
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -34,7 +34,7 @@ def start_clock(clock_settings):
     synchronize_time()
     update_clock_display()
 
-def setup_clock(canvas):
+def setup_clock():
     global time_display, date_display
 
     time_display = canvas.create_text(

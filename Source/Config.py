@@ -2,8 +2,6 @@ import os
 import json
 import copy
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
 CONFIG_DIR = os.path.join(
     os.getenv("APPDATA"),
     "RubberDuckClock"
