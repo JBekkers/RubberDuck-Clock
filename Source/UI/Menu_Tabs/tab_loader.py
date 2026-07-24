@@ -9,6 +9,10 @@ from Source.UI.Menu_Tabs.exchange_tab import build_exchange_tab
 window = None
 window_width = 400
 
+BACKGROUND = "#FDFF85"
+BUTTON = "#FFBA53"
+TEXT = "#000000"
+
 
 def open_settings(root, settings, config, actions):
 
@@ -24,10 +28,17 @@ def open_settings(root, settings, config, actions):
     window.geometry(f"{window_width}x450")
     window.resizable(False, False)
 
-    tab_bar = ttk.Frame(window)
+    tab_bar = tk.Frame(
+    window,
+    bg= BACKGROUND
+    )
     tab_bar.pack(fill="x")
 
-    content = ttk.Frame(window)
+    content = tk.Frame(
+    window,
+    bg= BACKGROUND
+    )
+
     content.pack(
         fill="both",
         expand=True,
@@ -57,10 +68,14 @@ def open_settings(root, settings, config, actions):
 
         tab_bar.columnconfigure(index, weight=1)
 
-        button = ttk.Button(
+        button = tk.Button(
             tab_bar,
-            text=title,
-            command=lambda i=index: show_tab(i)
+            text  =title,
+            command=lambda i=index: show_tab(i),
+            bg=BACKGROUND,
+            fg=TEXT,
+            relief="flat",
+            borderwidth=0
         )
 
         button.grid(
