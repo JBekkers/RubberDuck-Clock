@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from Source.Config_Manager import save_config
+from Source.Config.config import save_config
 
 
 SETTINGS = [
@@ -27,8 +27,7 @@ SETTINGS = [
 
 ]
 
-
-def build_settings_tab(parent, settings, config):
+def build_settings_tab(parent, settings, config, actions):
 
     tk.Label(
         parent,
@@ -61,3 +60,29 @@ def build_settings_tab(parent, settings, config):
             padx=20,
             pady=3
         )
+
+    tk.Label(
+        parent,
+        text="Application",
+        font=("Segoe UI", 12, "bold")
+    ).pack(
+        pady=(20,5)
+    )
+
+
+    tk.Button(
+        parent,
+        text="Reset Position",
+        command=actions["reset_position"]
+    ).pack(
+        pady=3
+    )
+
+
+    tk.Button(
+        parent,
+        text="Quit Application",
+        command=actions["quit"]
+    ).pack(
+        pady=3
+    )

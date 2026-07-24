@@ -1,6 +1,6 @@
-from Source.Constants import CENTER_X, CENTER_Y
+from Source.Config.constants import CENTER_X, CENTER_Y
 from Source.Window_Manager import root, canvas
-from Source.Animation_Manager import play_animation, is_idle
+from Source.animation import play_animation, is_idle
 
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo

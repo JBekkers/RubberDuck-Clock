@@ -1,6 +1,6 @@
-from Source.Constants import CENTER_X, CENTER_Y
+from Source.Config.constants import CENTER_X, CENTER_Y
 from Source.Window_Manager import root, canvas
-from Source.Paths import SPRITES_DIR, DATA_DIR
+from Source.Config.paths import SPRITES_DIR, DATA_DIR
 
 from dataclasses import dataclass
 
@@ -9,7 +9,7 @@ import json
 import os
 
 from PIL import Image, ImageTk
-from Source.Sound_Manager import play_sound
+from Source.sound import play_sound
 import time
 
 

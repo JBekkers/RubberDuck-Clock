@@ -11,7 +11,7 @@ def build_cosmetics_tab(parent, settings, config):
 
     tk.Label(
         parent,
-        text="comming soon"
+        text="Comming soon"
 
     ).pack(
         pady=20

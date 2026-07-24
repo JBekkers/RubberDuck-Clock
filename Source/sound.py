@@ -1,6 +1,6 @@
 import winsound
 import os
-from Source.Paths import SOUNDS_DIR
+from Source.Config.paths import SOUNDS_DIR
 
 def play_sound(filename):
     path = os.path.join(SOUNDS_DIR, filename)

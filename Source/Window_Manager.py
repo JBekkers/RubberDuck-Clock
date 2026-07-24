@@ -1,4 +1,4 @@
-from Source.Constants import WINDOW_HEIGHT, WINDOW_WIDTH
+from Source.Config.constants import WINDOW_HEIGHT, WINDOW_WIDTH
 
 import ctypes
 import tkinter as tk
