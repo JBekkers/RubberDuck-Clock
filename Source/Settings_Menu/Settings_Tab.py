@@ -16,13 +16,13 @@ SETTINGS = [
     ),
 
     (
-        "sleep_animation",
-        "Toggle Animations"
+        "disable_animation",
+        "Disable Animations"
     ),
 
     (
-        "toggle_sound",
-        "Toggle Sound"
+        "disable_sound",
+        "Disable Sound"
     )
 
 ]

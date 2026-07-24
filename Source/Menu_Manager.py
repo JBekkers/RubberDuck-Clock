@@ -101,12 +101,6 @@ def create_tray_icon():
                 reset_position
             ),
 
-            pystray.MenuItem(
-                "Quack on full hour",
-                toggle_hourly_quack,
-                checked=lambda item: settings["hourly_quack"]
-            ),
-
             pystray.Menu.SEPARATOR,
 
             pystray.MenuItem(
