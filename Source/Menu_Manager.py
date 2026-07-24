@@ -3,7 +3,7 @@ from Source.Window_Manager import root, canvas
 from Source.Paths import ASSETS_DIR
 from Source.Constants import WINDOW_HEIGHT, WINDOW_WIDTH
 
-from Source.Config import save_config
+from Source.Config_Manager import save_config
 from PIL import Image
 
 import os

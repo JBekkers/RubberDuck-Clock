@@ -1,8 +1,8 @@
-from Source.Config import load_config
+from Source.Config_Manager import load_config
 from Source.Animation_Manager import animate_sprite, choose_random_animation, duck_clicked
-from Source.Menu import setup_menu
+from Source.Menu_Manager import setup_menu
 from Source.Window_Manager import root, canvas, set_position, start_move,move_window
-from Source.Clock import setup_clock,start_clock
+from Source.Clock_Manager import setup_clock,start_clock
 
 config = load_config()
 settings = config["settings"]

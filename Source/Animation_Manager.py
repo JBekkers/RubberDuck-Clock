@@ -9,7 +9,7 @@ import json
 import os
 
 from PIL import Image, ImageTk
-from Source.Sound import play_sound
+from Source.Sound_Manager import play_sound
 import time
 
 
