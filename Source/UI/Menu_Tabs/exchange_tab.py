@@ -5,7 +5,7 @@ def build_exchange_tab(parent, settings, config):
 
     tk.Label(
         parent,
-        text="Cosmetics",
+        text="Exchange",
         font=("Segoe UI", 14, "bold")
     ).pack(pady=10)
 

@@ -11,7 +11,7 @@ def build_about_tab(parent, settings, config):
 
     tk.Label(
         parent,
-        text="Version 1.0"
+        text="Version 1.0.0"
     ).pack()
 
     tk.Label(

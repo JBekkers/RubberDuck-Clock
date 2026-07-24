@@ -7,6 +7,7 @@ from Source.UI.Menu_Tabs.about_tab import build_about_tab
 from Source.UI.Menu_Tabs.exchange_tab import build_exchange_tab
 
 window = None
+window_width = 400
 
 
 def open_settings(root, settings, config, actions):
@@ -20,12 +21,14 @@ def open_settings(root, settings, config, actions):
     window = tk.Toplevel(root)
 
     window.title("Duck Clock")
-    window.geometry("400x450")
+    window.geometry(f"{window_width}x450")
     window.resizable(False, False)
 
-    notebook = ttk.Notebook(window)
+    tab_bar = ttk.Frame(window)
+    tab_bar.pack(fill="x")
 
-    notebook.pack(
+    content = ttk.Frame(window)
+    content.pack(
         fill="both",
         expand=True,
         padx=5,
@@ -33,18 +36,45 @@ def open_settings(root, settings, config, actions):
     )
 
     tabs = [
-    ("Cosmetics", build_cosmetics_tab),
-    ("Exchange", build_exchange_tab),
-    ("Settings", build_settings_tab),
-    ("About", build_about_tab),
-]
+        ("Cosmetics", build_cosmetics_tab),
+        ("Exchange", build_exchange_tab),
+        ("Settings", build_settings_tab),
+        ("About", build_about_tab),
+    ]
 
-    for title, builder in tabs:
-        frame = ttk.Frame(notebook)
-        notebook.add(frame, text=title)
+    frames = []
+
+    def show_tab(index):
+        for frame in frames:
+            frame.pack_forget()
+
+        frames[index].pack(
+            fill="both",
+            expand=True
+        )
+
+    for index, (title, builder) in enumerate(tabs):
+
+        tab_bar.columnconfigure(index, weight=1)
+
+        button = ttk.Button(
+            tab_bar,
+            text=title,
+            command=lambda i=index: show_tab(i)
+        )
+
+        button.grid(
+            row=0,
+            column=index,
+            sticky="ew"
+        )
+
+        frame = ttk.Frame(content)
+        frames.append(frame)
 
         if builder is build_settings_tab:
             builder(frame, settings, config, actions)
         else:
             builder(frame, settings, config)
 
+    show_tab(0)
