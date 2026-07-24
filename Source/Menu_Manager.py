@@ -11,6 +11,7 @@ import tkinter as tk
 import threading
 
 from Source.Animation_Manager import play_animation
+from Source.Settings_Menu.Menu_Window import open_settings
 
 settings = None
 config = None
@@ -115,13 +116,11 @@ def create_tray_icon():
         ),
     )
 
-def show_context_menu(event):
-    menu.tk_popup(event.x_root, event.y_root)
+def show_settings(event=None):
+    open_settings(
+        root,
+        settings,
+        config
+    )
 
-menu = tk.Menu(root, tearoff=1)
-
-menu.add_command(label="Sleep", command=lambda: play_animation("Sleeping_Start"))
-menu.add_separator()
-menu.add_command(label="Quit", command=shutdown)
-
-canvas.bind("<Button-3>", show_context_menu)
+canvas.bind("<Button-3>", show_settings)
