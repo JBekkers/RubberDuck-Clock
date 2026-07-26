@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+
 
 from Source.UI.Menu_Tabs.cosmetics_tab import build_cosmetics_tab
 from Source.UI.Menu_Tabs.settings_tab import build_settings_tab
@@ -9,8 +9,10 @@ from Source.UI.Menu_Tabs.exchange_tab import build_exchange_tab
 window = None
 window_width = 400
 
-BACKGROUND = "#FDFF85"
-BUTTON = "#FFBA53"
+BACKGROUND = "#ffd13c"
+BUTTON = "#ffbb00"
+BUTTON_SELECTED="#ffd13c"
+BUTTON_CLICKED="#f8ec48"
 TEXT = "#000000"
 
 
@@ -23,21 +25,26 @@ def open_settings(root, settings, config, actions):
         return
 
     window = tk.Toplevel(root)
+    window.configure(bg=BACKGROUND)
+
+    window.option_add("*Background", BACKGROUND)
+    window.option_add("*Foreground", TEXT)
+
+    window.option_add("*Checkbutton.ActiveBackground", BACKGROUND)
+    window.option_add("*Button.Background", BUTTON)
+    window.option_add("*Button.Foreground", TEXT)
+    window.option_add("*Button.ActiveBackground", BUTTON_CLICKED)
+    window.option_add("*Button.ActiveForeground", TEXT)
+    window.option_add("*Button.HighlightThickness", 0)
 
     window.title("Duck Clock")
     window.geometry(f"{window_width}x450")
     window.resizable(False, False)
 
-    tab_bar = tk.Frame(
-    window,
-    bg= BACKGROUND
-    )
+    tab_bar = tk.Frame(window)
     tab_bar.pack(fill="x")
 
-    content = tk.Frame(
-    window,
-    bg= BACKGROUND
-    )
+    content = tk.Frame(window)
 
     content.pack(
         fill="both",
@@ -54,10 +61,14 @@ def open_settings(root, settings, config, actions):
     ]
 
     frames = []
+    buttons =[]
 
     def show_tab(index):
-        for frame in frames:
+        for i, frame in enumerate(frames):
             frame.pack_forget()
+            buttons[i].config(bg=BUTTON)
+
+        buttons[index].config(bg=BUTTON_SELECTED)
 
         frames[index].pack(
             fill="both",
@@ -70,13 +81,13 @@ def open_settings(root, settings, config, actions):
 
         button = tk.Button(
             tab_bar,
-            text  =title,
+            text=title,
             command=lambda i=index: show_tab(i),
-            bg=BACKGROUND,
-            fg=TEXT,
             relief="flat",
-            borderwidth=0
+            borderwidth=0,
+            highlightthickness=0,
         )
+        buttons.append(button)
 
         button.grid(
             row=0,
@@ -84,7 +95,7 @@ def open_settings(root, settings, config, actions):
             sticky="ew"
         )
 
-        frame = ttk.Frame(content)
+        frame = tk.Frame(content)
         frames.append(frame)
 
         if builder is build_settings_tab:
