@@ -1,6 +1,8 @@
-from Source.Config.constants import CENTER_X, CENTER_Y
+from Source.Config.style import CENTER_X, CENTER_Y
 from Source.Window_Manager import root, canvas
 from Source.animation import play_animation, is_idle
+
+from Source.Config import style
 
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -41,7 +43,7 @@ def setup_clock():
         CENTER_X,
         CENTER_Y + CLOCK_Y_OFFSET - 10,
         text="--:--",
-        font=("Segoe UI", 11, "bold"),
+        font=  ("Pixelon", 18),
         fill="black",
         anchor="center"
     )
@@ -50,7 +52,7 @@ def setup_clock():
         CENTER_X,
         CENTER_Y + CLOCK_Y_OFFSET + 10,
         text="--/--",
-        font=("Segoe UI", 8),
+        font= ("Pixelon", 10),
         fill="black",
         anchor="center"
     )

@@ -1,4 +1,4 @@
-from Source.Config.constants import CENTER_X, CENTER_Y
+from Source.Config.style import CENTER_X, CENTER_Y
 from Source.Window_Manager import root, canvas
 from Source.Config.paths import SPRITES_DIR, DATA_DIR
 

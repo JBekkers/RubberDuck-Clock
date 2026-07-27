@@ -3,7 +3,9 @@ from Source.animation import animate_sprite, choose_random_animation, duck_click
 from Source.UI.menu_manager import setup_menu
 from Source.Window_Manager import root, canvas, set_position, start_move,move_window
 from Source.clock import setup_clock,start_clock
+from Source.UI.app import load_font
 
+load_font("Pixelon.ttf")
 config = load_config()
 settings = config["settings"]
 

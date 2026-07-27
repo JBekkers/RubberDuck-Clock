@@ -1,4 +1,5 @@
 import tkinter as tk
+from Source.Config import style
 
 from Source.Config.config import save_config
 
@@ -32,7 +33,7 @@ def build_settings_tab(parent, settings, config, actions):
     tk.Label(
         parent,
         text="Settings",
-        font=("Segoe UI", 14, "bold")
+        font=style.TITLE_FONT
     ).pack(pady=10)
 
     for key, text in SETTINGS:
@@ -53,6 +54,7 @@ def build_settings_tab(parent, settings, config, actions):
         tk.Checkbutton(
             parent,
             text=text,
+            font=style.TITLE_FONT,
             variable=variable,
             command=changed
         ).pack(
@@ -64,7 +66,7 @@ def build_settings_tab(parent, settings, config, actions):
     tk.Label(
         parent,
         text="Application",
-        font=("Segoe UI", 12, "bold")
+        font= style.TEXT_FONT
     ).pack(
         pady=(20,5)
     )
@@ -73,7 +75,8 @@ def build_settings_tab(parent, settings, config, actions):
     tk.Button(
         parent,
         text="Reset Position",
-        command=actions["reset_position"]
+        command=actions["reset_position"],
+        font=style.TITLE_FONT
     ).pack(
         pady=3
     )
@@ -82,7 +85,8 @@ def build_settings_tab(parent, settings, config, actions):
     tk.Button(
         parent,
         text="Quit Application",
-        command=actions["quit"]
+        command=actions["quit"],
+        font=style.TITLE_FONT
     ).pack(
         pady=3
     )

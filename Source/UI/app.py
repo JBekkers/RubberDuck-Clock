@@ -1,6 +1,9 @@
 from Source.Window_Manager import root
-from Source.Config.constants import WINDOW_HEIGHT, WINDOW_WIDTH
+from Source.Config.style import WINDOW_HEIGHT, WINDOW_WIDTH
 from Source.Config.config import save_config
+from Source.Config.paths import FONTS_DIR
+import os
+import ctypes
 
 
 def reset_position(config):
@@ -43,3 +46,15 @@ def shutdown(config, icon=None):
             pass
 
     root.destroy()
+
+FR_PRIVATE = 0x10
+
+def load_font(filename):
+    path = os.path.join(FONTS_DIR, filename)
+
+    if os.path.exists(path):
+        ctypes.windll.gdi32.AddFontResourceExW(
+            path,
+            FR_PRIVATE,
+            0
+        )
