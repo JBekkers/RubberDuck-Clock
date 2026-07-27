@@ -1,6 +1,6 @@
 import tkinter as tk
 from Source.Config import style
-from Source.Window_Manager import set_menu_window
+from Source.Window_Manager import set_menu_window, set_menu_callback
 
 from Source.UI.Menu_Tabs.cosmetics_tab import build_cosmetics_tab
 from Source.UI.Menu_Tabs.settings_tab import build_settings_tab
@@ -36,16 +36,7 @@ def open_settings(root, settings, config, actions):
     window.option_add("*Button.ActiveForeground", style.TEXT_COLOR)
     window.option_add("*Button.HighlightThickness", 0)
 
-    duck_x = root.winfo_x()
-    duck_y = root.winfo_y()
-
-    duck_width = root.winfo_width()
-    duck_height = root.winfo_height()
-
-    menu_x = duck_x + (duck_width // 2) - (window_width // 2)
-    menu_y = duck_y + duck_height
-
-    window.geometry(f"{window_width}x450+{menu_x}+{menu_y}")
+    position_menu(root)
 
     window.resizable(False, False)
 
@@ -151,3 +142,32 @@ def open_settings(root, settings, config, actions):
     )
 
     show_tab(0)
+
+def position_menu(root):
+
+    if window is None or not window.winfo_exists():
+        return
+
+    menu_width = window_width
+    menu_height = 450
+
+    duck_x = root.winfo_x()
+    duck_y = root.winfo_y()
+
+    duck_width = root.winfo_width()
+    duck_height = root.winfo_height()
+
+    screen_height = root.winfo_screenheight()
+
+    menu_x = duck_x + (duck_width // 2) - (menu_width // 2)
+
+    # Prefer below the duck
+    menu_y = duck_y + duck_height
+
+    # If it won't fit, place it above instead
+    if menu_y + menu_height > screen_height:
+        menu_y = duck_y - menu_height
+
+    window.geometry(f"{menu_width}x{menu_height}+{menu_x}+{menu_y}")
+
+set_menu_callback(position_menu)

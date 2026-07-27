@@ -46,6 +46,9 @@ def move_window(event, target):
             f"+{menu_x}+{menu_y}"
         )
 
+    if menu_callback:
+        menu_callback(target)
+
 canvas = tk.Canvas(
     root,
     width=WINDOW_WIDTH,
@@ -67,3 +70,10 @@ def set_position(x, y):
     root.geometry(
         f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{x}+{y}"
     )
+
+menu_callback = None
+
+def set_menu_callback(callback):
+    global menu_callback
+    menu_callback = callback
+
