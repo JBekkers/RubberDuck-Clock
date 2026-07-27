@@ -1,10 +1,10 @@
 from Source.Window_Manager import root
 from Source.Config.style import WINDOW_HEIGHT, WINDOW_WIDTH
+from Source.UI.Menu_Tabs.tab_loader import position_menu
 from Source.Config.config import save_config
 from Source.Config.paths import FONTS_DIR
 import os
 import ctypes
-
 
 def reset_position(config):
 
@@ -16,12 +16,16 @@ def reset_position(config):
 
     save_config(config)
 
-    root.after(
-        0,
-        lambda: root.geometry(
+    def move():
+        root.geometry(
             f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{default_x}+{default_y}"
         )
-    )
+
+        root.update_idletasks()
+
+        position_menu(root)
+
+    root.after(0, move)
 
 
 def shutdown(config, icon=None):
