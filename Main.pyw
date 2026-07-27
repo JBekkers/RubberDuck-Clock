@@ -17,11 +17,11 @@ set_position(
 )
 
 def on_click(event):
-    start_move(event)
+    start_move(event, root)
     duck_clicked(event)
 
 def on_Move(event):
-    move_window(event)
+    move_window(event, root)
 
 canvas.bind("<Button-1>", on_click)
 canvas.bind("<B1-Motion>", on_Move)

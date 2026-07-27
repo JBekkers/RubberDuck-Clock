@@ -3,8 +3,11 @@ from Source.Config.style import WINDOW_HEIGHT, WINDOW_WIDTH
 import ctypes
 import tkinter as tk
 
-drag_offset_x = 0
-drag_offset_y = 0
+menu_window = None
+
+def set_menu_window(window):
+    global menu_window
+    menu_window = window
 
 root = tk.Tk()
 root.overrideredirect(True)
@@ -14,15 +17,34 @@ root.protocol("WM_DELETE_WINDOW")
 root.configure(bg="#010203")
 root.wm_attributes("-transparentcolor", "#010203")
 
-def start_move(event):
-    global drag_offset_x, drag_offset_y
-    drag_offset_x = event.x
-    drag_offset_y = event.y
+def start_move(event, target):
+    target._drag_x = event.x_root
+    target._drag_y = event.y_root
 
-def move_window(event):
-    x = event.x_root - drag_offset_x
-    y = event.y_root - drag_offset_y
-    root.geometry(f"+{x}+{y}")
+
+def move_window(event, target):
+
+    x = target.winfo_x() + (event.x_root - target._drag_x)
+    y = target.winfo_y() + (event.y_root - target._drag_y)
+
+    target.geometry(f"+{x}+{y}")
+
+    target._drag_x = event.x_root
+    target._drag_y = event.y_root
+
+    if menu_window and menu_window.winfo_exists():
+
+        menu_x = (
+            x 
+            + (target.winfo_width() // 2)
+            - (menu_window.winfo_width() // 2)
+        )
+
+        menu_y = y + target.winfo_height()
+
+        menu_window.geometry(
+            f"+{menu_x}+{menu_y}"
+        )
 
 canvas = tk.Canvas(
     root,
