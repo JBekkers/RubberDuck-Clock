@@ -10,12 +10,24 @@ from Source.UI.Menu_Tabs.exchange_tab import build_exchange_tab
 window = None
 window_width = 400
 
+def close_menu():
+    global window
+
+    if window is None:
+        return
+
+    if window.winfo_exists():
+        window.destroy()
+
+    window = None
+    set_menu_window(None)
+
 def open_settings(root, settings, config, actions):
 
     global window
 
     if window is not None and window.winfo_exists():
-        window.focus_force()
+        close_menu()
         return
 
     window = tk.Toplevel(root)
@@ -74,13 +86,6 @@ def open_settings(root, settings, config, actions):
 
     frames = []
     buttons =[]
-
-    def close_menu():
-        global window
-        if window is not None:
-            window.destroy()
-            window = None
-            set_menu_window(None)
 
 
     def show_tab(index):
