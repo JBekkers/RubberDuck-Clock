@@ -9,6 +9,7 @@ import threading
 
 from Source.UI.app import reset_position, shutdown
 from Source.UI.Menu_Tabs.tab_loader import open_settings
+from Source.UI.Menu_Button import create_menu_button
 
 settings = None
 config = None
@@ -67,7 +68,7 @@ def create_tray_icon():
         ),
     )
 
-def show_settings(event=None):
+def open_menu(event=None):
 
     actions = {
 
@@ -84,4 +85,4 @@ def show_settings(event=None):
         actions
     )
 
-canvas.bind("<Button-3>", show_settings)
+create_menu_button(open_menu)
