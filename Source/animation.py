@@ -146,7 +146,6 @@ def animate_sprite():
     )
 
 def choose_random_animation():
-
     if current_animation != "Idle":
         root.after(2000, choose_random_animation)
         return
@@ -168,7 +167,7 @@ def choose_random_animation():
 
         play_animation(animation)
 
-    root.after(6000, choose_random_animation)
+    root.after(random.randint(3000, 10000), choose_random_animation)
 
 def play_animation(name):
     global current_animation
