@@ -13,7 +13,6 @@ from Source.UI.Menu_Button import create_menu_button
 
 settings = None
 config = None
-menu_window = None
 
 def setup_menu(app_settings, app_config):
     global settings, config
@@ -70,37 +69,17 @@ def create_tray_icon():
     )
 
 def toggle_menu(event=None):
-    global menu_window
-
-    # Menu already open -> close it
-    if menu_window is not None and menu_window.winfo_exists():
-        menu_window.destroy()
-        menu_window = None
-        return
 
     actions = {
         "reset_position": lambda: reset_position(config),
         "quit": lambda: shutdown(config, icon)
     }
 
-    menu_window = open_settings(
+    open_settings(
         root,
         settings,
         config,
         actions
     )
-
-    # If the user closes it manually
-    menu_window.protocol(
-        "WM_DELETE_WINDOW",
-        close_menu
-    )
-
-def close_menu():
-    global menu_window
-
-    if menu_window is not None:
-        menu_window.destroy()
-        menu_window = None
-
+    
 create_menu_button(toggle_menu)

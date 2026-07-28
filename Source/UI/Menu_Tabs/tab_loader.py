@@ -16,11 +16,12 @@ def close_menu():
     if window is None:
         return
 
-    if window.winfo_exists():
-        window.destroy()
-
-    window = None
-    set_menu_window(None)
+    try:
+        if window.winfo_exists():
+            window.destroy()
+    finally:
+        window = None
+        set_menu_window(None)
 
 def open_settings(root, settings, config, actions):
 
@@ -31,6 +32,12 @@ def open_settings(root, settings, config, actions):
         return
 
     window = tk.Toplevel(root)
+
+    window.protocol(
+    "WM_DELETE_WINDOW",
+    close_menu
+    )
+
     set_menu_window(window)
     window.overrideredirect(True)
     window.configure(bg=style.BACKGROUND)
