@@ -98,6 +98,8 @@ Some ideas I'd like to add in the future:
 - new hat drop -> bubble forms with a unknown hat icon in it -> user clicks bubble (bubble pop animation plays) new hat is given
 - exchange -> sacrifice x amount of hats of same rarity to get a new hat from a higher rarity
 
+- automatically detect seasons like Christmas' new year, Easter etc and have special events happen based on this (snow with Christmas, or special event related hats)
+
 ---
 
 ## License
