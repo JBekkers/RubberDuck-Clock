@@ -92,8 +92,6 @@ Some ideas I'd like to add in the future:
 - More animated events like happy, loving, and more..
 - link with google agenda - show notifications for meetings etc
 
-- menu button in a bubble when clicked opens/closes menu either hamburger icon or "menu text" (group of bubbles animated moving up and down slowly seperatly from each other)
-
 - hat packages -> get a random hat ever 30m with different rarities (common, uncommon, rare, ulra rare, legendary) (maybe also have a timer somewhere)
 - new hat drop -> bubble forms with a unknown hat icon in it -> user clicks bubble (bubble pop animation plays) new hat is given
 - exchange -> sacrifice x amount of hats of same rarity to get a new hat from a higher rarity
