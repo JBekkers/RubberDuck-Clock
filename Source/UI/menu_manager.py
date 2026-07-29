@@ -7,7 +7,7 @@ from PIL import Image
 import os
 import threading
 
-from Source.UI.app import reset_position, shutdown
+from Source.UI.app import reset_position, shutdown, restart_application
 from Source.UI.Menu_Tabs.tab_loader import open_settings
 from Source.UI.Menu_Button import create_menu_button
 
@@ -72,7 +72,8 @@ def toggle_menu(event=None):
 
     actions = {
         "reset_position": lambda: reset_position(config),
-        "quit": lambda: shutdown(config, icon)
+        "quit": lambda: shutdown(config, icon),
+        "restart": lambda: restart_application(config, icon)
     }
 
     open_settings(

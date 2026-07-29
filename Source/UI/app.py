@@ -3,8 +3,18 @@ from Source.Config.style import WINDOW_HEIGHT, WINDOW_WIDTH
 from Source.UI.Menu_Tabs.tab_loader import position_menu
 from Source.Config.config import save_config
 from Source.Config.paths import FONTS_DIR
-import os
+
 import ctypes
+
+import os
+import sys
+import subprocess
+
+def save_current_pos(config):
+    config["position"]["x"] = root.winfo_x()
+    config["position"]["y"] = root.winfo_y()
+
+    save_config(config)
 
 def reset_position(config):
 
@@ -22,7 +32,6 @@ def reset_position(config):
         )
 
         root.update_idletasks()
-
         position_menu(root)
 
     root.after(0, move)
@@ -30,17 +39,8 @@ def reset_position(config):
 
 def shutdown(config, icon=None):
 
-    try:
-        x = root.winfo_x()
-        y = root.winfo_y()
 
-        config["position"]["x"] = x
-        config["position"]["y"] = y
-
-        save_config(config)
-
-    except Exception:
-        pass
+    save_current_pos(config)
 
 
     if icon:
@@ -62,3 +62,18 @@ def load_font(filename):
             FR_PRIVATE,
             0
         )
+
+def restart_application(config, icon=None):
+
+    save_current_pos(config)
+
+
+    if icon:
+        try:
+            icon.stop()
+        except Exception:
+            pass
+
+    subprocess.Popen([sys.executable] + sys.argv)
+
+    root.destroy()

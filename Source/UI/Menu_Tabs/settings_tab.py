@@ -81,6 +81,14 @@ def build_settings_tab(parent, settings, config, actions):
         pady=3
     )
 
+    tk.Button(
+        parent,
+        text="Restart Application",
+        command=actions["restart"],
+        font=style.TITLE_FONT
+    ).pack(
+        pady=3
+    )
 
     tk.Button(
         parent,
