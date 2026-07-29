@@ -26,7 +26,7 @@
         "Quack": {
             "speed": 120,
             "next": "Idle",
-            "weight": 0,
+            "weight": 10000,
             "sound": "quack.wav"
         },
 

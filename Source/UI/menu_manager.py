@@ -83,7 +83,8 @@ def toggle_menu(event=None):
                 disabled
             ),
 
-        "always_on_top": set_always_on_top
+        "always_on_top": set_always_on_top,
+        "sound_volume": 100
     }
 
     open_settings(

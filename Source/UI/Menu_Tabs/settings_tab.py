@@ -2,6 +2,7 @@ import tkinter as tk
 from Source.Config import style
 
 from Source.Config.config import save_config
+from Source.sound import set_sound_volume
 
 
 SETTINGS = [
@@ -22,11 +23,6 @@ SETTINGS = [
     ),
 
     (
-        "disable_sound",
-        "Disable Sound"
-    ),
-
-    (
         "disable_particles",
         "Disable Particles"
     )
@@ -40,6 +36,48 @@ def build_settings_tab(parent, settings, config, actions):
         text="Settings",
         font=style.TITLE_FONT
     ).pack(pady=10)
+
+    tk.Label(
+        parent,
+        text="Sound Volume",
+        font=style.TEXT_FONT
+    ).pack(
+        pady=(5)
+    )
+
+
+    volume = tk.IntVar(
+        value=settings.get("sound_volume", 100)
+    )
+
+    set_sound_volume(
+        volume.get()
+    )
+
+
+    def volume_changed(value):
+
+        value = int(float(value))
+
+        settings["sound_volume"] = value
+
+        set_sound_volume(value)
+
+        save_config(config)
+
+
+    tk.Scale(
+        parent,
+        from_=0,
+        to=100,
+        orient="horizontal",
+        variable=volume,
+        command=volume_changed,
+        font=style.TEXT_FONT,
+        length=200,
+        showvalue=True,
+        highlightthickness=0
+    ).pack()
 
     for key, text in SETTINGS:
 

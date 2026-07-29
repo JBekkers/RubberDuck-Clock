@@ -4,6 +4,7 @@ from Source.UI.menu_manager import setup_menu
 from Source.Window_Manager import root, canvas, set_position, start_move,move_window
 from Source.clock import setup_clock,start_clock
 from Source.UI.app import load_font
+from Source.sound import set_sound_volume
 
 from Source.Particle_spawner import ParticleSystem
 
@@ -28,6 +29,10 @@ setup_menu(
 set_position(
     config["position"]["x"],
     config["position"]["y"]
+)
+
+set_sound_volume(
+    settings.get("sound_volume", 100)
 )
 
 def on_click(event):

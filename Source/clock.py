@@ -104,7 +104,8 @@ def update_clock_display():
             last_hour_quacked != current_time.hour
         ):
             last_hour_quacked = current_time.hour
-            play_animation("Quack")
+            play_animation("Quack",volume=settings.get("sound_volume", 100)
+)
 
 
         elif current_time.minute != 0:
