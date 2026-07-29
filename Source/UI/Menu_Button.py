@@ -4,8 +4,8 @@ import os
 from Source.Window_Manager import canvas
 from Source.Config.paths import UI_DIR
 
-MENU_OFFSET_X = 60
-MENU_OFFSET_Y = 50
+MENU_OFFSET_X = 100
+MENU_OFFSET_Y = 100
 
 menu_image = None
 menu_hover = None

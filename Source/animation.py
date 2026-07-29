@@ -108,6 +108,12 @@ sprite_id = canvas.create_image(
 
 def animate_sprite():
 
+    canvas.coords(
+        sprite_id,
+        canvas.winfo_width() // 2,
+        canvas.winfo_height() - SPRITE_SIZE[1] // 2
+    )
+
     global current_animation
     global current_frame
 
