@@ -42,7 +42,7 @@ def open_settings(root, settings, config, actions):
     window.overrideredirect(True)
     window.configure(bg=style.BACKGROUND)
 
-    window.attributes("-topmost", True)
+    window.attributes("-topmost",settings["always_on_top"])
     window.lift()
 
     window.option_add("*Background", style.BACKGROUND)

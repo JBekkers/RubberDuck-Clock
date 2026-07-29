@@ -1,5 +1,5 @@
 import pystray
-from Source.Window_Manager import root, canvas
+from Source.Window_Manager import root, set_always_on_top
 from Source.Config.paths import ASSETS_DIR
 
 from PIL import Image
@@ -81,7 +81,9 @@ def toggle_menu(event=None):
             particle_system.set_disabled(
                 "Bubbles",
                 disabled
-            )
+            ),
+
+        "always_on_top": set_always_on_top
     }
 
     open_settings(
