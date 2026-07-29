@@ -20,11 +20,10 @@ def load_particle_images(folder_name):
 class Particle:
 
     def __init__(self, x, y, image):
-        self.id = canvas.create_image(
-            x,
-            y,
-            image=image
-        )
+        self.id = canvas.create_image(x, y, image=image)
+        self.image = image
+        self.width = image.width()
+        self.height = image.height()
 
         canvas.tag_lower(self.id)
 
@@ -39,6 +38,20 @@ class Particle:
             -self.speed_y
         )
 
+        x, y = canvas.coords(self.id)
+
+        half_width = self.width / 2
+        half_height = self.height / 2
+
+        if (
+            y - half_height <= 0 or                  # top touches top
+            x - half_width <= 0 or                   # left touches left
+            x + half_width >= canvas.winfo_width()   # right touches right
+        ):
+            self.destroy()
+            return False
+
+        return True
 
     def destroy(self):
         canvas.delete(self.id)
@@ -75,8 +88,11 @@ class ParticleManager:
         if not self.running:
             return
 
-        for particle in self.particles:
-            particle.move()
+        self.particles = [
+            particle
+            for particle in self.particles
+            if particle.move()
+        ]
 
         canvas.after(
             30,
