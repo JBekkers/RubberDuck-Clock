@@ -3,6 +3,7 @@ from Source.Window_Manager import canvas
 from Source.Config.paths import PARTICLES_DIR
 from PIL import Image, ImageTk
 import os
+import math
 
 
 def load_particle_images(folder_name):
@@ -25,16 +26,29 @@ class Particle:
         self.width = image.width()
         self.height = image.height()
 
+        self.wave_strength = random.uniform(0, 1)
+        self.angle = random.uniform(0, math.pi * 2)
+
         canvas.tag_lower(self.id)
 
         self.speed_y = random.uniform(0.5, 2)
-        self.speed_x = random.uniform(-0.25, 0.25)
+
+
+        self.distance_left = random.uniform(100, 500)
 
 
     def move(self):
+        self.angle += 0.1
+
+        self.distance_left -= self.speed_y
+
+        if self.distance_left <= 0:
+            self.destroy()
+            return False
+
         canvas.move(
             self.id,
-            self.speed_x,
+            math.sin(self.angle) * self.wave_strength,
             -self.speed_y
         )
 
@@ -44,9 +58,9 @@ class Particle:
         half_height = self.height / 2
 
         if (
-            y - half_height <= 0 or                  # top touches top
-            x - half_width <= 0 or                   # left touches left
-            x + half_width >= canvas.winfo_width()   # right touches right
+            y - half_height <= 0 or
+            x - half_width <= 0 or
+            x + half_width >= canvas.winfo_width()
         ):
             self.destroy()
             return False
@@ -73,15 +87,9 @@ class ParticleManager:
         x = random.randint(0, canvas.winfo_width())
         y = canvas.winfo_height()
 
-        image = random.choice(self.images)
-
-        particle = Particle(
-            x,
-            y,
-            image
+        self.particles.append(
+            Particle(x, y, random.choice(self.images))
         )
-
-        self.particles.append(particle)
 
 
     def update(self):
