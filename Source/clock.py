@@ -43,7 +43,7 @@ def setup_clock():
         text="--:--",
         font=  ("Pixelon", 18),
         fill="black",
-        anchor="center"
+        anchor="center",
     )
 
     date_display = canvas.create_text(
@@ -52,7 +52,7 @@ def setup_clock():
         text="--/--",
         font= ("Pixelon", 10),
         fill="black",
-        anchor="center"
+        anchor="center",
     )
 
 def synchronize_time():

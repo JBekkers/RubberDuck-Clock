@@ -1,5 +1,5 @@
 from Source.Config.style import CENTER_X, CENTER_Y
-from Source.Window_Manager import root, canvas
+from Source.Window_Manager import root, canvas, start_move, move_window
 from Source.Config.paths import SPRITES_DIR, DATA_DIR
 
 from dataclasses import dataclass
@@ -103,7 +103,7 @@ sprite_id = canvas.create_image(
     CENTER_X,
     CENTER_Y,
     image=animations[current_animation].frames[0],
-    anchor="center"
+    anchor="center",
 )
 
 def animate_sprite():

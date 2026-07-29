@@ -30,16 +30,29 @@ def start_move(event, target):
     target._drag_x = event.x_root
     target._drag_y = event.y_root
 
+def update_menu_position(target):
+    if menu_window and menu_window.winfo_exists():
+        x = (
+            target.winfo_x()
+            + target.winfo_width() // 2
+            - menu_window.winfo_width() // 2
+        )
+
+        y = target.winfo_y() + target.winfo_height()
+
+        menu_window.geometry(f"+{x}+{y}")
 
 def move_window(event, target):
 
-    x = target.winfo_x() + (event.x_root - target._drag_x)
-    y = target.winfo_y() + (event.y_root - target._drag_y)
+    x = target.winfo_x() + event.x_root - target._drag_x
+    y = target.winfo_y() + event.y_root - target._drag_y
 
     target.geometry(f"+{x}+{y}")
 
     target._drag_x = event.x_root
     target._drag_y = event.y_root
+
+    update_menu_position(target)
 
     if menu_window and menu_window.winfo_exists():
 
