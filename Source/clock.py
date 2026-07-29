@@ -2,8 +2,6 @@ from Source.Config.style import CENTER_X, CENTER_Y
 from Source.Window_Manager import root, canvas
 from Source.animation import play_animation, is_idle
 
-from Source.Config import style
-
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 import time

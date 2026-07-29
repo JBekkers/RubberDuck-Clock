@@ -5,11 +5,25 @@ from Source.Window_Manager import root, canvas, set_position, start_move,move_wi
 from Source.clock import setup_clock,start_clock
 from Source.UI.app import load_font
 
+from Source.Particle_spawner import ParticleSystem
+
 load_font("Pixelon.ttf")
 config = load_config()
 settings = config["settings"]
 
-setup_menu(settings, config)
+particle_system = ParticleSystem()
+
+particle_system.set_disabled(
+    "Bubbles",
+    settings["disable_particles"]
+)
+
+setup_menu(
+    settings,
+    config,
+    particle_system
+)
+
 
 set_position(
     config["position"]["x"],

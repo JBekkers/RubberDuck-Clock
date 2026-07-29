@@ -13,12 +13,14 @@ from Source.UI.Menu_Button import create_menu_button
 
 settings = None
 config = None
+particle_system = None
 
-def setup_menu(app_settings, app_config):
-    global settings, config
+def setup_menu(app_settings, app_config, app_particle_system):
+    global settings, config, particle_system
 
     settings = app_settings
     config = app_config
+    particle_system = app_particle_system
 
     create_tray_icon()
 
@@ -73,7 +75,13 @@ def toggle_menu(event=None):
     actions = {
         "reset_position": lambda: reset_position(config),
         "quit": lambda: shutdown(config, icon),
-        "restart": lambda: restart_application(config, icon)
+        "restart": lambda: restart_application(config, icon),
+
+        "disable_particles": lambda disabled:
+            particle_system.set_disabled(
+                "Bubbles",
+                disabled
+            )
     }
 
     open_settings(

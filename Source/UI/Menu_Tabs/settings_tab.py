@@ -24,6 +24,11 @@ SETTINGS = [
     (
         "disable_sound",
         "Disable Sound"
+    ),
+
+    (
+        "disable_particles",
+        "Disable Particles"
     )
 
 ]
@@ -48,6 +53,9 @@ def build_settings_tab(parent, settings, config, actions):
         ):
 
             settings[option] = var.get()
+
+            if option in actions:
+                actions[option](var.get())
 
             save_config(config)
 
