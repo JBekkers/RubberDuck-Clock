@@ -9,7 +9,7 @@ The application displays the current time and date inside a simple rubber duck w
 ## Features
 
 - Accuratly Displays the current time and date
-- Always stays on top of other windows
+- Custom menu with customization settings.
 - Cute animations and lots of hats to collect
 - Lightweight and simple
 
@@ -23,7 +23,7 @@ The application displays the current time and date inside a simple rubber duck w
 
 ## Requirements
 
-- Python 3.11 or newer
+- Python 3.13.x
 - Windows
 
 
@@ -31,29 +31,23 @@ The application displays the current time and date inside a simple rubber duck w
 
 Clone the repository
 
-Install the dependencies:
+Install the following dependencies:
+
+pygame
+pillow
+ntplib
+pystray
+tzdata
 
 ```bash
-pip install pillow ntplib pystray
+pip install pygame pillow ntplib pystray tzdata
+python -m pip install pygame pillow ntplib pystray tzdata
 ```
 
 Run the application:
 
 ```bash
 python main.py
-```
-
----
-
-## Project Structure
-
-```text
-RubberDuckClock/
-├── ClockSkins/
-│   └── duck.png
-├── Icon.png
-├── main.py
-└── README.md
 ```
 
 ---
@@ -75,15 +69,6 @@ SYNC_INTERVAL = 60
 ```
 
 The value is measured in seconds.
-
-### Window size
-
-```python
-WINDOW_WIDTH = 150
-WINDOW_HEIGHT = 150
-```
-
----
 
 ## Future Improvements
 
