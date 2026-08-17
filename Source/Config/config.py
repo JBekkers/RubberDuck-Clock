@@ -28,7 +28,8 @@ DEFAULT_CONFIG = {
     "disable_particles": False,
 
     "auto_timezone": True,
-    "timezone": "Europe/Amsterdam"
+    "timezone": "Europe/Amsterdam",
+    "clock_24_hour": True,
     }
 }
 

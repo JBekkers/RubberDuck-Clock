@@ -139,9 +139,18 @@ def update_clock_display():
             elif current_time.minute != 0:
                 last_hour_quacked = None
 
+            if settings.get("clock_24_hour", True):
+
+                time_text = current_time.strftime("%H:%M")
+
+            else:
+
+                time_text = current_time.strftime("%I:%M %p")
+
+
             canvas.itemconfig(
                 time_display,
-                text=current_time.strftime("%H:%M")
+                text=time_text
             )
 
             canvas.itemconfig(

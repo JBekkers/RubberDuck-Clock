@@ -24,6 +24,11 @@ SETTINGS = [
     (
         "disable_particles",
         "Disable Particles"
+    ),
+
+    (
+        "clock_24_hour",
+        "24 Hour Clock"
     )
 
 ]
