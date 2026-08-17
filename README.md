@@ -42,6 +42,7 @@ tzlocal
 
 ```bash
 pip install pygame pillow ntplib pystray tzdata
+py -m pip install pygame pillow ntplib pystray tzdata tzlocal
 python -m pip install pygame pillow ntplib pystray tzdata tzlocal
 ```
 
