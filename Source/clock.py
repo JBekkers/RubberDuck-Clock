@@ -89,49 +89,51 @@ def synchronize_time():
 
 def update_clock_display():
 
-    if network_time is not None:
+    try:
+        if network_time is not None:
 
-        elapsed = time.monotonic() - sync_monotonic
+            elapsed = time.monotonic() - sync_monotonic
 
-        current_time = network_time + timedelta(seconds=elapsed)
+            current_time = network_time + timedelta(seconds=elapsed)
 
-        global last_hour_quacked
+            global last_hour_quacked
 
-        if (
-            settings["hourly_quack"] and
-            current_time.minute == 0 and
-            is_idle() and
-            last_hour_quacked != current_time.hour
-        ):
-            last_hour_quacked = current_time.hour
-            play_animation("Quack",volume=settings.get("sound_volume", 100)
-)
+            if (
+                settings.get("hourly_quack", False)
+                and current_time.minute == 0
+                and is_idle()
+                and last_hour_quacked != current_time.hour
+            ):
+                last_hour_quacked = current_time.hour
+                play_animation("Quack")
 
+            elif current_time.minute != 0:
+                last_hour_quacked = None
 
-        elif current_time.minute != 0:
-            last_hour_quacked = None
+            canvas.itemconfig(
+                time_display,
+                text=current_time.strftime("%H:%M")
+            )
 
+            canvas.itemconfig(
+                date_display,
+                text=current_time.strftime("%d-%m-%Y")
+            )
 
+        else:
 
-        canvas.itemconfig(
-            time_display,
-            text=current_time.strftime("%H:%M")
-        )
+            canvas.itemconfig(
+                time_display,
+                text="Offline"
+            )
 
-        canvas.itemconfig(
-            date_display,
-            text=current_time.strftime("%d-%m-%Y")
-        )
+            canvas.itemconfig(
+                date_display,
+                text=""
+            )
 
-    else:
+    except Exception as e:
+        print("CLOCK ERROR:", repr(e))
 
-        canvas.itemconfig(
-            time_display,
-            text="Offline"
-        )
-
-        canvas.itemconfig(
-            date_display,
-            text=""
-        )
-    root.after(200, update_clock_display)
+    finally:
+        root.after(200, update_clock_display)
