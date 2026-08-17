@@ -38,10 +38,11 @@ pillow
 ntplib
 pystray
 tzdata
+tzlocal
 
 ```bash
 pip install pygame pillow ntplib pystray tzdata
-python -m pip install pygame pillow ntplib pystray tzdata
+python -m pip install pygame pillow ntplib pystray tzdata tzlocal
 ```
 
 Run the application:
