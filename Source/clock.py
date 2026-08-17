@@ -4,6 +4,8 @@ from Source.animation import play_animation, is_idle
 
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
+from tzlocal import get_localzone_name
+
 import time
 import ntplib
 
@@ -24,12 +26,39 @@ NTP_SERVERS = [
 ]
 
 settings = {}
+
+def update_timezone():
+    global TIMEZONE
+
+    if settings.get("auto_timezone", True):
+        timezone_name = get_localzone_name()
+    else:
+        timezone_name = settings.get(
+            "timezone",
+            "Europe/Amsterdam"
+        )
+
+    try:
+        TIMEZONE = ZoneInfo(timezone_name)
+        print("Clock timezone:", timezone_name)
+
+    except Exception as e:
+        print("TIMEZONE ERROR:", repr(e))
+
+        TIMEZONE = ZoneInfo("Europe/Amsterdam")
+
+def timezone_changed():
+    update_timezone()
+    synchronize_time()
+
 time_display = None
 date_display = None
 
 def start_clock(clock_settings):
     global settings
     settings = clock_settings
+
+    update_timezone()
 
     synchronize_time()
     update_clock_display()
