@@ -39,11 +39,20 @@ def on_click(event):
     start_move(event, root)
     duck_clicked(event)
 
-def on_Move(event):
+def on_move(event):
     move_window(event, root)
 
-canvas.bind("<Button-1>", on_click)
-canvas.bind("<B1-Motion>", on_Move)
+canvas.tag_bind(
+    "draggable",
+    "<Button-1>",
+    on_click
+)
+
+canvas.tag_bind(
+    "draggable",
+    "<B1-Motion>",
+    on_move
+)
 
 setup_clock()
 start_clock(settings)

@@ -2,19 +2,51 @@ import tkinter as tk
 from tkinter import ttk
 
 from Source.Config import style
-
 from Source.Config.config import save_config
 from Source.sound import set_sound_volume
 
 from tzlocal import get_localzone_name
 
 
-SETTINGS = [
+# ==================================================
+# SECTION TITLE
+# ==================================================
+
+def section_title(parent, text):
+
+    tk.Label(
+        parent,
+        text=text,
+        font=style.TEXT_FONT
+    ).pack(
+        pady=(15, 5)
+    )
+
+
+# ==================================================
+# SOUND SETTINGS
+# ==================================================
+
+SOUND_SETTINGS = [
+
+    (
+        "clock_24_hour",
+        "24 Hour Clock"
+    ),
 
     (
         "hourly_quack",
         "Hourly Quack"
-    ),
+    )
+
+]
+
+
+# ==================================================
+# OTHER SETTINGS
+# ==================================================
+
+OTHER_SETTINGS = [
 
     (
         "always_on_top",
@@ -24,21 +56,17 @@ SETTINGS = [
     (
         "disable_particles",
         "Disable Particles"
-    ),
-
-    (
-        "clock_24_hour",
-        "24 Hour Clock"
     )
 
 ]
 
 
-# --------------------------------------------------
-# Available manual timezones
-# --------------------------------------------------
+# ==================================================
+# AVAILABLE MANUAL TIMEZONES
+# ==================================================
 
 TIMEZONES = sorted([
+
     "Africa/Cairo",
     "Africa/Johannesburg",
 
@@ -83,8 +111,13 @@ TIMEZONES = sorted([
 
     "Pacific/Auckland",
     "Pacific/Honolulu",
+
 ])
 
+
+# ==================================================
+# BUILD SETTINGS TAB
+# ==================================================
 
 def build_settings_tab(parent, settings, config, actions):
 
@@ -102,13 +135,39 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Scrollbar
-    # --------------------------------------------------
+    # ==================================================
+    # SCROLLBAR
+    # ==================================================
+
+    scrollbar_style = ttk.Style()
+
+    scrollbar_style.theme_use(
+        "clam"
+    )
+
+    scrollbar_style.configure(
+        "Settings.Vertical.TScrollbar",
+        background=style.SCROLL_BACKGROUND,
+        troughcolor=style.SCROLL_TROUGH,
+        bordercolor=style.SCROLL_BORDER,
+        arrowcolor=style.SCROLL_ARROW,
+        relief="flat",
+        width=14
+    )
+
+    scrollbar_style.map(
+        "Settings.Vertical.TScrollbar",
+        background=[
+            ("active", style.BUTTON_CLICKED),
+            ("pressed", style.BUTTON_CLICKED)
+        ]
+    )
+
 
     scrollbar = ttk.Scrollbar(
         scroll_container,
-        orient="vertical"
+        orient="vertical",
+        style="Settings.Vertical.TScrollbar"
     )
 
     scrollbar.pack(
@@ -117,9 +176,9 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Canvas
-    # --------------------------------------------------
+    # ==================================================
+    # CANVAS
+    # ==================================================
 
     scroll_canvas = tk.Canvas(
         scroll_container,
@@ -133,20 +192,18 @@ def build_settings_tab(parent, settings, config, actions):
         expand=True
     )
 
-
     scrollbar.config(
         command=scroll_canvas.yview
     )
 
 
-    # --------------------------------------------------
-    # Frame containing all settings
-    # --------------------------------------------------
+    # ==================================================
+    # SETTINGS FRAME
+    # ==================================================
 
     settings_frame = tk.Frame(
         scroll_canvas
     )
-
 
     settings_window = scroll_canvas.create_window(
         (0, 0),
@@ -155,9 +212,9 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Update scroll region when content changes
-    # --------------------------------------------------
+    # ==================================================
+    # UPDATE SCROLL REGION
+    # ==================================================
 
     def update_scroll_region(event=None):
 
@@ -172,9 +229,9 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Make settings frame match canvas width
-    # --------------------------------------------------
+    # ==================================================
+    # MATCH FRAME WIDTH TO CANVAS
+    # ==================================================
 
     def resize_settings_frame(event):
 
@@ -191,7 +248,7 @@ def build_settings_tab(parent, settings, config, actions):
 
 
     # ==================================================
-    # MOUSE WHEEL SCROLLING
+    # MOUSE WHEEL
     # ==================================================
 
     def mouse_wheel(event):
@@ -229,7 +286,7 @@ def build_settings_tab(parent, settings, config, actions):
 
 
     # ==================================================
-    # SETTINGS TITLE
+    # MAIN SETTINGS TITLE
     # ==================================================
 
     tk.Label(
@@ -242,15 +299,15 @@ def build_settings_tab(parent, settings, config, actions):
 
 
     # ==================================================
-    # SOUND VOLUME
+    # SOUND SETTINGS
     # ==================================================
 
     tk.Label(
         settings_frame,
-        text="Sound Volume",
+        text="Volume",
         font=style.TEXT_FONT
     ).pack(
-        pady=5
+        pady=0
     )
 
 
@@ -269,7 +326,9 @@ def build_settings_tab(parent, settings, config, actions):
 
     def volume_changed(value):
 
-        value = int(float(value))
+        value = int(
+            float(value)
+        )
 
         settings["sound_volume"] = value
 
@@ -282,7 +341,7 @@ def build_settings_tab(parent, settings, config, actions):
         )
 
 
-    tk.Scale(
+    volume_scale = tk.Scale(
         settings_frame,
         from_=0,
         to=100,
@@ -292,8 +351,18 @@ def build_settings_tab(parent, settings, config, actions):
         font=style.TEXT_FONT,
         length=200,
         showvalue=True,
-        highlightthickness=0
-    ).pack()
+        highlightthickness=0,
+        bg=style.BACKGROUND,
+        fg=style.TEXT_COLOR,
+        troughcolor=style.BUTTON_NORMAL,
+        activebackground=style.BUTTON_CLICKED,
+        sliderlength=25,
+        width=12
+    )
+
+    volume_scale.pack(
+        pady=3
+    )
 
 
     # ==================================================
@@ -322,7 +391,7 @@ def build_settings_tab(parent, settings, config, actions):
 
 
     # --------------------------------------------------
-    # Get saved timezone
+    # Saved timezone
     # --------------------------------------------------
 
     saved_timezone = settings.get(
@@ -345,7 +414,7 @@ def build_settings_tab(parent, settings, config, actions):
 
 
     # --------------------------------------------------
-    # Decide which timezone to display
+    # Determine current timezone
     # --------------------------------------------------
 
     if auto_timezone.get():
@@ -362,12 +431,25 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
+    # ==================================================
+    # TIMEZONE CONTROLS
+    # ==================================================
+
+    timezone_controls = tk.Frame(
+        settings_frame
+    )
+
+    timezone_controls.pack(
+        fill="x"
+    )
+
+
     # --------------------------------------------------
-    # Automatic Region Selection checkbox
+    # Automatic Region Selection
     # --------------------------------------------------
 
     auto_timezone_check = tk.Checkbutton(
-        settings_frame,
+        timezone_controls,
         text="Automatic Region Selection",
         font=style.TITLE_FONT,
         variable=auto_timezone
@@ -380,31 +462,41 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Manual timezone dropdown
-    # --------------------------------------------------
+    # ==================================================
+    # TIMEZONE DROPDOWN STYLE
+    # ==================================================
 
-    timezone_dropdown = ttk.Combobox(
-        settings_frame,
-        textvariable=timezone,
-        values=TIMEZONES,
-        state=(
-            "disabled"
-            if auto_timezone.get()
-            else "readonly"
-        ),
-        width=25
+    dropdown_style = ttk.Style()
+
+    dropdown_style.theme_use(
+        "clam"
     )
 
-    timezone_dropdown.pack(
-        anchor="w",
-        padx=40,
-        pady=(0, 5)
+    dropdown_style.configure(
+        "Settings.TCombobox",
+        fieldbackground=style.BACKGROUND,
+        background=style.BUTTON_NORMAL,
+        foreground=style.TEXT_COLOR,
+        arrowcolor=style.TEXT_COLOR
     )
 
 
     # ==================================================
-    # TIMEZONE SETTING CHANGED
+    # TIMEZONE DROPDOWN
+    # ==================================================
+
+    timezone_dropdown = ttk.Combobox(
+        timezone_controls,
+        textvariable=timezone,
+        values=TIMEZONES,
+        state="readonly",
+        width=25,
+        style="Settings.TCombobox"
+    )
+
+
+    # ==================================================
+    # TIMEZONE CHANGED
     # ==================================================
 
     def update_timezone_setting():
@@ -434,9 +526,8 @@ def build_settings_tab(parent, settings, config, actions):
             )
 
 
-            timezone_dropdown.config(
-                state="disabled"
-            )
+            # Hide manual timezone dropdown
+            timezone_dropdown.pack_forget()
 
 
         # --------------------------------------------------
@@ -453,12 +544,15 @@ def build_settings_tab(parent, settings, config, actions):
             )
 
 
-            timezone_dropdown.config(
-                state="readonly"
+            # Show manual timezone dropdown
+            timezone_dropdown.pack(
+                anchor="w",
+                padx=20,
+                pady=3
             )
 
 
-        # Tell the clock that the timezone changed
+        # Tell clock that timezone changed
         if "timezone_changed" in actions:
 
             actions["timezone_changed"]()
@@ -472,6 +566,19 @@ def build_settings_tab(parent, settings, config, actions):
     auto_timezone_check.config(
         command=update_timezone_setting
     )
+
+
+    # --------------------------------------------------
+    # Show dropdown initially if manual mode is active
+    # --------------------------------------------------
+
+    if not auto_timezone.get():
+
+        timezone_dropdown.pack(
+            anchor="w",
+            padx=20,
+            pady=3
+        )
 
 
     # ==================================================
@@ -500,10 +607,63 @@ def build_settings_tab(parent, settings, config, actions):
 
 
     # ==================================================
+    # SOUND SETTINGS OPTIONS
+    # ==================================================
+
+    for key, text in SOUND_SETTINGS:
+
+        variable = tk.BooleanVar(
+            value=settings.get(
+                key,
+                False
+            )
+        )
+
+
+        def changed(
+            var=variable,
+            option=key
+        ):
+
+            settings[option] = var.get()
+
+
+            if option in actions:
+
+                actions[option](
+                    var.get()
+                )
+
+
+            save_config(
+                config
+            )
+
+
+        tk.Checkbutton(
+            settings_frame,
+            text=text,
+            font=style.TITLE_FONT,
+            variable=variable,
+            command=changed
+        ).pack(
+            anchor="w",
+            padx=20,
+            pady=3
+        )
+
+
+    # ==================================================
     # OTHER SETTINGS
     # ==================================================
 
-    for key, text in SETTINGS:
+    section_title(
+        settings_frame,
+        "Other Settings"
+    )
+
+
+    for key, text in OTHER_SETTINGS:
 
         variable = tk.BooleanVar(
             value=settings.get(
@@ -550,12 +710,9 @@ def build_settings_tab(parent, settings, config, actions):
     # APPLICATION
     # ==================================================
 
-    tk.Label(
+    section_title(
         settings_frame,
-        text="Application",
-        font=style.TEXT_FONT
-    ).pack(
-        pady=(20, 5)
+        "Application"
     )
 
 

@@ -73,6 +73,7 @@ def setup_clock():
         font=  ("Pixelon", 18),
         fill="black",
         anchor="center",
+        tags=("draggable",)
     )
 
     date_display = canvas.create_text(
@@ -82,6 +83,7 @@ def setup_clock():
         font= ("Pixelon", 10),
         fill="black",
         anchor="center",
+        tags=("draggable",)
     )
 
 def synchronize_time():

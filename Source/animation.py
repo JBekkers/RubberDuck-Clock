@@ -104,6 +104,7 @@ sprite_id = canvas.create_image(
     CENTER_Y,
     image=animations[current_animation].frames[0],
     anchor="center",
+    tags=("draggable",)
 )
 
 def animate_sprite():
