@@ -366,12 +366,12 @@ def build_settings_tab(parent, settings, config, actions):
 
 
     # ==================================================
-    # TIME ZONE
+    # CLOK SETTINGS
     # ==================================================
 
     tk.Label(
         settings_frame,
-        text="Time Zone",
+        text="Clock settings",
         font=style.TEXT_FONT
     ).pack(
         pady=(15, 5)
