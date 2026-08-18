@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 import os
 import math
 
+PARTICLE_SPAWN_PADDING = 20
 
 def load_particle_images(folder_name):
     folder = os.path.join(PARTICLES_DIR, folder_name)
@@ -34,7 +35,7 @@ class Particle:
         self.speed_y = random.uniform(0.5, 2)
 
 
-        self.distance_left = random.uniform(100, 500)
+        self.distance_left = random.uniform(canvas.winfo_height() * 0.6, canvas.winfo_height() * 0.9)
 
 
     def move(self):
@@ -84,11 +85,24 @@ class ParticleManager:
         if not self.running:
             return
 
-        x = random.randint(0, canvas.winfo_width())
+        canvas_width = canvas.winfo_width()
+
+        if canvas_width <= PARTICLE_SPAWN_PADDING * 2:
+            return
+
+        x = random.randint(
+            PARTICLE_SPAWN_PADDING,
+            canvas_width - PARTICLE_SPAWN_PADDING
+        )
+
         y = canvas.winfo_height()
 
         self.particles.append(
-            Particle(x, y, random.choice(self.images))
+            Particle(
+                x,
+                y,
+                random.choice(self.images)
+            )
         )
 
 
