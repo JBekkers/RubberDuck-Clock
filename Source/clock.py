@@ -70,7 +70,7 @@ def setup_clock():
         CENTER_X,
         CENTER_Y + CLOCK_Y_OFFSET - 10,
         text="--:--",
-        font=  ("Pixelon", 18),
+        font=  ("Pixelon", 15),
         fill="black",
         anchor="center",
         tags=("draggable",)
