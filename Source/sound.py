@@ -1,7 +1,6 @@
 import os
 import pygame
 from Source.Config.paths import SOUNDS_DIR
-import math
 
 pygame.mixer.init()
 
@@ -29,8 +28,6 @@ def play_sound(filename):
 
     sound = pygame.mixer.Sound(path)
 
-    sound.set_volume(
-        math.pow(sound_volume / 100, 2)
-    )
+    sound.set_volume(sound_volume / 100)
 
     sound.play()

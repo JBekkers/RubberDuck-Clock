@@ -3,7 +3,7 @@ from tkinter import ttk
 
 from Source.Config import style
 from Source.Config.config import save_config
-from Source.sound import set_sound_volume
+from Source.sound import set_sound_volume, play_sound
 
 from tzlocal import get_localzone_name
 
@@ -340,6 +340,10 @@ def build_settings_tab(parent, settings, config, actions):
             config
         )
 
+    def volume_released(event):
+
+        play_sound("quack.wav")
+
 
     volume_scale = tk.Scale(
         settings_frame,
@@ -358,6 +362,11 @@ def build_settings_tab(parent, settings, config, actions):
         activebackground=style.BUTTON_CLICKED,
         sliderlength=25,
         width=12
+    )
+
+    volume_scale.bind(
+    "<ButtonRelease-1>",
+    volume_released
     )
 
     volume_scale.pack(
