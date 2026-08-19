@@ -35,6 +35,8 @@ def setup_menu(app_settings, app_config, app_particle_system):
 def tray_reset_position(icon, item):
     reset_position(config)
 
+def tray_restart_app(icon, item):
+    restart_application(config, icon)
 
 def tray_quit_app(icon, item):
 
@@ -59,8 +61,14 @@ def create_tray_icon():
         menu=pystray.Menu(
 
             pystray.MenuItem(
-                "Reset Position",
+                "Reset Clock Position",
                 tray_reset_position
+            ),
+
+
+            pystray.MenuItem(
+                "Restart Application",
+                tray_restart_app
             ),
 
             pystray.Menu.SEPARATOR,

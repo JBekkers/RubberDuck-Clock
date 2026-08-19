@@ -318,11 +318,19 @@ def build_settings_tab(parent, settings, config, actions):
         )
     )
 
+    volume_display = tk.StringVar(
+        value=f"{volume.get()}%"
+    )
+
 
     set_sound_volume(
         volume.get()
     )
 
+
+    # ==================================================
+    # VOLUME CHANGED
+    # ==================================================
 
     def volume_changed(value):
 
@@ -336,17 +344,54 @@ def build_settings_tab(parent, settings, config, actions):
             value
         )
 
+        volume_display.set(
+            f"{value}%"
+        )
+
         save_config(
             config
         )
 
+
+    # ==================================================
+    # VOLUME RELEASED
+    # ==================================================
+
     def volume_released(event):
 
-        play_sound("quack.wav")
+        play_sound(
+            "quack.wav"
+        )
 
+
+    # ==================================================
+    # VOLUME CONTAINER
+    # ==================================================
+
+    volume_container = tk.Frame(
+        settings_frame
+    )
+
+    volume_container.pack(
+        fill="x",
+        pady=(3)
+    )
+
+    volume_container.configure(
+        height=35
+    )
+
+    volume_container.pack_propagate(
+        False
+    )
+
+
+    # ==================================================
+    # VOLUME SLIDER
+    # ==================================================
 
     volume_scale = tk.Scale(
-        settings_frame,
+        volume_container,
         from_=0,
         to=100,
         orient="horizontal",
@@ -354,7 +399,7 @@ def build_settings_tab(parent, settings, config, actions):
         command=volume_changed,
         font=style.TEXT_FONT,
         length=200,
-        showvalue=True,
+        showvalue=False,
         highlightthickness=0,
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR,
@@ -364,18 +409,120 @@ def build_settings_tab(parent, settings, config, actions):
         width=12
     )
 
-    volume_scale.bind(
-    "<ButtonRelease-1>",
-    volume_released
-    )
-
-    volume_scale.pack(
-        pady=3
+    volume_scale.place(
+        relx=0.5,
+        rely=0.5,
+        anchor="center"
     )
 
 
     # ==================================================
-    # CLOK SETTINGS
+    # VOLUME PERCENTAGE
+    # ==================================================
+
+    volume_display_label = tk.Label(
+        volume_container,
+        textvariable=volume_display,
+        font=style.TEXT_FONT,
+        width=5,
+        anchor="w"
+    )
+
+    volume_display_label.place(
+        relx=0.5,
+        rely=0.5,
+        x= 108,
+        anchor="w"
+    )
+
+
+    # ==================================================
+    # CLICK ANYWHERE ON SLIDER
+    # ==================================================
+
+    def slider_clicked(event):
+
+        # Current thumb position
+        thumb_x = volume_scale.coords(
+            volume_scale.get()
+        )[0]
+
+        # Approximate half the thumb width
+        thumb_half_width = (
+            volume_scale.cget("sliderlength") / 2
+        )
+
+        # If clicking the thumb,
+        # let Tkinter handle normal dragging.
+        if (
+            thumb_x - thumb_half_width
+            <= event.x
+            <=
+            thumb_x + thumb_half_width
+        ):
+            return
+
+
+        # Actual slider range
+        min_x = volume_scale.coords(
+            volume_scale.cget("from")
+        )[0]
+
+        max_x = volume_scale.coords(
+            volume_scale.cget("to")
+        )[0]
+
+
+        # Keep click inside slider
+        x = max(
+            min_x,
+            min(
+                event.x,
+                max_x
+            )
+        )
+
+
+        # Convert position to percentage
+        percentage = (
+            (x - min_x)
+            /
+            (max_x - min_x)
+        )
+
+
+        value = round(
+            percentage * 100
+        )
+
+
+        # Move slider
+        volume_scale.set(
+            value
+        )
+
+
+        # Update volume
+        volume_changed(
+            value
+        )
+
+
+    volume_scale.bind(
+        "<Button-1>",
+        slider_clicked,
+        add="+"
+    )
+
+
+    volume_scale.bind(
+        "<ButtonRelease-1>",
+        volume_released
+    )
+
+
+    # ==================================================
+    # CLOCK SETTINGS
     # ==================================================
 
     tk.Label(
@@ -387,9 +534,9 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Automatic timezone setting
-    # --------------------------------------------------
+    # ==================================================
+    # AUTOMATIC TIMEZONE
+    # ==================================================
 
     auto_timezone = tk.BooleanVar(
         value=settings.get(
@@ -399,9 +546,9 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Saved timezone
-    # --------------------------------------------------
+    # ==================================================
+    # SAVED TIMEZONE
+    # ==================================================
 
     saved_timezone = settings.get(
         "timezone",
@@ -409,9 +556,9 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Detect computer timezone
-    # --------------------------------------------------
+    # ==================================================
+    # DETECT COMPUTER TIMEZONE
+    # ==================================================
 
     try:
 
@@ -422,9 +569,9 @@ def build_settings_tab(parent, settings, config, actions):
         detected_timezone = "Europe/Amsterdam"
 
 
-    # --------------------------------------------------
-    # Determine current timezone
-    # --------------------------------------------------
+    # ==================================================
+    # DETERMINE CURRENT TIMEZONE
+    # ==================================================
 
     if auto_timezone.get():
 
@@ -453,9 +600,9 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Automatic Region Selection
-    # --------------------------------------------------
+    # ==================================================
+    # AUTOMATIC REGION SELECTION
+    # ==================================================
 
     auto_timezone_check = tk.Checkbutton(
         timezone_controls,
@@ -515,9 +662,9 @@ def build_settings_tab(parent, settings, config, actions):
         settings["auto_timezone"] = automatic
 
 
-        # --------------------------------------------------
-        # Automatic mode
-        # --------------------------------------------------
+        # ==================================================
+        # AUTOMATIC MODE
+        # ==================================================
 
         if automatic:
 
@@ -535,13 +682,12 @@ def build_settings_tab(parent, settings, config, actions):
             )
 
 
-            # Hide manual timezone dropdown
             timezone_dropdown.pack_forget()
 
 
-        # --------------------------------------------------
-        # Manual mode
-        # --------------------------------------------------
+        # ==================================================
+        # MANUAL MODE
+        # ==================================================
 
         else:
 
@@ -553,7 +699,6 @@ def build_settings_tab(parent, settings, config, actions):
             )
 
 
-            # Show manual timezone dropdown
             timezone_dropdown.pack(
                 anchor="w",
                 padx=20,
@@ -577,9 +722,9 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Show dropdown initially if manual mode is active
-    # --------------------------------------------------
+    # ==================================================
+    # SHOW DROPDOWN INITIALLY IF MANUAL MODE
+    # ==================================================
 
     if not auto_timezone.get():
 
@@ -725,13 +870,13 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Reset Position
-    # --------------------------------------------------
+    # ==================================================
+    # RESET POSITION
+    # ==================================================
 
     tk.Button(
         settings_frame,
-        text="Reset Position",
+        text="Reset Clock Position",
         command=actions["reset_position"],
         font=style.TITLE_FONT
     ).pack(
@@ -739,9 +884,9 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Restart Application
-    # --------------------------------------------------
+    # ==================================================
+    # RESTART APPLICATION
+    # ==================================================
 
     tk.Button(
         settings_frame,
@@ -753,9 +898,9 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
 
-    # --------------------------------------------------
-    # Quit Application
-    # --------------------------------------------------
+    # ==================================================
+    # QUIT APPLICATION
+    # ==================================================
 
     tk.Button(
         settings_frame,
