@@ -15,6 +15,8 @@ CONFIG_FILE = os.path.join(
 )
 
 DEFAULT_CONFIG = {
+    "total_uptime": 0,
+    
     "position": {
         "x": 915,
         "y": 0

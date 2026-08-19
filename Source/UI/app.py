@@ -3,6 +3,7 @@ from Source.Config.style import WINDOW_HEIGHT, WINDOW_WIDTH
 from Source.UI.Menu_Tabs.tab_loader import position_menu
 from Source.Config.config import save_config
 from Source.Config.paths import FONTS_DIR
+from Source.UI.Menu_Tabs.uptime import get_session_uptime
 
 import ctypes
 
@@ -37,11 +38,24 @@ def reset_position(config):
     root.after(0, move)
 
 
-def shutdown(config, icon=None):
+def save_uptime(config):
 
+    session_time = get_session_uptime()
+
+    config["total_uptime"] = (
+        config.get("total_uptime", 0)
+        +
+        session_time
+    )
+
+    save_config(config)
+    save_config(config)
+
+def shutdown(config, icon=None):
 
     save_current_pos(config)
 
+    save_uptime(config)
 
     if icon:
         try:
@@ -67,6 +81,7 @@ def restart_application(config, icon=None):
 
     save_current_pos(config)
 
+    save_uptime(config)
 
     if icon:
         try:
@@ -77,3 +92,4 @@ def restart_application(config, icon=None):
     subprocess.Popen([sys.executable] + sys.argv)
 
     root.destroy()
+
