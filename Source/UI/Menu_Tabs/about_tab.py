@@ -66,8 +66,7 @@ def build_about_tab(parent, settings, config):
 
         total_uptime = (
             config.get("total_uptime", 0)
-            +
-            current_session
+            + current_session
         )
 
         uptime_display.set(

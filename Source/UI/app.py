@@ -49,7 +49,6 @@ def save_uptime(config):
     )
 
     save_config(config)
-    save_config(config)
 
 def shutdown(config, icon=None):
 

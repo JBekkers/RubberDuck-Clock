@@ -42,21 +42,23 @@ def load_config():
         with open(CONFIG_FILE, "r") as f:
             config = json.load(f)
 
-        # Add new settings automatically
-        for section, values in DEFAULT_CONFIG.items():
+        # Add missing top-level sections/settings
+        for section, default_value in DEFAULT_CONFIG.items():
 
             if section not in config:
-                config[section] = copy.deepcopy(values)
+                config[section] = copy.deepcopy(default_value)
 
-            else:
-                for key, value in values.items():
+            elif isinstance(default_value, dict):
+                for key, value in default_value.items():
 
                     if key not in config[section]:
-                        config[section][key] = value
+                        config[section][key] = copy.deepcopy(value)
 
         return config
 
-    except Exception:
+    except Exception as e:
+
+        print(f"Failed to load config: {e}")
 
         return copy.deepcopy(DEFAULT_CONFIG)
 
