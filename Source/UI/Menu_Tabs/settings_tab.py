@@ -7,6 +7,25 @@ from Source.sound import set_sound_volume, play_sound
 
 from tzlocal import get_localzone_name
 
+# ==================================================
+# BUTTON HOVER EFFECT
+# ==================================================
+
+def add_button_hover(button):
+
+    button.bind(
+        "<Enter>",
+        lambda event: button.config(
+            bg=style.BUTTON_CLICKED
+        )
+    )
+
+    button.bind(
+        "<Leave>",
+        lambda event: button.config(
+            bg=style.BUTTON_NORMAL
+        )
+    )
 
 # ==================================================
 # SECTION TITLE
@@ -871,42 +890,60 @@ def build_settings_tab(parent, settings, config, actions):
 
 
     # ==================================================
-    # RESET POSITION
+    # APPLICATION BUTTONS
     # ==================================================
 
-    tk.Button(
+    #reset
+    reset_button = tk.Button(
         settings_frame,
         text="Reset Clock Position",
         command=actions["reset_position"],
-        font=style.TITLE_FONT
-    ).pack(
+        font=style.TITLE_FONT,
+        bg=style.BUTTON_NORMAL,
+        activebackground=style.BUTTON_CLICKED
+    )
+
+    reset_button.pack(
         pady=3
     )
 
+    add_button_hover(
+        reset_button
+    )
 
-    # ==================================================
-    # RESTART APPLICATION
-    # ==================================================
-
-    tk.Button(
+    #restart
+    restart_button = tk.Button(
         settings_frame,
         text="Restart Application",
         command=actions["restart"],
-        font=style.TITLE_FONT
-    ).pack(
+        font=style.TITLE_FONT,
+        bg=style.BUTTON_NORMAL,
+        activebackground=style.BUTTON_CLICKED
+    )
+
+    restart_button.pack(
         pady=3
     )
 
+    add_button_hover(
+        restart_button
+    )
 
-    # ==================================================
-    # QUIT APPLICATION
-    # ==================================================
 
-    tk.Button(
+    #quit
+    quit_button = tk.Button(
         settings_frame,
         text="Quit Application",
         command=actions["quit"],
-        font=style.TITLE_FONT
-    ).pack(
+        font=style.TITLE_FONT,
+        bg=style.BUTTON_NORMAL,
+        activebackground=style.BUTTON_CLICKED
+    )
+
+    quit_button.pack(
         pady=3
+    )
+
+    add_button_hover(
+        quit_button
     )
