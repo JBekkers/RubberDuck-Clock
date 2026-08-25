@@ -85,6 +85,9 @@ Some ideas I'd like to add in the future:
 
 - automatically detect seasons like Christmas' new year, Easter etc and have special events happen based on this (snow with Christmas, or special event related hats)
 
+
+End of line features:
+- Installer that automaticaly installs the app/option to make add it to startup applications on pc/make it run
 ---
 
 ## License
