@@ -46,7 +46,6 @@ def open_settings(root, settings, config, actions):
     window.lift()
 
     window.option_add("*Background", style.BACKGROUND)
-    window.option_add("*Foreground", style.TEXT_COLOR)
 
     window.option_add("*Checkbutton.ActiveBackground", style.BACKGROUND)
     window.option_add("*Button.Background", style.BUTTON_NORMAL)
@@ -119,6 +118,10 @@ def open_settings(root, settings, config, actions):
             font=style.TITLE_FONT,
             borderwidth=0,
             highlightthickness=0,
+            bg=style.BUTTON_NORMAL,
+            fg=style.TEXT_COLOR,
+            activebackground=style.BUTTON_NORMAL,
+            activeforeground=style.TEXT_COLOR,
         )
         buttons.append(button)
 

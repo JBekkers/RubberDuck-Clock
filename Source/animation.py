@@ -12,7 +12,6 @@ from PIL import Image, ImageTk
 from Source.sound import play_sound
 import time
 
-
 SPRITE_SIZE = (150, 150)
 
 ANIMATION_FILE = os.path.join(DATA_DIR, "animations.json")
@@ -32,7 +31,36 @@ animations: dict[str, Animation] = {}
 current_animation = "Idle"
 current_frame = 0
 loop_start_time = None
+app_config = None
 
+# Animations that count as rare discoveries.
+RARE_ANIMATIONS = {"RBGmode"}
+
+
+def set_config(config):
+    global app_config
+    app_config = config
+
+
+def record_rare_animation(name):
+    if name not in RARE_ANIMATIONS or app_config is None:
+        return
+
+    app_config["rare_animations_seen"] = (
+        app_config.get("rare_animations_seen", 0) + 1
+    )
+
+    discovered = app_config.get(
+        "rare_animations_discovered",
+        []
+    )
+
+    if name not in discovered:
+        discovered.append(name)
+        app_config["rare_animations_discovered"] = discovered
+
+    from Source.Config.config import save_config
+    save_config(app_config)
 
 def load_animation(
     name,
@@ -183,6 +211,9 @@ def play_animation(name):
 
     current_animation = name
     current_frame = 0
+
+    record_rare_animation(name)
+
     loop_start_time = time.monotonic()
 
     animation = animations[current_animation]
@@ -197,7 +228,7 @@ def play_animation(name):
             )
         else:
             animation.current_loop_time = loop_time
-    
+
     if animation.sound:
         play_sound(animation.sound)
 

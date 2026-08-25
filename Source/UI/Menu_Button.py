@@ -4,7 +4,7 @@ import os
 from Source.Window_Manager import canvas
 from Source.Config.paths import UI_DIR
 
-MENU_OFFSET_X = 100
+MENU_OFFSET_X = 130
 MENU_OFFSET_Y = 100
 
 menu_image = None

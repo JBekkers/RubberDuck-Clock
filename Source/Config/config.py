@@ -16,25 +16,27 @@ CONFIG_FILE = os.path.join(
 
 DEFAULT_CONFIG = {
     "total_uptime": 0,
-    
+    "session_count": 0,
+    "rare_animations_seen": 0,
+    "rare_animations_discovered": [],
+
     "position": {
         "x": 915,
         "y": 0
     },
 
     "settings": {
-    "hourly_quack": False,
-    "always_on_top": True,
-    "disable_animation": False,
-    "disable_sound": False,
-    "disable_particles": False,
+        "hourly_quack": False,
+        "always_on_top": True,
+        "disable_animation": False,
+        "disable_sound": False,
+        "disable_particles": False,
 
-    "auto_timezone": True,
-    "timezone": "Europe/Amsterdam",
-    "clock_24_hour": True,
+        "auto_timezone": True,
+        "timezone": "Europe/Amsterdam",
+        "clock_24_hour": True,
     }
 }
-
 
 def load_config():
 

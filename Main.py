@@ -1,8 +1,8 @@
-from Source.Config.config import load_config
-from Source.animation import animate_sprite, choose_random_animation, duck_clicked
+from Source.Config.config import load_config, save_config
+from Source.animation import animate_sprite, choose_random_animation, duck_clicked, set_config
 from Source.UI.menu_manager import setup_menu
-from Source.Window_Manager import root, canvas, set_position, start_move,move_window
-from Source.clock import setup_clock,start_clock
+from Source.Window_Manager import root, canvas, set_position, start_move, move_window
+from Source.clock import setup_clock, start_clock
 from Source.UI.app import load_font
 from Source.sound import set_sound_volume
 
@@ -11,6 +11,12 @@ from Source.Particle_spawner import ParticleSystem
 load_font("Pixelon.ttf")
 config = load_config()
 settings = config["settings"]
+
+# Start a new session
+config["session_count"] = config.get("session_count", 0) + 1
+save_config(config)
+
+set_config(config)
 
 particle_system = ParticleSystem()
 

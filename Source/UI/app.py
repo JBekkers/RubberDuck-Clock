@@ -3,7 +3,7 @@ from Source.Config.style import WINDOW_HEIGHT, WINDOW_WIDTH
 from Source.UI.Menu_Tabs.tab_loader import position_menu
 from Source.Config.config import save_config
 from Source.Config.paths import FONTS_DIR
-from Source.UI.Menu_Tabs.uptime import get_session_uptime
+from Source.UI.Menu_Tabs.stats import get_session_uptime
 
 import ctypes
 
