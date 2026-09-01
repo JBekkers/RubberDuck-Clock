@@ -2,7 +2,7 @@ import tkinter as tk
 
 from Source.Config import style
 from Source.UI.Menu_Tabs.stats import get_session_uptime
-from Source.animation import RARE_ANIMATIONS
+from Source.animation import animations
 
 
 def format_uptime(seconds):
@@ -94,10 +94,15 @@ def build_about_tab(parent, settings, config):
             )
         )
 
+        rare_count = sum(
+            1 for animation in animations.values()
+            if animation.isRare
+        )
+
         rare_display.set(
             f"Rare Animations:\n"
             f"{config.get('rare_animations_seen', 0)} seen  •  "
-            f"{discovered} / {len(RARE_ANIMATIONS)} discovered"
+            f"{discovered} / {rare_count} discovered"
         )
 
         uptime_label.after(

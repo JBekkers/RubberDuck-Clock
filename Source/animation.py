@@ -24,6 +24,7 @@ class Animation:
     loop_time:float |int | list[float]
     next_animation:str
     weight:float
+    isRare:bool = False
     sound: str | None = None 
     current_loop_time: float = 0
 
@@ -33,17 +34,18 @@ current_frame = 0
 loop_start_time = None
 app_config = None
 
-# Animations that count as rare discoveries.
-RARE_ANIMATIONS = {"RBGmode"}
-
-
 def set_config(config):
     global app_config
     app_config = config
 
 
 def record_rare_animation(name):
-    if name not in RARE_ANIMATIONS or app_config is None:
+    if app_config is None:
+        return
+
+    animation = animations.get(name)
+
+    if animation is None or not animation.isRare:
         return
 
     app_config["rare_animations_seen"] = (
@@ -72,6 +74,7 @@ def load_animation(
     next_animation="Idle",
     weight=0,
     sound=None,
+    isRare = False,
 ):
 
     sheet = Image.open(
@@ -105,6 +108,7 @@ def load_animation(
         next_animation=next_animation,
         weight=weight,
         sound=sound,
+        isRare=isRare,
     )
 
 with open(ANIMATION_FILE, "r") as f:
@@ -124,7 +128,8 @@ for name, data in animation_data["animations"].items():
         loop_time=data.get("loop_time", 0),
         next_animation=data.get("next", "Idle"),
         weight=data.get("weight", 0),
-        sound=data.get("sound")
+        sound=data.get("sound"),
+        isRare=data.get("isRare", False),
     )
 
 sprite_id = canvas.create_image(

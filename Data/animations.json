@@ -76,6 +76,7 @@
             "looping": true,
             "loop_time": 60,
             "next": "Idle",
+            "isRare": true,
             "weight": 0.001
         }
     }
