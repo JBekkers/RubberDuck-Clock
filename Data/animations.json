@@ -78,6 +78,13 @@
             "next": "Idle",
             "isRare": true,
             "weight": 0.005
+        },
+
+        "Grow": {
+            "speed": 90,
+            "next": "Idle",
+            "isRare": true,
+            "weight": 0.005
         }
     }
 }
