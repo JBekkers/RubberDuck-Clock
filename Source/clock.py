@@ -68,7 +68,7 @@ def setup_clock():
 
     time_display = canvas.create_text(
         CENTER_X,
-        CENTER_Y + CLOCK_Y_OFFSET - 10,
+        CENTER_Y + CLOCK_Y_OFFSET + 40,
         text="--:--",
         font=  ("Pixelon", 15),
         fill="black",
@@ -78,7 +78,7 @@ def setup_clock():
 
     date_display = canvas.create_text(
         CENTER_X,
-        CENTER_Y + CLOCK_Y_OFFSET + 10,
+        CENTER_Y + CLOCK_Y_OFFSET + 60,
         text="--/--",
         font= ("Pixelon", 10),
         fill="black",

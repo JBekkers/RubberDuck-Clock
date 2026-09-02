@@ -81,9 +81,10 @@
         },
 
         "Grow": {
-            "speed": 90,
+            "speed": 350,
             "next": "Idle",
             "isRare": true,
+            "effect": "grow",
             "weight": 0.005
         }
     }
