@@ -70,7 +70,7 @@ def setup_clock():
         CENTER_X,
         CENTER_Y + CLOCK_Y_OFFSET + 40,
         text="--:--",
-        font=  ("Pixelon", 15),
+        font=  ("Pxls", 15),
         fill="black",
         anchor="center",
         tags=("draggable",)
@@ -80,7 +80,7 @@ def setup_clock():
         CENTER_X,
         CENTER_Y + CLOCK_Y_OFFSET + 60,
         text="--/--",
-        font= ("Pixelon", 10),
+        font= ("Pxls", 10),
         fill="black",
         anchor="center",
         tags=("draggable",)

@@ -9,8 +9,8 @@ SCROLL_TROUGH= "#ffd13c"
 SCROLL_BORDER= "#ffd13c"
 SCROLL_ARROW= "#f8ec48"
 
-TITLE_FONT = ("Pixelon", 14)
-TEXT_FONT = ("Pixelon", 10)
+TITLE_FONT = ("Pxls", 14)
+TEXT_FONT = ("Pxls", 10)
 
 ##CONTANTS
 WINDOW_WIDTH = 250

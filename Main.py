@@ -8,7 +8,7 @@ from Source.sound import set_sound_volume
 
 from Source.Particle_spawner import ParticleSystem
 
-load_font("Pixelon.ttf")
+load_font("Pxls-Regular.ttf")
 config = load_config()
 settings = config["settings"]
 
