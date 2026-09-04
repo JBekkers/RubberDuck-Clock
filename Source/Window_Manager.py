@@ -54,20 +54,6 @@ def move_window(event, target):
 
     update_menu_position(target)
 
-    if menu_window and menu_window.winfo_exists():
-
-        menu_x = (
-            x 
-            + (target.winfo_width() // 2)
-            - (menu_window.winfo_width() // 2)
-        )
-
-        menu_y = y + target.winfo_height()
-
-        menu_window.geometry(
-            f"+{menu_x}+{menu_y}"
-        )
-
     if menu_callback:
         menu_callback(target)
 

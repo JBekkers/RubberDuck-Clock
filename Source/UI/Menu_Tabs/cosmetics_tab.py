@@ -12,7 +12,7 @@ def build_cosmetics_tab(parent, settings, config):
 
     tk.Label(
         parent,
-        text="Comming soon",
+        text="Coming soon",
         font= style.TEXT_FONT
 
     ).pack(

@@ -41,7 +41,6 @@ def load_particle_pop(folder_name):
 
 
 class Particle:
-
     def __init__(self, x, y, image, pop_image):
         self.id = canvas.create_image(
             x,
@@ -274,15 +273,6 @@ class ParticleSystem:
             self.particles[name].stop()
 
             del self.particles[name]
-
-
-    def toggle(self, name, enabled):
-
-        if enabled:
-            self.enable(name)
-
-        else:
-            self.disable(name)
 
 
     def set_disabled(self, name, disabled):

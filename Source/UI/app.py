@@ -11,6 +11,16 @@ import os
 import sys
 import subprocess
 
+def prepare_shutdown(config, icon=None):
+    save_current_pos(config)
+    save_uptime(config)
+
+    if icon:
+        try:
+            icon.stop()
+        except Exception:
+            pass
+
 def save_current_pos(config):
     config["position"]["x"] = root.winfo_x()
     config["position"]["y"] = root.winfo_y()
@@ -51,17 +61,7 @@ def save_uptime(config):
     save_config(config)
 
 def shutdown(config, icon=None):
-
-    save_current_pos(config)
-
-    save_uptime(config)
-
-    if icon:
-        try:
-            icon.stop()
-        except Exception:
-            pass
-
+    prepare_shutdown(config, icon)
     root.destroy()
 
 FR_PRIVATE = 0x10
@@ -77,18 +77,6 @@ def load_font(filename):
         )
 
 def restart_application(config, icon=None):
-
-    save_current_pos(config)
-
-    save_uptime(config)
-
-    if icon:
-        try:
-            icon.stop()
-        except Exception:
-            pass
-
+    prepare_shutdown(config, icon)
     subprocess.Popen([sys.executable] + sys.argv)
-
     root.destroy()
-

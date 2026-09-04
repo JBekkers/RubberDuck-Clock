@@ -12,7 +12,6 @@ load_font("Pxls-Regular.ttf")
 config = load_config()
 settings = config["settings"]
 
-# Start a new session
 config["session_count"] = config.get("session_count", 0) + 1
 save_config(config)
 
