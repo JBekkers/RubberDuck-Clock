@@ -37,6 +37,14 @@ def build_about_tab(parent, settings, config):
         pady=(10, 5)
     )
 
+    tk.Label(
+        parent,
+        text="testlock \U0001F512 end testlock - testcheck \u2713 end testcheck",
+        font=style.TEXT_FONT,
+    ).pack(
+        pady=(0, 10)
+    )
+
     uptime_display = tk.StringVar()
     session_display = tk.StringVar()
     rare_display = tk.StringVar()
