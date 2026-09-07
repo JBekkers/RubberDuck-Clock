@@ -71,7 +71,7 @@
             "weight": 0
         },
 
-        "RBGmode": {
+        "RGBmode": {
             "speed": 90,
             "looping": true,
             "loop_time": 60,
