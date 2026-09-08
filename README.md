@@ -76,16 +76,16 @@ The value is measured in seconds.
 
 Some ideas I'd like to add in the future:
 
-- More animated events like happy, loving, and more..
+- More animated events/rare animated events
+
 - link with google agenda - show notifications for meetings etc
 
 - hat packages -> get a random hat ever 30m with different rarities (common, uncommon, rare, ulra rare, legendary) (maybe also have a timer somewhere)
 - new hat drop -> bubble forms with a unknown hat icon in it -> user clicks bubble (bubble pop animation plays) new hat is given
 - exchange -> sacrifice x amount of hats of same rarity to get a new hat from a higher rarity
 
-- automatically detect seasons like Christmas' new year, Easter etc and have special events happen based on this (snow with Christmas, or special event related hats)
-
-- dropdown for rare animations shows all rare animation names/amounts user has seen them
+- automatically detect seasons like Christmas, new year, Easter etc and have special events related hats that only drop during special season time.
+- seasonal particle effects like snow, fireworks, easter, eggs falling that play during special seasons only (option in settings to toggle seasonal effects - if not default to bubbles)
 
 
 End of line features:
