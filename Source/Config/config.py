@@ -2,10 +2,7 @@ import os
 import json
 import copy
 
-CONFIG_DIR = os.path.join(
-    os.getenv("APPDATA"),
-    "RubberDuckClock"
-)
+from Source.Config.paths import CONFIG_DIR
 
 os.makedirs(CONFIG_DIR, exist_ok=True)
 
@@ -15,11 +12,6 @@ CONFIG_FILE = os.path.join(
 )
 
 DEFAULT_CONFIG = {
-    "total_uptime": 0,
-    "session_count": 0,
-    "rare_animations_seen": 0,
-    "rare_animations_discovered": [],
-
     "position": {
         "x": 915,
         "y": 0
@@ -66,15 +58,26 @@ def load_config():
 
 
 def save_config(config):
+    temp_file = CONFIG_FILE + ".tmp"
 
     try:
-        with open(CONFIG_FILE, "w") as f:
-
+        with open(temp_file, "w") as f:
             json.dump(
                 config,
                 f,
                 indent=4
             )
 
-    except Exception:
-        pass
+        os.replace(
+            temp_file,
+            CONFIG_FILE
+        )
+
+    except Exception as e:
+        print(f"Failed to save config: {e}")
+
+        try:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+        except Exception:
+            pass

@@ -1,4 +1,6 @@
-from Source.Config.config import load_config, save_config
+from Source.Config.config import load_config
+from Source.Config.stats import load_stats, start_session
+
 from Source.animation import animate_sprite, choose_random_animation, duck_clicked, set_config
 from Source.UI.menu_manager import setup_menu
 from Source.Window_Manager import root, canvas, set_position, start_move, move_window
@@ -9,13 +11,14 @@ from Source.sound import set_sound_volume
 from Source.Particle_spawner import ParticleSystem
 
 load_font("Pxls-Regular.ttf")
+
 config = load_config()
+stats = load_stats()
+
 settings = config["settings"]
 
-config["session_count"] = config.get("session_count", 0) + 1
-save_config(config)
-
-set_config(config)
+start_session(stats)
+set_config(config, stats)
 
 particle_system = ParticleSystem()
 
@@ -27,6 +30,7 @@ particle_system.set_disabled(
 setup_menu(
     settings,
     config,
+    stats,
     particle_system
 )
 

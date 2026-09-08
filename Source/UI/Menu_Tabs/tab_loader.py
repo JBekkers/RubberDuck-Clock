@@ -23,7 +23,7 @@ def close_menu():
         window = None
         set_menu_window(None)
 
-def open_settings(root, settings, config, actions):
+def open_settings(root,settings,config,stats,actions):
 
     global window
 
@@ -135,9 +135,11 @@ def open_settings(root, settings, config, actions):
         frames.append(frame)
 
         if builder is build_settings_tab:
-            builder(frame, settings, config, actions)
+            builder(frame,settings,config,actions)
+        elif builder is build_about_tab:
+            builder(frame,settings,config,stats)
         else:
-            builder(frame, settings, config)
+            builder(frame,settings,config)
 
     close_button = tk.Button(
         tab_bar,
@@ -175,11 +177,8 @@ def position_menu(root):
     screen_height = root.winfo_screenheight()
 
     menu_x = duck_x + (duck_width // 2) - (menu_width // 2)
-
-    # Prefer below the duck
     menu_y = duck_y + duck_height
 
-    # If it won't fit, place it above instead
     if menu_y + menu_height > screen_height:
         menu_y = duck_y - menu_height
 

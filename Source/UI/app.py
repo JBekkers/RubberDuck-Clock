@@ -1,6 +1,7 @@
 from Source.Window_Manager import root
 from Source.Config.style import WINDOW_HEIGHT, WINDOW_WIDTH
 from Source.UI.Menu_Tabs.tab_loader import position_menu
+from Source.Config.stats import save_stats
 from Source.Config.config import save_config
 from Source.Config.paths import FONTS_DIR
 from Source.UI.Menu_Tabs.stats import get_session_uptime
@@ -11,9 +12,9 @@ import os
 import sys
 import subprocess
 
-def prepare_shutdown(config, icon=None):
+def prepare_shutdown(config, stats, icon=None):
     save_current_pos(config)
-    save_uptime(config)
+    save_uptime(stats)
 
     if icon:
         try:
@@ -48,20 +49,18 @@ def reset_position(config):
     root.after(0, move)
 
 
-def save_uptime(config):
-
+def save_uptime(stats):
     session_time = get_session_uptime()
 
-    config["total_uptime"] = (
-        config.get("total_uptime", 0)
-        +
-        session_time
+    stats["total_uptime"] = (
+        stats.get("total_uptime", 0)
+        + session_time
     )
 
-    save_config(config)
+    save_stats(stats)
 
-def shutdown(config, icon=None):
-    prepare_shutdown(config, icon)
+def shutdown(config, stats, icon=None):
+    prepare_shutdown(config, stats, icon)
     root.destroy()
 
 FR_PRIVATE = 0x10
@@ -76,7 +75,11 @@ def load_font(filename):
             0
         )
 
-def restart_application(config, icon=None):
-    prepare_shutdown(config, icon)
-    subprocess.Popen([sys.executable] + sys.argv)
+def restart_application(config, stats, icon=None):
+    prepare_shutdown(config, stats, icon)
+
+    subprocess.Popen(
+        [sys.executable] + sys.argv
+    )
+
     root.destroy()

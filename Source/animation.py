@@ -36,7 +36,9 @@ animations: dict[str, Animation] = {}
 current_animation = "Idle"
 current_frame = 0
 loop_start_time = None
+
 app_config = None
+app_stats = None
 
 effect_manager = None
 
@@ -50,13 +52,15 @@ def start_effect(effect_name):
 
     return effect_manager.start(effect_name)
 
-def set_config(config):
-    global app_config
+def set_config(config, stats):
+    global app_config, app_stats
+
     app_config = config
+    app_stats = stats
 
 
 def record_rare_animation(name):
-    if app_config is None:
+    if app_stats is None:
         return
 
     animation = animations.get(name)
@@ -64,21 +68,12 @@ def record_rare_animation(name):
     if animation is None or not animation.isRare:
         return
 
-    app_config["rare_animations_seen"] = (
-        app_config.get("rare_animations_seen", 0) + 1
+    from Source.Config.stats import record_rare_animation
+
+    record_rare_animation(
+        app_stats,
+        name
     )
-
-    discovered = app_config.get(
-        "rare_animations_discovered",
-        []
-    )
-
-    if name not in discovered:
-        discovered.append(name)
-        app_config["rare_animations_discovered"] = discovered
-
-    from Source.Config.config import save_config
-    save_config(app_config)
 
 def load_animation(
     name,

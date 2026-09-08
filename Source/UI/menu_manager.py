@@ -16,12 +16,19 @@ from Source.UI.Menu_Button import create_menu_button
 settings = None
 config = None
 particle_system = None
+stats = None
 
-def setup_menu(app_settings, app_config, app_particle_system):
-    global settings, config, particle_system
+def setup_menu(
+    app_settings,
+    app_config,
+    app_stats,
+    app_particle_system
+):
+    global settings, config, stats, particle_system
 
     settings = app_settings
     config = app_config
+    stats = app_stats
     particle_system = app_particle_system
 
     create_tray_icon()
@@ -36,13 +43,12 @@ def tray_reset_position(icon, item):
     reset_position(config)
 
 def tray_restart_app(icon, item):
-    restart_application(config, icon)
+    restart_application(config, stats, icon)
 
 def tray_quit_app(icon, item):
-
     root.after(
         0,
-        lambda: shutdown(config, icon)
+        lambda: shutdown(config, stats, icon)
     )
 
 tray_icon = Image.open(os.path.join(ASSETS_DIR, "Icon.png"))
@@ -84,8 +90,8 @@ def toggle_menu(event=None):
 
     actions = {
         "reset_position": lambda: reset_position(config),
-        "quit": lambda: shutdown(config, icon),
-        "restart": lambda: restart_application(config, icon),
+        "quit": lambda: shutdown(config, stats, icon),
+        "restart": lambda: restart_application(config, stats, icon),
 
         "disable_particles": lambda disabled:
             particle_system.set_disabled(
@@ -103,6 +109,7 @@ def toggle_menu(event=None):
         root,
         settings,
         config,
+        stats,
         actions
     )
     

@@ -4,6 +4,16 @@ BASE_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "..")
 )
 
+APPDATA = os.getenv("APPDATA")
+
+if not APPDATA:
+    APPDATA = os.path.expanduser("~")
+
+CONFIG_DIR = os.path.join(
+    APPDATA,
+    "RubberDuckClock"
+)
+
 ASSETS_DIR = os.path.join(BASE_DIR, "Assets")
 SOUNDS_DIR = os.path.join(ASSETS_DIR, "Sounds")
 DATA_DIR = os.path.join(BASE_DIR, "Data")
