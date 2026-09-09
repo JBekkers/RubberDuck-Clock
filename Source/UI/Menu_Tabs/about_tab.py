@@ -5,7 +5,6 @@ from Source.Config import style
 from Source.UI.Menu_Tabs.stats import get_session_uptime
 from Source.animation import animations, set_rare_animation_callback
 
-
 def format_uptime(seconds):
     hours = seconds / 3600
     return f"Total Uptime:\n{hours:.1f} hours"
@@ -211,6 +210,30 @@ def build_about_tab(parent, settings, config, stats):
     session_display = tk.StringVar()
     rare_display = tk.StringVar()
 
+    def update_rare_summary():
+        discovered = len(
+            stats.get(
+                "rare_animations_discovered",
+                []
+            )
+        )
+
+        rare_count = sum(
+            1
+            for animation in animations.values()
+            if animation.isRare
+        )
+
+        rare_display.set(
+            f"{stats.get('rare_animations_seen', 0)} seen  •  "
+            f"{discovered} / {rare_count} discovered"
+        )
+
+    session_display.set(
+    f"Total Sessions:\n"
+    f"{stats.get('session_count', 0)}"
+    )
+
     tk.Label(
         about_frame,
         textvariable=uptime_display,
@@ -273,6 +296,8 @@ def build_about_tab(parent, settings, config, stats):
     rare_label.pack(
         pady=(2, 0)
     )
+
+    update_rare_summary()
 
     version_label = tk.Label(
         about_frame,
@@ -487,6 +512,7 @@ def build_about_tab(parent, settings, config, stats):
             return
 
         update_rare_details()
+        update_rare_summary()
         update_scroll_region()
 
     set_rare_animation_callback(refresh_rare_details)
@@ -548,11 +574,6 @@ def build_about_tab(parent, settings, config, stats):
             )
         )
 
-        session_display.set(
-            f"Total Sessions:\n"
-            f"{stats.get('session_count', 0)}"
-        )
-
         discovered = len(
             stats.get(
                 "rare_animations_discovered",
@@ -566,13 +587,8 @@ def build_about_tab(parent, settings, config, stats):
             if animation.isRare
         )
 
-        rare_display.set(
-            f"{stats.get('rare_animations_seen', 0)} seen  •  "
-            f"{discovered} / {rare_count} discovered"
-        )
-
         rare_label.after(
-            1000,
+            60000,
             update_uptime
         )
 

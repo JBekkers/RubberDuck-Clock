@@ -10,7 +10,7 @@ import time
 import ntplib
 
 TIMEZONE = ZoneInfo("Europe/Amsterdam") 
-SYNC_INTERVAL = 60   
+SYNC_INTERVAL = 1800   
 CLOCK_Y_OFFSET = 55
 
 last_hour_quacked = None
@@ -176,4 +176,4 @@ def update_clock_display():
         print("CLOCK ERROR:", repr(e))
 
     finally:
-        root.after(200, update_clock_display)
+        root.after(1000, update_clock_display)

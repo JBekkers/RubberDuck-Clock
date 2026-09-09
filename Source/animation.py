@@ -173,16 +173,8 @@ def animate_sprite():
     global current_animation
     global current_frame
 
-    # --------------------------------------------------------
-    # Update effects
-    # --------------------------------------------------------
-
     if effect_manager is not None:
         effect_manager.update()
-
-    # --------------------------------------------------------
-    # Position duck
-    # --------------------------------------------------------
 
     scale = (
         effect_manager.scale
@@ -203,10 +195,6 @@ def animate_sprite():
         y
     )
 
-    # --------------------------------------------------------
-    # Current animation
-    # --------------------------------------------------------
-
     animation = animations[current_animation]
 
     frames = animation.frames
@@ -220,15 +208,10 @@ def animate_sprite():
 
         return
 
-    # Safety check.
     if current_frame >= len(frames):
         current_frame = 0
 
     frame = frames[current_frame]
-
-    # --------------------------------------------------------
-    # Scale frame
-    # --------------------------------------------------------
 
     width = max(
         1,
@@ -251,9 +234,6 @@ def animate_sprite():
             Image.Resampling.NEAREST
         )
 
-    # --------------------------------------------------------
-    # Convert to Tkinter image
-    # --------------------------------------------------------
 
     photo = ImageTk.PhotoImage(
         resized_frame
@@ -264,18 +244,8 @@ def animate_sprite():
         image=photo
     )
 
-    # Keep reference alive.
     canvas.image = photo
-
-    # --------------------------------------------------------
-    # Advance frame
-    # --------------------------------------------------------
-
     current_frame += 1
-
-    # --------------------------------------------------------
-    # Animation finished
-    # --------------------------------------------------------
 
     if current_frame >= len(frames):
 
@@ -302,10 +272,6 @@ def animate_sprite():
             finish_current_animation(
                 animation
             )
-
-    # --------------------------------------------------------
-    # Next frame
-    # --------------------------------------------------------
 
     root.after(
         animation.speed,
@@ -402,10 +368,6 @@ effect_manager = EffectManager(
 
 def finish_current_animation(animation):
 
-    # --------------------------------------------------------
-    # Special effect
-    # --------------------------------------------------------
-
     if animation.effect:
 
         handled = start_effect(
@@ -417,10 +379,6 @@ def finish_current_animation(animation):
             play_animation("Idle")
 
             return
-
-    # --------------------------------------------------------
-    # Normal animation
-    # --------------------------------------------------------
 
     play_animation(
         animation.next_animation
