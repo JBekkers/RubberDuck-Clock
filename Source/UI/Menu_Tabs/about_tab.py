@@ -34,6 +34,8 @@ def get_panel_color(color):
 
 
 def build_about_tab(parent, settings, config, stats):
+    last_discovered_animations = None
+
     scroll_container = tk.Frame(parent)
     scroll_container.pack(fill="both", expand=True)
 
@@ -77,7 +79,9 @@ def build_about_tab(parent, settings, config, stats):
         expand=True
     )
 
-    scrollbar.config(command=scroll_canvas.yview)
+    scrollbar.config(
+        command=scroll_canvas.yview
+    )
 
     about_frame = tk.Frame(
         scroll_canvas,
@@ -116,6 +120,7 @@ def build_about_tab(parent, settings, config, stats):
         scroll_canvas.configure(
             scrollregion=scroll_canvas.bbox("all")
         )
+
         scroll_canvas.after_idle(update_scrollbar)
 
     about_frame.bind(
@@ -128,6 +133,7 @@ def build_about_tab(parent, settings, config, stats):
             about_window,
             width=event.width
         )
+
         scroll_canvas.after_idle(update_scrollbar)
 
     scroll_canvas.bind(
@@ -151,10 +157,19 @@ def build_about_tab(parent, settings, config, stats):
         )
 
     def disable_mousewheel(event):
-        scroll_canvas.unbind_all("<MouseWheel>")
+        scroll_canvas.unbind_all(
+            "<MouseWheel>"
+        )
 
-    scroll_canvas.bind("<Enter>", enable_mousewheel)
-    scroll_canvas.bind("<Leave>", disable_mousewheel)
+    scroll_canvas.bind(
+        "<Enter>",
+        enable_mousewheel
+    )
+
+    scroll_canvas.bind(
+        "<Leave>",
+        disable_mousewheel
+    )
 
     tk.Label(
         about_frame,
@@ -162,7 +177,9 @@ def build_about_tab(parent, settings, config, stats):
         font=style.TITLE_FONT,
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR
-    ).pack(pady=(14, 8))
+    ).pack(
+        pady=(14, 8)
+    )
 
     tk.Label(
         about_frame,
@@ -177,7 +194,10 @@ def build_about_tab(parent, settings, config, stats):
         fg=style.TEXT_COLOR,
         wraplength=320,
         justify="center"
-    ).pack(padx=20, pady=(0, 12))
+    ).pack(
+        padx=20,
+        pady=(0, 12)
+    )
 
     tk.Label(
         about_frame,
@@ -185,7 +205,9 @@ def build_about_tab(parent, settings, config, stats):
         font=style.TITLE_FONT,
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR
-    ).pack(pady=(8, 10))
+    ).pack(
+        pady=(8, 10)
+    )
 
     uptime_display = tk.StringVar()
     session_display = tk.StringVar()
@@ -205,14 +227,18 @@ def build_about_tab(parent, settings, config, stats):
         font=style.TEXT_FONT,
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR
-    ).pack(pady=(12, 0))
+    ).pack(
+        pady=(12, 0)
+    )
 
     rare_title_frame = tk.Frame(
         about_frame,
         bg=style.BACKGROUND
     )
 
-    rare_title_frame.pack(pady=(14, 0))
+    rare_title_frame.pack(
+        pady=(14, 0)
+    )
 
     tk.Label(
         rare_title_frame,
@@ -220,7 +246,9 @@ def build_about_tab(parent, settings, config, stats):
         font=style.TEXT_FONT,
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR
-    ).pack(side="left")
+    ).pack(
+        side="left"
+    )
 
     rare_info = tk.Label(
         rare_title_frame,
@@ -244,7 +272,9 @@ def build_about_tab(parent, settings, config, stats):
         fg=style.TEXT_COLOR
     )
 
-    rare_label.pack(pady=(2, 0))
+    rare_label.pack(
+        pady=(2, 0)
+    )
 
     version_label = tk.Label(
         about_frame,
@@ -259,7 +289,9 @@ def build_about_tab(parent, settings, config, stats):
         justify="center"
     )
 
-    version_label.pack(pady=20)
+    version_label.pack(
+        pady=20
+    )
 
     rare_details_container = tk.Frame(
         about_frame,
@@ -286,7 +318,9 @@ def build_about_tab(parent, settings, config, stats):
         font=style.TEXT_FONT,
         bg=rare_panel_bg,
         fg=style.TEXT_COLOR
-    ).pack(anchor="w")
+    ).pack(
+        anchor="w"
+    )
 
     rare_scroll_area = tk.Frame(
         rare_details_container,
@@ -361,12 +395,20 @@ def build_about_tab(parent, settings, config, stats):
     )
 
     def update_rare_details():
+        # Remove old rows.
         for widget in rare_list_frame.winfo_children():
             widget.destroy()
 
         counts = stats.get(
             "rare_animation_counts",
             {}
+        )
+
+        discovered_animations = set(
+            stats.get(
+                "rare_animations_discovered",
+                []
+            )
         )
 
         rare_animations = [
@@ -376,7 +418,15 @@ def build_about_tab(parent, settings, config, stats):
         ]
 
         for name in rare_animations:
-            count = counts.get(name, 0)
+            count = counts.get(
+                name,
+                0
+            )
+
+            if name in discovered_animations:
+                display_name = name
+            else:
+                display_name = "????"
 
             row = tk.Frame(
                 rare_list_frame,
@@ -388,11 +438,10 @@ def build_about_tab(parent, settings, config, stats):
                 pady=2
             )
 
-            indicator_color = (
-                "#168a28"
-                if count > 0
-                else "#c62828"
-            )
+            if name in discovered_animations:
+                indicator_color = "#168a28"
+            else:
+                indicator_color = "#c62828"
 
             indicator = tk.Frame(
                 row,
@@ -408,7 +457,7 @@ def build_about_tab(parent, settings, config, stats):
 
             tk.Label(
                 row,
-                text=name,
+                text=display_name,
                 font=style.TEXT_FONT,
                 bg=rare_panel_bg,
                 fg=style.TEXT_COLOR,
@@ -439,7 +488,9 @@ def build_about_tab(parent, settings, config, stats):
     def toggle_rare_details():
         if rare_details_container.winfo_manager():
             rare_details_container.pack_forget()
+
             update_scroll_region()
+
             return
 
         update_rare_details()
@@ -451,7 +502,9 @@ def build_about_tab(parent, settings, config, stats):
             before=version_label
         )
 
-        scroll_canvas.after_idle(update_scroll_region)
+        scroll_canvas.after_idle(
+            update_scroll_region
+        )
 
     rare_info.bind(
         "<Button-1>",
@@ -473,15 +526,22 @@ def build_about_tab(parent, settings, config, stats):
     )
 
     def update_uptime():
+        nonlocal last_discovered_animations
+
         current_session = get_session_uptime()
 
         total_uptime = (
-            stats.get("total_uptime", 0)
+            stats.get(
+                "total_uptime",
+                0
+            )
             + current_session
         )
 
         uptime_display.set(
-            format_uptime(total_uptime)
+            format_uptime(
+                total_uptime
+            )
         )
 
         session_display.set(
@@ -489,11 +549,15 @@ def build_about_tab(parent, settings, config, stats):
             f"{stats.get('session_count', 0)}"
         )
 
-        discovered = len(
+        discovered_animations = tuple(
             stats.get(
                 "rare_animations_discovered",
                 []
             )
+        )
+
+        discovered = len(
+            discovered_animations
         )
 
         rare_count = sum(
@@ -507,11 +571,21 @@ def build_about_tab(parent, settings, config, stats):
             f"{discovered} / {rare_count} discovered"
         )
 
-        if rare_details_container.winfo_manager():
+        if (
+            rare_details_container.winfo_manager()
+            and discovered_animations != last_discovered_animations
+        ):
             update_rare_details()
 
-        rare_label.after(1000, update_uptime)
+        last_discovered_animations = discovered_animations
+
+        rare_label.after(
+            1000,
+            update_uptime
+        )
 
     update_uptime()
 
-    scroll_canvas.after_idle(update_scrollbar)
+    scroll_canvas.after_idle(
+        update_scrollbar
+    )
