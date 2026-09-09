@@ -3,7 +3,7 @@ from tkinter import ttk
 
 from Source.Config import style
 from Source.UI.Menu_Tabs.stats import get_session_uptime
-from Source.animation import animations
+from Source.animation import animations, set_rare_animation_callback
 
 
 def format_uptime(seconds):
@@ -34,8 +34,6 @@ def get_panel_color(color):
 
 
 def build_about_tab(parent, settings, config, stats):
-    last_discovered_animations = None
-
     scroll_container = tk.Frame(parent)
     scroll_container.pack(fill="both", expand=True)
 
@@ -395,7 +393,6 @@ def build_about_tab(parent, settings, config, stats):
     )
 
     def update_rare_details():
-        # Remove old rows.
         for widget in rare_list_frame.winfo_children():
             widget.destroy()
 
@@ -425,8 +422,10 @@ def build_about_tab(parent, settings, config, stats):
 
             if name in discovered_animations:
                 display_name = name
+                indicator_color = "#168a28"
             else:
                 display_name = "????"
+                indicator_color = "#c62828"
 
             row = tk.Frame(
                 rare_list_frame,
@@ -437,11 +436,6 @@ def build_about_tab(parent, settings, config, stats):
                 fill="x",
                 pady=2
             )
-
-            if name in discovered_animations:
-                indicator_color = "#168a28"
-            else:
-                indicator_color = "#c62828"
 
             indicator = tk.Frame(
                 row,
@@ -485,6 +479,18 @@ def build_about_tab(parent, settings, config, stats):
             scrollregion=rare_canvas.bbox("all")
         )
 
+    def refresh_rare_details():
+        if not rare_details_container.winfo_exists():
+            return
+
+        if not rare_details_container.winfo_manager():
+            return
+
+        update_rare_details()
+        update_scroll_region()
+
+    set_rare_animation_callback(refresh_rare_details)
+
     def toggle_rare_details():
         if rare_details_container.winfo_manager():
             rare_details_container.pack_forget()
@@ -526,8 +532,6 @@ def build_about_tab(parent, settings, config, stats):
     )
 
     def update_uptime():
-        nonlocal last_discovered_animations
-
         current_session = get_session_uptime()
 
         total_uptime = (
@@ -549,15 +553,11 @@ def build_about_tab(parent, settings, config, stats):
             f"{stats.get('session_count', 0)}"
         )
 
-        discovered_animations = tuple(
+        discovered = len(
             stats.get(
                 "rare_animations_discovered",
                 []
             )
-        )
-
-        discovered = len(
-            discovered_animations
         )
 
         rare_count = sum(
@@ -570,14 +570,6 @@ def build_about_tab(parent, settings, config, stats):
             f"{stats.get('rare_animations_seen', 0)} seen  •  "
             f"{discovered} / {rare_count} discovered"
         )
-
-        if (
-            rare_details_container.winfo_manager()
-            and discovered_animations != last_discovered_animations
-        ):
-            update_rare_details()
-
-        last_discovered_animations = discovered_animations
 
         rare_label.after(
             1000,

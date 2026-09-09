@@ -40,6 +40,8 @@ loop_start_time = None
 app_config = None
 app_stats = None
 
+rare_animation_callback = None
+
 effect_manager = None
 
 def get_current_animation():
@@ -58,6 +60,9 @@ def set_config(config, stats):
     app_config = config
     app_stats = stats
 
+def set_rare_animation_callback(callback):
+    global rare_animation_callback
+    rare_animation_callback = callback
 
 def record_rare_animation(name):
     if app_stats is None:
@@ -74,6 +79,9 @@ def record_rare_animation(name):
         app_stats,
         name
     )
+
+    if rare_animation_callback is not None:
+        rare_animation_callback()
 
 def load_animation(
     name,
