@@ -20,8 +20,6 @@ DEFAULT_CONFIG = {
     "settings": {
         "hourly_quack": False,
         "always_on_top": True,
-        "disable_animation": False,
-        "disable_sound": False,
         "disable_particles": False,
 
         "auto_timezone": True,

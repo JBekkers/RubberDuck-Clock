@@ -508,12 +508,11 @@ def build_about_tab(parent, settings, config, stats):
         if not rare_details_container.winfo_exists():
             return
 
-        if not rare_details_container.winfo_manager():
-            return
-
-        update_rare_details()
         update_rare_summary()
-        update_scroll_region()
+
+        if rare_details_container.winfo_manager():
+            update_rare_details()
+            update_scroll_region()
 
     set_rare_animation_callback(refresh_rare_details)
 
@@ -561,39 +560,16 @@ def build_about_tab(parent, settings, config, stats):
         current_session = get_session_uptime()
 
         total_uptime = (
-            stats.get(
-                "total_uptime",
-                0
-            )
+            stats.get("total_uptime",0)
             + current_session
         )
 
         uptime_display.set(
-            format_uptime(
-                total_uptime
-            )
+            format_uptime(total_uptime)
         )
 
-        discovered = len(
-            stats.get(
-                "rare_animations_discovered",
-                []
-            )
-        )
-
-        rare_count = sum(
-            1
-            for animation in animations.values()
-            if animation.isRare
-        )
-
-        rare_label.after(
-            60000,
-            update_uptime
-        )
+        rare_label.after(60000,update_uptime)
 
     update_uptime()
 
-    scroll_canvas.after_idle(
-        update_scrollbar
-    )
+    scroll_canvas.after_idle(update_scrollbar)

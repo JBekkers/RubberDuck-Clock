@@ -3,7 +3,7 @@ from Source.Config.stats import load_stats, start_session
 
 from Source.animation import animate_sprite, choose_random_animation, duck_clicked, set_config
 from Source.UI.menu_manager import setup_menu
-from Source.Window_Manager import root, canvas, set_position, start_move, move_window
+from Source.Window_Manager import root, canvas, set_position, start_move, move_window, set_always_on_top
 from Source.clock import setup_clock, start_clock
 from Source.UI.app import load_font
 from Source.sound import set_sound_volume
@@ -20,6 +20,7 @@ settings = config["settings"]
 start_session(stats)
 set_config(config, stats)
 
+set_always_on_top(settings["always_on_top"])
 particle_system = ParticleSystem()
 
 particle_system.set_disabled(

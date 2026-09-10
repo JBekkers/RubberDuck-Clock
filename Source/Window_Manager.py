@@ -1,11 +1,7 @@
 from Source.Config.style import WINDOW_HEIGHT, WINDOW_WIDTH
-from Source.Config.config import load_config
 
 import ctypes
 import tkinter as tk
-
-config = load_config()
-settings = config["settings"]
 
 menu_window = None
 def set_always_on_top(enabled):
@@ -20,7 +16,7 @@ def set_menu_window(window):
 
 root = tk.Tk()
 root.overrideredirect(True)
-root.attributes("-topmost", settings["always_on_top"])
+root.attributes("-topmost", True)
 root.protocol("WM_DELETE_WINDOW")
 
 root.configure(bg="#010203")
