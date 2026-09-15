@@ -16,7 +16,8 @@ GROW_DURATION = 8.0
 SHRINK_DURATION = 8.0
 
 # Minimum / maximum time the duck stays giant.
-GIANT_TIME = (60, 120)
+# current: between 5 - 10 mins
+GIANT_TIME = (300, 600)
 
 
 # ============================================================
