@@ -12,6 +12,7 @@ The application displays the current time and date inside a simple rubber duck w
 - Custom menu with customization settings.
 - Cute animations and lots of hats to collect
 - Lightweight and simple
+- Tracks uptime/session count
 
 ---
 
@@ -31,19 +32,11 @@ The application displays the current time and date inside a simple rubber duck w
 
 Clone the repository
 
-Install the following dependencies:
-
-pygame
-pillow
-ntplib
-pystray
-tzdata
-tzlocal
+Install the dependencies:
 
 ```bash
-pip install pygame pillow ntplib pystray tzdata
-py -m pip install pygame pillow ntplib pystray tzdata tzlocal
-python -m pip install pygame pillow ntplib pystray tzdata tzlocal
+py -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 Run the application:
@@ -52,25 +45,6 @@ Run the application:
 python main.py
 ```
 
----
-
-## Configuration
-
-The following values can be changed directly
-
-### Timezone
-
-```python
-TIMEZONE = ZoneInfo("Europe/Amsterdam")
-```
-
-### Synchronization interval
-
-```python
-SYNC_INTERVAL = 60
-```
-
-The value is measured in seconds.
 
 ## Future Improvements
 
