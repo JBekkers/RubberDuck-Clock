@@ -1,0 +1,6 @@
+pygame==2.6.1
+Pillow==12.3.0
+ntplib==0.4.0
+pystray==0.19.5
+tzdata==2026.3
+tzlocal==5.4.4
