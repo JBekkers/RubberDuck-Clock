@@ -44,7 +44,8 @@ Run the application:
 ```bash
 python main.py
 ```
-
+run ExecClock.bat or
+debug.bat to run with console open
 
 ## Future Improvements
 
