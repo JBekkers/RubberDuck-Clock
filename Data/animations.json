@@ -76,16 +76,14 @@
             "looping": true,
             "loop_time": [300,600],
             "next": "Idle",
-            "isRare": true,
-            "weight": 0.005
+            "isRare": true
         },
 
         "Grow": {
             "speed": 350,
             "next": "Idle",
             "isRare": true,
-            "effect": "grow",
-            "weight": 0.005
+            "effect": "grow"
         }
     }
 }

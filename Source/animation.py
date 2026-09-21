@@ -18,6 +18,7 @@ from Source.Config.effects import EffectManager
 SPRITE_SIZE = (150, 150)
 
 ANIMATION_FILE = os.path.join(DATA_DIR, "animations.json")
+RAREANIM_CHANCE = 0.005
 
 @dataclass
 class Animation:
@@ -289,30 +290,61 @@ def choose_random_animation():
 
         return
 
-    choices = []
-    weights = []
+    # --------------------------------------------------
+    # RARE POOL
+    # --------------------------------------------------
 
-    for name, anim in animations.items():
+    rare_choices = [
 
-        if anim.weight > 0:
+        name
+        for name, anim in animations.items()
+        if anim.isRare
 
-            choices.append(name)
-            weights.append(anim.weight)
+    ]
 
-    if choices:
+    if rare_choices and random.random() < RAREANIM_CHANCE:
+
+        animation_name = random.choice(
+            rare_choices
+        )
+
+    # --------------------------------------------------
+    # NORMAL POOL
+    # --------------------------------------------------
+
+    else:
+
+        normal_choices = []
+        normal_weights = []
+
+        for name, anim in animations.items():
+
+            if not anim.isRare and anim.weight > 0:
+
+                normal_choices.append(name)
+                normal_weights.append(anim.weight)
+
+        if not normal_choices:
+
+            root.after(
+                6000,
+                choose_random_animation
+            )
+
+            return
 
         animation_name = random.choices(
-            choices,
-            weights=weights,
+            normal_choices,
+            weights=normal_weights,
             k=1
         )[0]
 
-        play_animation(
-            animation_name
-        )
+    play_animation(
+        animation_name
+    )
 
     root.after(
-        random.randint(3000, 10000),
+        6000,
         choose_random_animation
     )
 
