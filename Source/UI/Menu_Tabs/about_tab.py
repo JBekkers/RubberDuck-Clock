@@ -301,6 +301,7 @@ def build_about_tab(parent, settings, config, stats):
 
     version_label = tk.Label(
         about_frame,
+        ##version format: 1.Major.Minor/bugfix
         text=(
             "Version: DEV_1.0.0\n\n"
             "Created by Epicstargamer (Esg)\n"
