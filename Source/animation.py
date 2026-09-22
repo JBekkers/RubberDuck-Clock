@@ -18,7 +18,9 @@ from Source.Config.effects import EffectManager
 SPRITE_SIZE = (150, 150)
 
 ANIMATION_FILE = os.path.join(DATA_DIR, "animations.json")
-RAREANIM_CHANCE = 0.005
+
+## 1 in 6667 chance (about every 11h)
+RAREANIM_CHANCE = 0.00015
 
 @dataclass
 class Animation:
