@@ -47,7 +47,11 @@ def save_stats(stats):
                 indent=4
             )
 
-        os.replace(temp_file,STATS_FILE)
+            f.flush()
+            os.fsync(f.fileno())
+
+        os.replace(temp_file, STATS_FILE)
+        return True
 
     except Exception as e:
         print(f"Failed to save stats: {e}")
@@ -57,6 +61,8 @@ def save_stats(stats):
                 os.remove(temp_file)
         except Exception:
             pass
+
+        return False
 
 
 def start_session(stats):

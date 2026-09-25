@@ -5,7 +5,7 @@ from Source.animation import animate_sprite, choose_random_animation, duck_click
 from Source.UI.menu_manager import setup_menu
 from Source.Window_Manager import root, canvas, set_position, start_move, move_window, set_always_on_top
 from Source.clock import setup_clock, start_clock
-from Source.UI.app import load_font
+from Source.UI.app import load_font, start_uptime_autosave
 from Source.sound import set_sound_volume
 
 from Source.Particle_spawner import ParticleSystem
@@ -69,5 +69,7 @@ start_clock(settings)
 
 animate_sprite()
 choose_random_animation()
+
+start_uptime_autosave(stats)
 
 root.mainloop()

@@ -48,16 +48,38 @@ def reset_position(config):
 
     root.after(0, move)
 
+_last_saved_uptime = 0
 
 def save_uptime(stats):
-    session_time = get_session_uptime()
+    global _last_saved_uptime
 
+    session_time = int(get_session_uptime())
+
+    # Only add time that has not already been saved.
+    elapsed = session_time - _last_saved_uptime
+
+    if elapsed <= 0:
+        return
+
+    # Save only the new time.
     stats["total_uptime"] = (
-        stats.get("total_uptime", 0)
-        + session_time
+        stats.get("total_uptime", 0) + elapsed
     )
 
-    save_stats(stats)
+    if save_stats(stats):
+        _last_saved_uptime = session_time
+    else:
+        # Undo the in-memory change if saving failed.
+        stats["total_uptime"] -= elapsed
+
+def start_uptime_autosave(stats, interval_ms=30_000):
+    def checkpoint():
+        save_uptime(stats)
+
+        # Schedule the next checkpoint.
+        root.after(interval_ms, checkpoint)
+
+    root.after(interval_ms, checkpoint)
 
 def shutdown(config, stats, icon=None):
     prepare_shutdown(config, stats, icon)
