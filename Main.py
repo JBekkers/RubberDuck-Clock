@@ -5,7 +5,7 @@ from Source.animation import animate_sprite, choose_random_animation, duck_click
 from Source.UI.menu_manager import setup_menu
 from Source.Window_Manager import root, canvas, set_position, start_move, move_window, set_always_on_top
 from Source.clock import setup_clock, start_clock
-from Source.UI.app import load_font, start_uptime_autosave
+from Source.UI.app import load_font, start_uptime_autosave, schedule_pos_save
 from Source.sound import set_sound_volume
 
 from Source.Particle_spawner import ParticleSystem
@@ -51,6 +51,11 @@ def on_click(event):
 
 def on_move(event):
     move_window(event, root)
+
+root.bind(
+    "<Configure>",
+    lambda event: schedule_pos_save(event, config)
+)
 
 canvas.tag_bind(
     "draggable",

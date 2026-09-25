@@ -28,6 +28,29 @@ def save_current_pos(config):
 
     save_config(config)
 
+
+pos_save_job = None
+last_pos = None
+
+def schedule_pos_save(event, config):
+    global pos_save_job, last_pos
+
+    pos = (root.winfo_x(), root.winfo_y())
+
+    if pos == last_pos:
+        return
+
+    last_pos = pos
+
+    if pos_save_job:
+        root.after_cancel(pos_save_job)
+
+    pos_save_job = root.after(
+        400,
+        lambda: save_current_pos(config)
+    )
+
+
 def reset_position(config):
 
     default_x = 915
