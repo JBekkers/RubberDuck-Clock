@@ -1,3 +1,68 @@
+import ctypes
+import sys
+import atexit
+from ctypes import wintypes
+
+# ── Single-instance protection ──────────────────────
+
+MUTEX_NAME = "Local\\RubberDuckClock_SingleInstance"
+ERROR_ALREADY_EXISTS = 183
+
+kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+
+kernel32.CreateMutexW.argtypes = [
+    ctypes.c_void_p,
+    wintypes.BOOL,
+    wintypes.LPCWSTR,
+]
+kernel32.CreateMutexW.restype = wintypes.HANDLE
+
+kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+kernel32.CloseHandle.restype = wintypes.BOOL
+
+
+def show_startup_error(message):
+    """Display an error above the always-on-top clock."""
+    ctypes.windll.user32.MessageBoxW(
+        None,
+        message,
+        "RubberDuck Clock",
+        0x10 | 0x40000,
+    )
+
+
+def acquire_single_instance():
+    """Allow only one running instance of the clock."""
+    ctypes.set_last_error(0)
+
+    handle = kernel32.CreateMutexW(
+        None,
+        False,
+        MUTEX_NAME,
+    )
+
+    if not handle:
+        raise ctypes.WinError(ctypes.get_last_error())
+
+    if ctypes.get_last_error() == ERROR_ALREADY_EXISTS:
+        kernel32.CloseHandle(handle)
+        return False
+
+    atexit.register(kernel32.CloseHandle, handle)
+    return True
+
+
+try:
+    if not acquire_single_instance():
+        sys.exit(0)
+
+except OSError as error:
+    show_startup_error(
+        f"Could not start RubberDuck Clock.\n\n{error}"
+    )
+    sys.exit(1)
+
+
 from Source.Config.config import load_config
 from Source.Config.stats import load_stats, start_session
 
@@ -9,6 +74,7 @@ from Source.UI.app import load_font, start_uptime_autosave, schedule_pos_save
 from Source.sound import set_sound_volume
 
 from Source.Particle_spawner import ParticleSystem
+
 
 load_font("Pxls-Regular.ttf")
 
