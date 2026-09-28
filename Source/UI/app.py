@@ -1,12 +1,12 @@
 from Source.Window_Manager import root
 from Source.Config.style import WINDOW_HEIGHT, WINDOW_WIDTH
 from Source.UI.Menu_Tabs.tab_loader import position_menu
-from Source.Config.stats import save_stats
+from Source.Config.stats import save_stats, get_session_uptime
 from Source.Config.config import save_config
 from Source.Config.paths import FONTS_DIR
-from Source.UI.Menu_Tabs.stats import get_session_uptime
 
 import ctypes
+import time
 
 import os
 import sys

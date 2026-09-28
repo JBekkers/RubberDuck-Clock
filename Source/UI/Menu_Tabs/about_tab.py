@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from Source.Config import style
-from Source.UI.Menu_Tabs.stats import get_session_uptime
+from Source.Config.stats import get_session_uptime
 from Source.animation import animations, set_rare_animation_callback
 
 def format_uptime(seconds):

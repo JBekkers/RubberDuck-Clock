@@ -2,8 +2,11 @@ import copy
 import json
 import os
 
+import time
+
 from Source.Config.paths import CONFIG_DIR
 
+APP_START_TIME = time.monotonic()
 
 STATS_FILE = os.path.join(
     CONFIG_DIR,
@@ -72,6 +75,9 @@ def start_session(stats):
 
     save_stats(stats)
 
+def get_session_uptime():
+
+    return time.monotonic() - APP_START_TIME
 
 def add_uptime(stats, seconds):
     stats["total_uptime"] = (
