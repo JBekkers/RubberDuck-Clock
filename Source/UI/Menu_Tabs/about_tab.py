@@ -558,18 +558,13 @@ def build_about_tab(parent, settings, config, stats):
     )
 
     def update_uptime():
-        current_session = get_session_uptime()
-
-        total_uptime = (
-            stats.get("total_uptime",0)
-            + current_session
-        )
+        total_uptime = stats.get("total_uptime", 0)
 
         uptime_display.set(
             format_uptime(total_uptime)
         )
 
-        rare_label.after(60000,update_uptime)
+        rare_label.after(60000, update_uptime)
 
     update_uptime()
 
