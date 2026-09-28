@@ -12,6 +12,12 @@ import os
 import sys
 import subprocess
 
+mutex_release_callback = None
+
+def set_mutex_release_callback(callback):
+    global mutex_release_callback
+    mutex_release_callback = callback
+
 def prepare_shutdown(config, stats, icon=None):
     save_current_pos(config)
     save_uptime(stats)
@@ -122,6 +128,9 @@ def load_font(filename):
 
 def restart_application(config, stats, icon=None):
     prepare_shutdown(config, stats, icon)
+
+    if mutex_release_callback:
+        mutex_release_callback()
 
     subprocess.Popen(
         [sys.executable] + sys.argv

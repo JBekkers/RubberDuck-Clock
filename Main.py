@@ -7,6 +7,7 @@ from ctypes import wintypes
 
 MUTEX_NAME = "Local\\RubberDuckClock_SingleInstance"
 ERROR_ALREADY_EXISTS = 183
+mutex_handle = None
 
 kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
 
@@ -31,8 +32,17 @@ def show_startup_error(message):
     )
 
 
+def release_single_instance():
+    global mutex_handle
+
+    if mutex_handle is not None:
+        kernel32.CloseHandle(mutex_handle)
+        mutex_handle = None
+
+
 def acquire_single_instance():
-    """Allow only one running instance of the clock."""
+    global mutex_handle
+
     ctypes.set_last_error(0)
 
     handle = kernel32.CreateMutexW(
@@ -48,7 +58,9 @@ def acquire_single_instance():
         kernel32.CloseHandle(handle)
         return False
 
-    atexit.register(kernel32.CloseHandle, handle)
+    mutex_handle = handle
+    atexit.register(release_single_instance)
+
     return True
 
 
@@ -62,7 +74,7 @@ except OSError as error:
     )
     sys.exit(1)
 
-
+from Source.UI.app import load_font, start_uptime_autosave, schedule_pos_save, set_mutex_release_callback
 from Source.Config.config import load_config
 from Source.Config.stats import load_stats, start_session
 
@@ -70,11 +82,11 @@ from Source.animation import animate_sprite, choose_random_animation, duck_click
 from Source.UI.menu_manager import setup_menu
 from Source.Window_Manager import root, canvas, set_position, start_move, move_window, set_always_on_top
 from Source.clock import setup_clock, start_clock
-from Source.UI.app import load_font, start_uptime_autosave, schedule_pos_save
 from Source.sound import set_sound_volume
 
 from Source.Particle_spawner import ParticleSystem
 
+set_mutex_release_callback(release_single_instance)
 
 load_font("Pxls-Regular.ttf")
 
