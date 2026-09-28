@@ -51,10 +51,12 @@ def schedule_pos_save(event, config):
     if pos_save_job:
         root.after_cancel(pos_save_job)
 
-    pos_save_job = root.after(
-        400,
-        lambda: save_current_pos(config)
-    )
+    def save_position():
+        global pos_save_job
+        pos_save_job = None
+        save_current_pos(config)
+
+    pos_save_job = root.after(400, save_position)
 
 
 def reset_position(config):
@@ -129,11 +131,13 @@ def load_font(filename):
 def restart_application(config, stats, icon=None):
     prepare_shutdown(config, stats, icon)
 
+    try:
+        subprocess.Popen([sys.executable] + sys.argv)
+    except Exception as e:
+        print(f"Failed to restart application: {e}")
+        return
+
     if mutex_release_callback:
         mutex_release_callback()
-
-    subprocess.Popen(
-        [sys.executable] + sys.argv
-    )
 
     root.destroy()
