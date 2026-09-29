@@ -2,6 +2,10 @@ import ctypes
 import sys
 import atexit
 from ctypes import wintypes
+from Source.Config.error_handler import setup_error_logging,handle_uncaught_exception
+
+setup_error_logging()
+sys.excepthook = handle_uncaught_exception
 
 # ── Single-instance protection ──────────────────────
 
@@ -66,6 +70,9 @@ def acquire_single_instance():
 
 try:
     if not acquire_single_instance():
+        show_startup_error(
+            "RubberDuck Clock is already running."
+        )
         sys.exit(0)
 
 except OSError as error:
@@ -85,6 +92,8 @@ from Source.clock import setup_clock, start_clock
 from Source.sound import set_sound_volume
 
 from Source.Particle_spawner import ParticleSystem
+
+root.report_callback_exception = handle_uncaught_exception
 
 set_mutex_release_callback(release_single_instance)
 
