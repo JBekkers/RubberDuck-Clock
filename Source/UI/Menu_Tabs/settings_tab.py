@@ -5,6 +5,7 @@ from Source.Config.config import save_config
 from Source.sound import set_sound_volume, play_sound
 from tzlocal import get_localzone_name
 
+from Source.Config.error_handler import logger
 
 def add_button_hover(button):
 
@@ -117,6 +118,10 @@ def get_detected_timezone():
     try:
         return get_localzone_name()
     except Exception:
+        logger.exception(
+            "Failed to detect local timezone."
+        )
+
         return DEFAULT_TIMEZONE
     
 def build_settings_tab(parent, settings, config, actions):

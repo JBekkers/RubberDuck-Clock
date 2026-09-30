@@ -6,6 +6,8 @@ from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 from tzlocal import get_localzone_name
 
+from Source.Config.error_handler import logger
+
 import time
 import ntplib
 
@@ -42,8 +44,10 @@ def update_timezone():
         TIMEZONE = ZoneInfo(timezone_name)
         print("Clock timezone:", timezone_name)
 
-    except Exception as e:
-        print("TIMEZONE ERROR:", repr(e))
+    except Exception:
+        logger.exception(
+            "Failed to determine clock timezone."
+        )
 
         TIMEZONE = ZoneInfo("Europe/Amsterdam")
 
@@ -113,7 +117,9 @@ def synchronize_time():
         sync_monotonic = time.monotonic()
 
     except Exception:
-        pass
+        logger.exception(
+            "Time synchronization failed."
+        )
 
     root.after(SYNC_INTERVAL * 1000, synchronize_time)
 
@@ -172,8 +178,10 @@ def update_clock_display():
                 text=""
             )
 
-    except Exception as e:
-        print("CLOCK ERROR:", repr(e))
+    except Exception:
+        logger.exception(
+            "Clock update failed."
+        )
 
     finally:
         root.after(1000, update_clock_display)

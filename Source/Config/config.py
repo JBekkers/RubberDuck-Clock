@@ -3,6 +3,7 @@ import json
 import copy
 
 from Source.Config.paths import CONFIG_DIR
+from Source.Config.error_handler import logger
 
 os.makedirs(CONFIG_DIR, exist_ok=True)
 
@@ -48,9 +49,10 @@ def load_config():
 
         return config
 
-    except Exception as e:
-
-        print(f"Failed to load config: {e}")
+    except Exception:
+        logger.exception(
+            "Failed to load configuration."
+        )
 
         return copy.deepcopy(DEFAULT_CONFIG)
 
@@ -71,11 +73,13 @@ def save_config(config):
             CONFIG_FILE
         )
 
-    except Exception as e:
-        print(f"Failed to save config: {e}")
+    except Exception:
+        logger.exception(
+            "Failed to save configuration."
+        )
 
         try:
             if os.path.exists(temp_file):
                 os.remove(temp_file)
-        except Exception:
+        except OSError:
             pass

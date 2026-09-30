@@ -5,6 +5,7 @@ import os
 import time
 
 from Source.Config.paths import CONFIG_DIR
+from Source.Config.error_handler import logger
 
 APP_START_TIME = time.monotonic()
 
@@ -34,8 +35,11 @@ def load_stats():
 
         return stats
 
-    except Exception as e:
-        print(f"Failed to load stats: {e}")
+    except Exception:
+        logger.exception(
+            "Failed to load statistics."
+        )
+
         return copy.deepcopy(DEFAULT_STATS)
 
 
@@ -56,13 +60,15 @@ def save_stats(stats):
         os.replace(temp_file, STATS_FILE)
         return True
 
-    except Exception as e:
-        print(f"Failed to save stats: {e}")
+    except Exception:
+        logger.exception(
+            "Failed to save statistics."
+        )
 
         try:
             if os.path.exists(temp_file):
                 os.remove(temp_file)
-        except Exception:
+        except OSError:
             pass
 
         return False

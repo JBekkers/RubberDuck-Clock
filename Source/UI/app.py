@@ -5,8 +5,9 @@ from Source.Config.stats import save_stats, get_session_uptime
 from Source.Config.config import save_config
 from Source.Config.paths import FONTS_DIR
 
+from Source.Config.error_handler import logger
+
 import ctypes
-import time
 
 import os
 import sys
@@ -132,9 +133,13 @@ def restart_application(config, stats, icon=None):
     prepare_shutdown(config, stats, icon)
 
     try:
-        subprocess.Popen([sys.executable] + sys.argv)
-    except Exception as e:
-        print(f"Failed to restart application: {e}")
+        subprocess.Popen(
+            [sys.executable] + sys.argv
+        )
+    except Exception:
+        logger.exception(
+            "Failed to restart application."
+        )
         return
 
     if mutex_release_callback:
