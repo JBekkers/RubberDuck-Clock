@@ -3,9 +3,7 @@ import os
 
 from Source.Window_Manager import canvas
 from Source.Config.paths import UI_DIR
-
-MENU_OFFSET_X = 130
-MENU_OFFSET_Y = 200
+from Source.Config import style
 
 menu_image = None
 menu_hover = None
@@ -37,8 +35,8 @@ def create_menu_button(open_menu):
     )
 
     menu_button = canvas.create_image(
-        75 + MENU_OFFSET_X,
-        75 + MENU_OFFSET_Y,
+        75 + style.MENU_OFFSET_X,
+        75 + style.MENU_OFFSET_Y,
         image=menu_image,
         anchor="center",
         tags=("menu_button",)

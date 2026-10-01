@@ -2,34 +2,12 @@ import tkinter as tk
 from tkinter import ttk
 
 from Source.Config import style
-from Source.Config.stats import get_session_uptime
 from Source.animation import animations, set_rare_animation_callback
+
 
 def format_uptime(seconds):
     hours = seconds / 3600
     return f"Total Uptime:\n{hours:.1f} hours"
-
-
-def get_panel_color(color):
-    color = color.lstrip("#")
-
-    if len(color) != 6:
-        return color
-
-    rgb = [
-        int(color[0:2], 16),
-        int(color[2:4], 16),
-        int(color[4:6], 16)
-    ]
-
-    amount = -10 if sum(rgb) / 3 > 128 else 12
-
-    rgb = [
-        max(0, min(255, value + amount))
-        for value in rgb
-    ]
-
-    return "#" + "".join(f"{value:02x}" for value in rgb)
 
 
 def build_about_tab(parent, settings, config, stats):
@@ -46,7 +24,7 @@ def build_about_tab(parent, settings, config, stats):
         bordercolor=style.SCROLL_BORDER,
         arrowcolor=style.SCROLL_ARROW,
         relief="flat",
-        width=14
+        width=style.SCROLL_WIDTH
     )
 
     scrollbar_style.map(
@@ -91,8 +69,8 @@ def build_about_tab(parent, settings, config, stats):
         anchor="nw"
     )
 
-    rare_panel_bg = get_panel_color(style.BACKGROUND)
-    rare_border = get_panel_color(rare_panel_bg)
+    rare_panel_bg = style.RARE_PANEL_BACKGROUND
+    rare_border = style.RARE_PANEL_BORDER
 
     def update_scrollbar():
         scroll_canvas.update_idletasks()
@@ -189,7 +167,7 @@ def build_about_tab(parent, settings, config, stats):
         font=style.TEXT_FONT,
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR,
-        wraplength=320,
+        wraplength=style.ABOUT_TEXT_WRAP_LENGTH,
         justify="center"
     ).pack(
         padx=20,
@@ -230,8 +208,8 @@ def build_about_tab(parent, settings, config, stats):
         )
 
     session_display.set(
-    f"Total Sessions:\n"
-    f"{stats.get('session_count', 0)}"
+        f"Total Sessions:\n"
+        f"{stats.get('session_count', 0)}"
     )
 
     tk.Label(
@@ -301,7 +279,6 @@ def build_about_tab(parent, settings, config, stats):
 
     version_label = tk.Label(
         about_frame,
-        ##version format: 1.Major.Minor/bugfix
         text=(
             "Version: DEV_1.0.0\n\n"
             "Created by Epicstargamer (Esg)\n"
@@ -321,7 +298,7 @@ def build_about_tab(parent, settings, config, stats):
         about_frame,
         bg=rare_panel_bg,
         highlightbackground=rare_border,
-        highlightthickness=1,
+        highlightthickness=style.RARE_PANEL_BORDER_WIDTH,
         bd=0
     )
 
@@ -360,7 +337,8 @@ def build_about_tab(parent, settings, config, stats):
 
     rare_scrollbar = ttk.Scrollbar(
         rare_scroll_area,
-        orient="vertical"
+        orient="vertical",
+        style="About.Vertical.TScrollbar"
     )
 
     rare_scrollbar.pack(
@@ -370,7 +348,7 @@ def build_about_tab(parent, settings, config, stats):
 
     rare_canvas = tk.Canvas(
         rare_scroll_area,
-        height=100,
+        height=style.RARE_LIST_HEIGHT,
         highlightthickness=0,
         bg=rare_panel_bg,
         yscrollcommand=rare_scrollbar.set
@@ -448,10 +426,10 @@ def build_about_tab(parent, settings, config, stats):
 
             if name in discovered_animations:
                 display_name = name
-                indicator_color = "#168a28"
+                indicator_color = style.UNLOCKED_COLOR
             else:
                 display_name = "????"
-                indicator_color = "#c62828"
+                indicator_color = style.LOCKED_COLOR
 
             row = tk.Frame(
                 rare_list_frame,
@@ -466,7 +444,7 @@ def build_about_tab(parent, settings, config, stats):
             indicator = tk.Frame(
                 row,
                 bg=indicator_color,
-                width=4
+                width=style.RARE_INDICATOR_WIDTH
             )
 
             indicator.pack(
@@ -558,14 +536,22 @@ def build_about_tab(parent, settings, config, stats):
     )
 
     def update_uptime():
-        total_uptime = stats.get("total_uptime", 0)
+        total_uptime = stats.get(
+            "total_uptime",
+            0
+        )
 
         uptime_display.set(
             format_uptime(total_uptime)
         )
 
-        rare_label.after(60000, update_uptime)
+        rare_label.after(
+            60000,
+            update_uptime
+        )
 
     update_uptime()
 
-    scroll_canvas.after_idle(update_scrollbar)
+    scroll_canvas.after_idle(
+        update_scrollbar
+    )

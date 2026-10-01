@@ -8,7 +8,6 @@ from Source.UI.Menu_Tabs.about_tab import build_about_tab
 from Source.UI.Menu_Tabs.exchange_tab import build_exchange_tab
 
 window = None
-window_width = 400
 
 def close_menu():
     global window
@@ -79,8 +78,8 @@ def open_settings(root,settings,config,stats,actions):
     content.pack(
         fill="both",
         expand=True,
-        padx=5,
-        pady=5
+        padx=style.MENU_PADDING,
+        pady=style.MENU_PADDING
     )
 
     tabs = [
@@ -120,7 +119,7 @@ def open_settings(root,settings,config,stats,actions):
             highlightthickness=0,
             bg=style.BUTTON_NORMAL,
             fg=style.TEXT_COLOR,
-            activebackground=style.BUTTON_NORMAL,
+            activebackground=style.BUTTON_CLICKED,
             activeforeground=style.TEXT_COLOR,
         )
         buttons.append(button)
@@ -146,7 +145,10 @@ def open_settings(root,settings,config,stats,actions):
         text="X",
         command=close_menu,
         relief="flat",
-        bg="#CF5029",
+        bg=style.CLOSE_BUTTON,
+        fg=style.TEXT_COLOR,
+        activebackground=style.CLOSE_BUTTON,
+        activeforeground=style.TEXT_COLOR,
         font=style.TITLE_FONT,
         borderwidth=0,
         highlightthickness=0,
@@ -165,8 +167,8 @@ def position_menu(root):
     if window is None or not window.winfo_exists():
         return
 
-    menu_width = window_width
-    menu_height = 450
+    menu_width = style.MENU_WIDTH
+    menu_height = style.MENU_HEIGHT
 
     duck_x = root.winfo_x()
     duck_y = root.winfo_y()

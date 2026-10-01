@@ -140,7 +140,7 @@ def build_settings_tab(parent, settings, config, actions):
         bordercolor=style.SCROLL_BORDER,
         arrowcolor=style.SCROLL_ARROW,
         relief="flat",
-        width=14
+        width=style.SCROLL_WIDTH
     )
 
     scrollbar_style.map(
@@ -209,13 +209,13 @@ def build_settings_tab(parent, settings, config, actions):
             bg=style.BACKGROUND,
             activebackground=style.BACKGROUND,
             selectcolor=style.BACKGROUND,
-            fg="black",
-            activeforeground="black",
+            fg=style.TEXT_COLOR,
+            activeforeground=style.TEXT_COLOR,
             command=changed
         ).pack(
             anchor="w",
-            padx=20,
-            pady=3
+            padx=style.CONTROL_PADDING_X,
+            pady=style.CONTROL_PADDING_Y
         )
 
     def update_scroll_region(event=None):
@@ -293,8 +293,8 @@ def build_settings_tab(parent, settings, config, actions):
         play_sound("quack.wav" )
 
     volume_container = tk.Frame(settings_frame)
-    volume_container.pack(fill="x",pady=3)
-    volume_container.configure(height=35)
+    volume_container.pack(fill="x",pady=style.VOLUME_CONTAINER_PADDING_Y)
+    volume_container.configure(height=style.VOLUME_CONTAINER_HEIGHT)
     volume_container.pack_propagate(False)
 
     volume_scale = tk.Scale(
@@ -305,15 +305,15 @@ def build_settings_tab(parent, settings, config, actions):
         variable=volume,
         command=volume_changed,
         font=style.TEXT_FONT,
-        length=200,
+        length=style.VOLUME_SLIDER_LENGTH,
         showvalue=False,
         highlightthickness=0,
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR,
         troughcolor=style.BUTTON_NORMAL,
         activebackground=style.BUTTON_CLICKED,
-        sliderlength=25,
-        width=12
+        sliderlength=style.VOLUME_SLIDER_THUMB_LENGTH,
+        width=style.VOLUME_SLIDER_WIDTH,
     )
 
     volume_scale.place(
@@ -326,7 +326,7 @@ def build_settings_tab(parent, settings, config, actions):
         volume_container,
         textvariable=volume_display,
         font=style.TEXT_FONT,
-        width=5,
+        width=style.VOLUME_DISPLAY_WIDTH,
         anchor="w"
     )
 
@@ -334,7 +334,7 @@ def build_settings_tab(parent, settings, config, actions):
     volume_display_label.place(
         relx=0.5,
         rely=0.5,
-        x=108,
+        x=style.VOLUME_DISPLAY_OFFSET_X,
         anchor="w"
     )
 
@@ -403,14 +403,14 @@ def build_settings_tab(parent, settings, config, actions):
         bg=style.BACKGROUND,
         activebackground=style.BACKGROUND,
         selectcolor=style.BACKGROUND,
-        fg="black",
-        activeforeground="black"
+        fg=style.TEXT_COLOR,
+        activeforeground=style.TEXT_COLOR,
     )
 
     auto_timezone_check.pack(
         anchor="w",
-        padx=20,
-        pady=3
+        padx=style.CONTROL_PADDING_X,
+        pady=style.CONTROL_PADDING_Y
     )
 
     dropdown_style = ttk.Style()
@@ -421,8 +421,8 @@ def build_settings_tab(parent, settings, config, actions):
         "Settings.TCombobox",
         fieldbackground=style.BUTTON_NORMAL,
         background=style.BUTTON_NORMAL,
-        foreground="black",
-        arrowcolor="black",
+        foreground=style.TEXT_COLOR,
+        arrowcolor=style.TEXT_COLOR,
         bordercolor=style.BUTTON_NORMAL,
         lightcolor=style.BUTTON_NORMAL,
         darkcolor=style.BUTTON_NORMAL
@@ -439,7 +439,7 @@ def build_settings_tab(parent, settings, config, actions):
 
             (
                 "disabled",
-                "#d0d0d0"
+                style.DISABLED_BACKGROUND
             )
         ],
 
@@ -451,19 +451,19 @@ def build_settings_tab(parent, settings, config, actions):
 
             (
                 "disabled",
-                "#d0d0d0"
+                style.DISABLED_BACKGROUND
             )
         ],
 
         foreground=[
             (
                 "readonly",
-                "black"
+                style.TEXT_COLOR
             ),
 
             (
                 "disabled",
-                "#777777"
+                style.DISABLED_TEXT
             )
         ],
 
@@ -475,7 +475,7 @@ def build_settings_tab(parent, settings, config, actions):
 
             (
                 "disabled",
-                "#d0d0d0"
+                style.DISABLED_BACKGROUND
             )
         ],
 
@@ -496,7 +496,7 @@ def build_settings_tab(parent, settings, config, actions):
         arrowcolor=[
             (
                 "readonly",
-                "black"
+                style.TEXT_COLOR
             ),
 
             (
@@ -511,14 +511,14 @@ def build_settings_tab(parent, settings, config, actions):
         textvariable=timezone,
         values=TIMEZONES,
         state="readonly",
-        width=25,
+        width=style.TIMEZONE_WIDTH,
         style="Settings.TCombobox"
     )
 
     timezone_dropdown.pack(
         anchor="w",
-        padx=(45,20),
-        pady=3
+        padx=(style.TIMEZONE_PADDING_LEFT,style.TIMEZONE_PADDING_RIGHT),
+        pady=style.CONTROL_PADDING_Y
     )
 
     def timezone_selected(event=None):
@@ -597,12 +597,12 @@ def build_settings_tab(parent, settings, config, actions):
             command=command,
             font=style.TITLE_FONT,
             bg=style.BUTTON_NORMAL,
-            fg="black",
-            activeforeground="black",
+            fg=style.TEXT_COLOR,
+            activeforeground=style.TEXT_COLOR,
             activebackground=style.BUTTON_CLICKED
         )
 
-        button.pack(pady=3)
+        button.pack(pady=style.BUTTON_PADDING_Y)
         add_button_hover(button)
 
     add_action_button(
