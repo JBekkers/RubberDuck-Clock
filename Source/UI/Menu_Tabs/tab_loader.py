@@ -45,8 +45,10 @@ def open_settings(root,settings,config,stats,actions):
     window.lift()
 
     window.option_add("*Background", style.BACKGROUND)
+    window.option_add("*Foreground", style.TEXT_COLOR)
 
-    window.option_add("*Checkbutton.ActiveBackground", style.BACKGROUND)
+    window.option_add("*Checkbutton.ActiveBackground",style.SURFACE)
+
     window.option_add("*Button.Background", style.BUTTON_NORMAL)
     window.option_add("*Button.Foreground", style.TEXT_COLOR)
     window.option_add("*Button.ActiveBackground", style.BUTTON_CLICKED)
@@ -71,10 +73,20 @@ def open_settings(root,settings,config,stats,actions):
 
     background.lower()
 
-    tab_bar = tk.Frame(window)
+    tab_bar = tk.Frame(
+        window,
+        bg=style.BUTTON_NORMAL,
+        height=style.MENU_HEADER_HEIGHT
+    )
+    tab_bar.pack_propagate(False)
+
     tab_bar.pack(fill="x")
 
-    content = tk.Frame(window)
+    content = tk.Frame(
+        window,
+        bg=style.SURFACE
+    )
+
     content.pack(
         fill="both",
         expand=True,
@@ -96,9 +108,15 @@ def open_settings(root,settings,config,stats,actions):
     def show_tab(index):
         for i, frame in enumerate(frames):
             frame.pack_forget()
-            buttons[i].config(bg=style.BUTTON_NORMAL)
+            buttons[i].config(
+                bg=style.BUTTON_NORMAL,
+                relief="flat"
+            )
 
-        buttons[index].config(bg=style.BUTTON_SELECTED)
+        buttons[index].config(
+            bg=style.BUTTON_SELECTED,
+            relief="flat"
+        )
 
         frames[index].pack(
             fill="both",
@@ -114,13 +132,16 @@ def open_settings(root,settings,config,stats,actions):
             text=title,
             command=lambda i=index: show_tab(i),
             relief="flat",
-            font=style.TITLE_FONT,
+            font=style.MENU_TAB_FONT,
             borderwidth=0,
             highlightthickness=0,
             bg=style.BUTTON_NORMAL,
             fg=style.TEXT_COLOR,
             activebackground=style.BUTTON_CLICKED,
             activeforeground=style.TEXT_COLOR,
+            cursor="hand2",
+            padx=style.MENU_TAB_PADDING_X,
+            pady=style.MENU_TAB_PADDING_Y,
         )
         buttons.append(button)
 
@@ -142,16 +163,17 @@ def open_settings(root,settings,config,stats,actions):
 
     close_button = tk.Button(
         tab_bar,
-        text="X",
+        text="×",
         command=close_menu,
         relief="flat",
         bg=style.CLOSE_BUTTON,
-        fg=style.TEXT_COLOR,
-        activebackground=style.CLOSE_BUTTON,
-        activeforeground=style.TEXT_COLOR,
-        font=style.TITLE_FONT,
+        fg="#FFFFFF",
+        activebackground=style.CLOSE_BUTTON_HOVER,
+        activeforeground="#FFFFFF",
+        font=("Segoe UI", 12, "bold"),
         borderwidth=0,
         highlightthickness=0,
+        cursor="hand2",
     )
 
     close_button.grid(

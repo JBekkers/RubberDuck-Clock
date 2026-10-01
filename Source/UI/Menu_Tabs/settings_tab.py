@@ -29,9 +29,11 @@ def section_title(parent, text):
     tk.Label(
         parent,
         text=text,
-        font=style.TEXT_FONT,
+        font=style.TITLE_FONT,
+        bg=style.BACKGROUND,
+        fg=style.TEXT_COLOR
     ).pack(
-        pady=(15, 5)
+        pady=(18, 8)
     )
 
 
@@ -204,7 +206,7 @@ def build_settings_tab(parent, settings, config, actions):
         tk.Checkbutton(
             parent,
             text=text,
-            font=style.TITLE_FONT,
+            font=style.TEXT_FONT,
             variable=variable,
             bg=style.BACKGROUND,
             activebackground=style.BACKGROUND,
@@ -369,7 +371,7 @@ def build_settings_tab(parent, settings, config, actions):
     tk.Label(
         settings_frame,
         text="Clock settings",
-        font=style.TEXT_FONT
+        font=style.TITLE_FONT
     ).pack(
         pady=(15, 5)
     )
@@ -398,7 +400,7 @@ def build_settings_tab(parent, settings, config, actions):
     auto_timezone_check = tk.Checkbutton(
         timezone_controls,
         text="Automatic Region Selection",
-        font=style.TITLE_FONT,
+        font=style.TEXT_FONT,
         variable=auto_timezone,
         bg=style.BACKGROUND,
         activebackground=style.BACKGROUND,
