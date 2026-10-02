@@ -274,10 +274,6 @@ def build_settings_tab(parent, settings, config, actions):
         )
     )
 
-    volume_display = tk.StringVar(
-        value=f"{volume.get()}%"
-    )
-
     set_sound_volume(
         volume.get()
     )
@@ -287,83 +283,135 @@ def build_settings_tab(parent, settings, config, actions):
         value = int(float(value))
         settings["sound_volume"] = value
         set_sound_volume(value)
-        volume_display.set(f"{value}%")
         save_config(config)
 
 
     def volume_released(event):
         play_sound("quack.wav" )
 
-    volume_container = tk.Frame(settings_frame)
-    volume_container.pack(fill="x",pady=style.VOLUME_CONTAINER_PADDING_Y)
-    volume_container.configure(height=style.VOLUME_CONTAINER_HEIGHT)
+    
+    volume_container = tk.Frame(
+        settings_frame,
+        bg=style.BACKGROUND,
+        height=style.VOLUME_CONTAINER_HEIGHT
+    )
+    volume_container.pack(
+        fill="x",
+        pady=style.VOLUME_CONTAINER_PADDING_Y
+    )
     volume_container.pack_propagate(False)
 
-    volume_scale = tk.Scale(
+    volume_canvas = tk.Canvas(
         volume_container,
-        from_=0,
-        to=100,
-        orient="horizontal",
-        variable=volume,
-        command=volume_changed,
-        font=style.TEXT_FONT,
-        length=style.VOLUME_SLIDER_LENGTH,
-        showvalue=False,
-        highlightthickness=0,
+        width=style.VOLUME_CANVAS_WIDTH,
+        height=style.VOLUME_CANVAS_HEIGHT,
         bg=style.BACKGROUND,
-        fg=style.TEXT_COLOR,
-        troughcolor=style.BUTTON_NORMAL,
-        activebackground=style.BUTTON_CLICKED,
-        sliderlength=style.VOLUME_SLIDER_THUMB_LENGTH,
-        width=style.VOLUME_SLIDER_WIDTH,
+        highlightthickness=0,
+        bd=0
     )
-
-    volume_scale.place(
+    volume_canvas.place(
         relx=0.5,
         rely=0.5,
         anchor="center"
     )
 
-    volume_display_label = tk.Label(
-        volume_container,
-        textvariable=volume_display,
-        font=style.TEXT_FONT,
-        width=style.VOLUME_DISPLAY_WIDTH,
-        anchor="w"
-    )
+    track_start = 34
+    track_end = 240
+    track_y = style.VOLUME_CANVAS_HEIGHT // 2
+    thumb_radius = style.VOLUME_THUMB_RADIUS
 
+    def draw_volume_slider():
+        volume_canvas.delete("all")
 
-    volume_display_label.place(
-        relx=0.5,
-        rely=0.5,
-        x=style.VOLUME_DISPLAY_OFFSET_X,
-        anchor="w"
-    )
-
-    def slider_clicked(event):
-
-        thumb_x = volume_scale.coords(
-            volume_scale.get()
-        )[0]
-
-        thumb_half_width = (
-            volume_scale.cget("sliderlength")/2
+        # Track
+        volume_canvas.create_line(
+            track_start,
+            track_y,
+            track_end,
+            track_y,
+            fill=style.VOLUME_TRACK_COLOR,
+            width=style.VOLUME_TRACK_HEIGHT,
+            capstyle="round"
         )
 
-        if (thumb_x - thumb_half_width <= event.x <= thumb_x + thumb_half_width):
-            return
+        # Current thumb position
+        percentage = volume.get() / 100
+        thumb_x = (
+            track_start
+            + percentage * (track_end - track_start)
+        )
 
-        min_x = volume_scale.coords(volume_scale.cget("from"))[0]
-        max_x = volume_scale.coords(volume_scale.cget("to"))[0]
-        x = max(min_x,min(event.x,max_x))
-        percentage = ((x - min_x)/(max_x - min_x))
+        # Thumb shadow
+        volume_canvas.create_oval(
+            thumb_x - thumb_radius + 1,
+            track_y - thumb_radius + 2,
+            thumb_x + thumb_radius + 1,
+            track_y + thumb_radius + 2,
+            fill="#D7CBBE",
+            outline=""
+        )
+
+        # Circular thumb
+        volume_canvas.create_oval(
+            thumb_x - thumb_radius,
+            track_y - thumb_radius,
+            thumb_x + thumb_radius,
+            track_y + thumb_radius,
+            fill=style.VOLUME_THUMB_COLOR,
+            outline=""
+        )
+
+        # Speaker icons
+        volume_canvas.create_text(
+            13,
+            track_y,
+            text="◖",
+            fill=style.VOLUME_ICON_COLOR,
+            font=("Segoe UI Symbol", 12)
+        )
+
+        volume_canvas.create_text(
+            260,
+            track_y,
+            text="◖))",
+            fill=style.VOLUME_ICON_COLOR,
+            font=("Segoe UI Symbol", 10)
+        )
+
+    def set_volume_from_mouse(event):
+        x = max(
+            track_start,
+            min(event.x, track_end)
+        )
+
+        percentage = (
+            (x - track_start)
+            / (track_end - track_start)
+        )
+
         value = round(percentage * 100)
-        volume_scale.set(value)
-        volume_changed(value)
 
-    volume_scale.bind("<Button-1>",slider_clicked,add="+")
-    volume_scale.bind("<ButtonRelease-1>",volume_released)
+        if value != volume.get():
+            volume.set(value)
+            volume_changed(value)
 
+        draw_volume_slider()
+
+    volume_canvas.bind(
+        "<Button-1>",
+        set_volume_from_mouse
+    )
+
+    volume_canvas.bind(
+        "<B1-Motion>",
+        set_volume_from_mouse
+    )
+    volume_canvas.bind(
+        "<ButtonRelease-1>",
+        volume_released
+    )
+
+    draw_volume_slider()
     # ==================================================
     # CLOCK SETTINGS
     # ==================================================
