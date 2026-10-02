@@ -367,7 +367,6 @@ def build_settings_tab(parent, settings, config, actions):
             track_y,
             text="◖",
             fill=style.VOLUME_ICON_COLOR,
-            font=("Segoe UI Symbol", 12)
         )
 
         volume_canvas.create_text(
@@ -375,7 +374,6 @@ def build_settings_tab(parent, settings, config, actions):
             track_y,
             text="◖))",
             fill=style.VOLUME_ICON_COLOR,
-            font=("Segoe UI Symbol", 10)
         )
 
     def set_volume_from_mouse(event):
