@@ -1,51 +1,27 @@
 import tkinter as tk
-from tkinter import ttk
 
 from Source.Config import style
 from Source.animation import animations, set_rare_animation_callback
-
+from Source.Config.scrollbar import FlatScrollbar
 
 def format_uptime(seconds):
     hours = seconds / 3600
     return f"Total Uptime:\n{hours:.1f} hours"
 
-
 def build_about_tab(parent, settings, config, stats):
     scroll_container = tk.Frame(parent)
     scroll_container.pack(fill="both", expand=True)
-
-    scrollbar_style = ttk.Style()
-    scrollbar_style.theme_use("clam")
-
-    scrollbar_style.configure(
-        "About.Vertical.TScrollbar",
-        background=style.SCROLL_BACKGROUND,
-        troughcolor=style.SCROLL_TROUGH,
-        bordercolor=style.SCROLL_BORDER,
-        arrowcolor=style.SCROLL_ARROW,
-        relief="flat",
-        width=style.SCROLL_WIDTH
-    )
-
-    scrollbar_style.map(
-        "About.Vertical.TScrollbar",
-        background=[
-            ("active", style.BUTTON_CLICKED),
-            ("pressed", style.BUTTON_CLICKED)
-        ]
-    )
-
-    scrollbar = ttk.Scrollbar(
-        scroll_container,
-        orient="vertical",
-        style="About.Vertical.TScrollbar"
-    )
 
     scroll_canvas = tk.Canvas(
         scroll_container,
         highlightthickness=0,
         bg=style.BACKGROUND,
-        yscrollcommand=scrollbar.set
+        bd=0
+    )
+
+    scrollbar = FlatScrollbar(
+        scroll_container,
+        command=scroll_canvas.yview
     )
 
     scroll_canvas.pack(
@@ -54,8 +30,13 @@ def build_about_tab(parent, settings, config, stats):
         expand=True
     )
 
-    scrollbar.config(
-        command=scroll_canvas.yview
+    scrollbar.pack(
+        side="right",
+        fill="y"
+    )
+
+    scroll_canvas.configure(
+        yscrollcommand=scrollbar.set
     )
 
     about_frame = tk.Frame(
@@ -335,23 +316,23 @@ def build_about_tab(parent, settings, config, stats):
         pady=(2, 8)
     )
 
-    rare_scrollbar = ttk.Scrollbar(
-        rare_scroll_area,
-        orient="vertical",
-        style="About.Vertical.TScrollbar"
-    )
-
-    rare_scrollbar.pack(
-        side="right",
-        fill="y"
-    )
-
     rare_canvas = tk.Canvas(
         rare_scroll_area,
         height=style.RARE_LIST_HEIGHT,
         highlightthickness=0,
         bg=rare_panel_bg,
-        yscrollcommand=rare_scrollbar.set
+        bd=0
+    )
+
+    rare_scrollbar = FlatScrollbar(
+        rare_scroll_area,
+        command=rare_canvas.yview,
+        bg=rare_panel_bg,
+        width=style.RARE_SCROLLBAR_WIDTH,
+        thumb_color=style.SCROLLBAR_THUMB,
+        hover_color=style.SCROLLBAR_THUMB_HOVER,
+        thumb_width=style.RARE_SCROLLBAR_THUMB_WIDTH,
+        min_thumb_height=style.RARE_SCROLLBAR_MIN_THUMB_HEIGHT
     )
 
     rare_canvas.pack(
@@ -360,8 +341,13 @@ def build_about_tab(parent, settings, config, stats):
         expand=True
     )
 
-    rare_scrollbar.config(
-        command=rare_canvas.yview
+    rare_scrollbar.pack(
+        side="right",
+        fill="y"
+    )
+
+    rare_canvas.configure(
+        yscrollcommand=rare_scrollbar.set
     )
 
     rare_list_frame = tk.Frame(
@@ -493,7 +479,9 @@ def build_about_tab(parent, settings, config, stats):
             update_rare_details()
             update_scroll_region()
 
-    set_rare_animation_callback(refresh_rare_details)
+    set_rare_animation_callback(
+        refresh_rare_details
+    )
 
     def toggle_rare_details():
         if rare_details_container.winfo_manager():

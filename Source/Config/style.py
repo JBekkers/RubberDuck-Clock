@@ -29,12 +29,17 @@ CLOSE_BUTTON_HOVER = "#B95742"
 # ------------------------------------------------------------
 # SCROLLBAR
 # ------------------------------------------------------------
+SCROLLBAR_BACKGROUND = "#FAC97B"
+SCROLLBAR_THUMB = "#89604F"
+SCROLLBAR_THUMB_HOVER = "#806C49"
 
-SCROLL_BACKGROUND = "#EBC45B"
-SCROLL_TROUGH = "#FFF8E7"
-SCROLL_BORDER = "#FFF8E7"
-SCROLL_ARROW = "#806C49"
-SCROLL_WIDTH = 10
+SCROLLBAR_WIDTH = 20
+SCROLLBAR_THUMB_WIDTH = 20
+SCROLLBAR_MIN_THUMB_HEIGHT = 15
+
+RARE_SCROLLBAR_WIDTH = 14
+RARE_SCROLLBAR_THUMB_WIDTH = 15
+RARE_SCROLLBAR_MIN_THUMB_HEIGHT = 5
 
 
 # ------------------------------------------------------------

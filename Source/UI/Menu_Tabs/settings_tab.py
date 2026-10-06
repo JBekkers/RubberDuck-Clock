@@ -2,13 +2,13 @@ import tkinter as tk
 from tkinter import ttk
 from Source.Config import style
 from Source.Config.config import save_config
+from Source.Config.scrollbar import FlatScrollbar
 from Source.sound import set_sound_volume, play_sound
 from tzlocal import get_localzone_name
 
 from Source.Config.error_handler import logger
 
 def add_button_hover(button):
-
     button.bind(
         "<Enter>",
         lambda event: button.config(
@@ -23,9 +23,7 @@ def add_button_hover(button):
         )
     )
 
-
 def section_title(parent, text):
-
     tk.Label(
         parent,
         text=text,
@@ -36,37 +34,29 @@ def section_title(parent, text):
         pady=(18, 8)
     )
 
-
 SOUND_SETTINGS = [
-
     (
         "clock_24_hour",
         "24 Hour Clock"
     ),
-
     (
         "hourly_quack",
         "Hourly Quack Alarm"
     )
-
 ]
 
 OTHER_SETTINGS = [
-
     (
         "always_on_top",
         "Always On Top"
     ),
-
     (
         "disable_particles",
         "Disable Particles"
     )
-
 ]
 
 TIMEZONES = sorted([
-
     "Africa/Cairo",
     "Africa/Johannesburg",
 
@@ -111,7 +101,6 @@ TIMEZONES = sorted([
 
     "Pacific/Auckland",
     "Pacific/Honolulu",
-
 ])
 
 DEFAULT_TIMEZONE = "Europe/Amsterdam"
@@ -123,53 +112,24 @@ def get_detected_timezone():
         logger.exception(
             "Failed to detect local timezone."
         )
-
         return DEFAULT_TIMEZONE
-    
+
 def build_settings_tab(parent, settings, config, actions):
-
-
-    scroll_container = tk.Frame(parent)
-    scroll_container.pack(fill="both",expand=True)
-
-    scrollbar_style = ttk.Style()
-    scrollbar_style.theme_use("clam")
-
-    scrollbar_style.configure(
-        "Settings.Vertical.TScrollbar",
-        background=style.SCROLL_BACKGROUND,
-        troughcolor=style.SCROLL_TROUGH,
-        bordercolor=style.SCROLL_BORDER,
-        arrowcolor=style.SCROLL_ARROW,
-        relief="flat",
-        width=style.SCROLL_WIDTH
+    scroll_container = tk.Frame(
+        parent,
+        bg=style.BACKGROUND
     )
 
-    scrollbar_style.map(
-        "Settings.Vertical.TScrollbar",
-
-        background=[
-            ("active", style.BUTTON_CLICKED),
-            ("pressed", style.BUTTON_CLICKED)
-        ]
-    )
-
-
-    scrollbar = ttk.Scrollbar(
-        scroll_container,
-        orient="vertical",
-        style="Settings.Vertical.TScrollbar"
-    )
-
-    scrollbar.pack(
-        side="right",
-        fill="y"
+    scroll_container.pack(
+        fill="both",
+        expand=True
     )
 
     scroll_canvas = tk.Canvas(
         scroll_container,
+        bg=style.BACKGROUND,
         highlightthickness=0,
-        yscrollcommand=scrollbar.set
+        bd=0
     )
 
     scroll_canvas.pack(
@@ -178,18 +138,30 @@ def build_settings_tab(parent, settings, config, actions):
         expand=True
     )
 
+    scrollbar = FlatScrollbar(
+        scroll_container,
+        command=scroll_canvas.yview
+    )
 
-    scrollbar.config(command=scroll_canvas.yview)
+    scrollbar.pack(
+        side="right",
+        fill="y"
+    )
 
-    settings_frame = tk.Frame(scroll_canvas)
+    scroll_canvas.configure(
+        yscrollcommand=scrollbar.set
+    )
 
+    settings_frame = tk.Frame(
+        scroll_canvas,
+        bg=style.BACKGROUND
+    )
 
     settings_window = scroll_canvas.create_window(
         (0, 0),
         window=settings_frame,
         anchor="nw"
     )
-
 
     def add_setting_checkbox(parent, settings, config, actions, key, text):
         variable = tk.BooleanVar(value=settings.get(key, False))
@@ -221,13 +193,16 @@ def build_settings_tab(parent, settings, config, actions):
         )
 
     def update_scroll_region(event=None):
-        scroll_canvas.configure(scrollregion=scroll_canvas.bbox("all"))
+        scroll_canvas.configure(
+            scrollregion=scroll_canvas.bbox("all")
+        )
 
-
-    settings_frame.bind("<Configure>",update_scroll_region)
+    settings_frame.bind(
+        "<Configure>",
+        update_scroll_region
+    )
 
     def resize_settings_frame(event):
-
         scroll_canvas.itemconfig(
             settings_window,
             width=event.width
@@ -239,16 +214,30 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
     def mouse_wheel(event):
-        scroll_canvas.yview_scroll(int(-1 *(event.delta / 120)),"units")
+        scroll_canvas.yview_scroll(
+            int(-1 * (event.delta / 120)),
+            "units"
+        )
 
     def enable_mousewheel(event):
-        scroll_canvas.bind_all("<MouseWheel>",mouse_wheel)
+        scroll_canvas.bind_all(
+            "<MouseWheel>",
+            mouse_wheel
+        )
 
     def disable_mousewheel(event):
-        scroll_canvas.unbind_all("<MouseWheel>")
+        scroll_canvas.unbind_all(
+            "<MouseWheel>"
+        )
 
-    scroll_canvas.bind(  "<Enter>",enable_mousewheel)
-    scroll_canvas.bind("<Leave>",disable_mousewheel
+    scroll_canvas.bind(
+        "<Enter>",
+        enable_mousewheel
+    )
+
+    scroll_canvas.bind(
+        "<Leave>",
+        disable_mousewheel
     )
 
     tk.Label(
@@ -279,26 +268,25 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
     def volume_changed(value):
-
         value = int(float(value))
         settings["sound_volume"] = value
         set_sound_volume(value)
         save_config(config)
 
-
     def volume_released(event):
-        play_sound("quack.wav" )
+        play_sound("quack.wav")
 
-    
     volume_container = tk.Frame(
         settings_frame,
         bg=style.BACKGROUND,
         height=style.VOLUME_CONTAINER_HEIGHT
     )
+
     volume_container.pack(
         fill="x",
         pady=style.VOLUME_CONTAINER_PADDING_Y
     )
+
     volume_container.pack_propagate(False)
 
     volume_canvas = tk.Canvas(
@@ -309,6 +297,7 @@ def build_settings_tab(parent, settings, config, actions):
         highlightthickness=0,
         bd=0
     )
+
     volume_canvas.place(
         relx=0.5,
         rely=0.5,
@@ -323,7 +312,6 @@ def build_settings_tab(parent, settings, config, actions):
     def draw_volume_slider():
         volume_canvas.delete("all")
 
-        # Track
         volume_canvas.create_line(
             track_start,
             track_y,
@@ -334,14 +322,13 @@ def build_settings_tab(parent, settings, config, actions):
             capstyle="round"
         )
 
-        # Current thumb position
         percentage = volume.get() / 100
+
         thumb_x = (
             track_start
             + percentage * (track_end - track_start)
         )
 
-        # Thumb shadow
         volume_canvas.create_oval(
             thumb_x - thumb_radius + 1,
             track_y - thumb_radius + 2,
@@ -351,7 +338,6 @@ def build_settings_tab(parent, settings, config, actions):
             outline=""
         )
 
-        # Circular thumb
         volume_canvas.create_oval(
             thumb_x - thumb_radius,
             track_y - thumb_radius,
@@ -361,19 +347,18 @@ def build_settings_tab(parent, settings, config, actions):
             outline=""
         )
 
-        # Speaker icons
         volume_canvas.create_text(
             13,
             track_y,
             text="◖",
-            fill=style.VOLUME_ICON_COLOR,
+            fill=style.VOLUME_ICON_COLOR
         )
 
         volume_canvas.create_text(
             260,
             track_y,
             text="◖))",
-            fill=style.VOLUME_ICON_COLOR,
+            fill=style.VOLUME_ICON_COLOR
         )
 
     def set_volume_from_mouse(event):
@@ -404,15 +389,13 @@ def build_settings_tab(parent, settings, config, actions):
         "<B1-Motion>",
         set_volume_from_mouse
     )
+
     volume_canvas.bind(
         "<ButtonRelease-1>",
         volume_released
     )
 
     draw_volume_slider()
-    # ==================================================
-    # CLOCK SETTINGS
-    # ==================================================
 
     tk.Label(
         settings_frame,
@@ -422,9 +405,17 @@ def build_settings_tab(parent, settings, config, actions):
         pady=(15, 5)
     )
 
+    auto_timezone = tk.BooleanVar(
+        value=settings.get(
+            "auto_timezone",
+            True
+        )
+    )
 
-    auto_timezone = tk.BooleanVar(value=settings.get("auto_timezone",True))
-    saved_timezone = settings.get("timezone","Europe/Amsterdam")
+    saved_timezone = settings.get(
+        "timezone",
+        "Europe/Amsterdam"
+    )
 
     detected_timezone = get_detected_timezone()
 
@@ -435,13 +426,20 @@ def build_settings_tab(parent, settings, config, actions):
 
     if auto_timezone.get():
         current_timezone = detected_timezone
-
     else:
         current_timezone = saved_timezone
 
-    timezone = tk.StringVar(value=current_timezone)
-    timezone_controls = tk.Frame(settings_frame)
-    timezone_controls.pack(fill="x")
+    timezone = tk.StringVar(
+        value=current_timezone
+    )
+
+    timezone_controls = tk.Frame(
+        settings_frame
+    )
+
+    timezone_controls.pack(
+        fill="x"
+    )
 
     auto_timezone_check = tk.Checkbutton(
         timezone_controls,
@@ -452,7 +450,7 @@ def build_settings_tab(parent, settings, config, actions):
         activebackground=style.BACKGROUND,
         selectcolor=style.BACKGROUND,
         fg=style.TEXT_COLOR,
-        activeforeground=style.TEXT_COLOR,
+        activeforeground=style.TEXT_COLOR
     )
 
     auto_timezone_check.pack(
@@ -462,7 +460,6 @@ def build_settings_tab(parent, settings, config, actions):
     )
 
     dropdown_style = ttk.Style()
-
     dropdown_style.theme_use("clam")
 
     dropdown_style.configure(
@@ -478,75 +475,63 @@ def build_settings_tab(parent, settings, config, actions):
 
     dropdown_style.map(
         "Settings.TCombobox",
-
         fieldbackground=[
             (
                 "readonly",
                 style.BUTTON_NORMAL
             ),
-
             (
                 "disabled",
                 style.DISABLED_BACKGROUND
             )
         ],
-
         background=[
             (
                 "readonly",
                 style.BUTTON_NORMAL
             ),
-
             (
                 "disabled",
                 style.DISABLED_BACKGROUND
             )
         ],
-
         foreground=[
             (
                 "readonly",
                 style.TEXT_COLOR
             ),
-
             (
                 "disabled",
                 style.DISABLED_TEXT
             )
         ],
-
         bordercolor=[
             (
                 "readonly",
                 style.BUTTON_NORMAL
             ),
-
             (
                 "disabled",
                 style.DISABLED_BACKGROUND
             )
         ],
-
         lightcolor=[
             (
                 "readonly",
                 style.BUTTON_NORMAL
             )
         ],
-
         darkcolor=[
             (
                 "readonly",
                 style.BUTTON_NORMAL
             )
         ],
-
         arrowcolor=[
             (
                 "readonly",
                 style.TEXT_COLOR
             ),
-
             (
                 "disabled",
                 "#777777"
@@ -565,12 +550,14 @@ def build_settings_tab(parent, settings, config, actions):
 
     timezone_dropdown.pack(
         anchor="w",
-        padx=(style.TIMEZONE_PADDING_LEFT,style.TIMEZONE_PADDING_RIGHT),
+        padx=(
+            style.TIMEZONE_PADDING_LEFT,
+            style.TIMEZONE_PADDING_RIGHT
+        ),
         pady=style.CONTROL_PADDING_Y
     )
 
     def timezone_selected(event=None):
-
         settings["timezone"] = timezone.get()
 
         if "timezone_changed" in actions:
@@ -587,15 +574,16 @@ def build_settings_tab(parent, settings, config, actions):
 
     def update_timezone_setting():
         automatic = auto_timezone.get()
-
         settings["auto_timezone"] = automatic
 
         if automatic:
             detected = get_detected_timezone()
             timezone.set(detected)
-
         else:
-            selected = settings.get("timezone",DEFAULT_TIMEZONE)
+            selected = settings.get(
+                "timezone",
+                DEFAULT_TIMEZONE
+            )
 
             if selected not in TIMEZONES:
                 selected = DEFAULT_TIMEZONE
@@ -604,14 +592,15 @@ def build_settings_tab(parent, settings, config, actions):
 
         update_timezone_dropdown()
 
-
         if "timezone_changed" in actions:
             actions["timezone_changed"]()
 
         save_config(config)
 
     update_timezone_dropdown()
-    auto_timezone_check.config(command=update_timezone_setting)
+    auto_timezone_check.config(
+        command=update_timezone_setting
+    )
 
     for key, text in SOUND_SETTINGS:
         add_setting_checkbox(
@@ -623,8 +612,10 @@ def build_settings_tab(parent, settings, config, actions):
             text
         )
 
-    section_title(settings_frame, "Other Settings")
-
+    section_title(
+        settings_frame,
+        "Other Settings"
+    )
 
     for key, text in OTHER_SETTINGS:
         add_setting_checkbox(
@@ -636,7 +627,10 @@ def build_settings_tab(parent, settings, config, actions):
             text
         )
 
-    section_title(settings_frame,"Application")
+    section_title(
+        settings_frame,
+        "Application"
+    )
 
     def add_action_button(parent, text, command):
         button = tk.Button(
@@ -650,7 +644,10 @@ def build_settings_tab(parent, settings, config, actions):
             activebackground=style.BUTTON_CLICKED
         )
 
-        button.pack(pady=style.BUTTON_PADDING_Y)
+        button.pack(
+            pady=style.BUTTON_PADDING_Y
+        )
+
         add_button_hover(button)
 
     add_action_button(
