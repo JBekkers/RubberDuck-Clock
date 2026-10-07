@@ -8,12 +8,12 @@ class FlatScrollbar(tk.Canvas):
         self,
         parent,
         command,
-        bg= style.SCROLLBAR_BACKGROUND,
+        bg=style.SCROLLBAR_BACKGROUND,
         width=style.SCROLLBAR_WIDTH,
         thumb_color=style.SCROLLBAR_THUMB,
         hover_color=style.SCROLLBAR_THUMB_HOVER,
         thumb_width=style.SCROLLBAR_THUMB_WIDTH,
-        min_thumb_height=style.SCROLLBAR_MIN_THUMB_HEIGHT
+        thumb_height=style.SCROLLBAR_THUMB_HEIGHT
     ):
 
         super().__init__(
@@ -33,7 +33,7 @@ class FlatScrollbar(tk.Canvas):
         self.hover_color = hover_color
 
         self.thumb_width = thumb_width
-        self.min_thumb_height = min_thumb_height
+        self.thumb_height = thumb_height
 
         self.first = 0.0
         self.last = 1.0
@@ -101,62 +101,88 @@ class FlatScrollbar(tk.Canvas):
         if height <= 1:
             return
 
-        # Nothing to scroll.
         if self.last - self.first >= 1.0:
             return
 
-        thumb_height = max(
-            self.min_thumb_height,
-            height * (self.last - self.first)
-        )
-
         thumb_height = min(
-            thumb_height,
+            self.thumb_height,
             height
         )
 
-        available_height = height - thumb_height
-
-        thumb_top = (
-            self.first * available_height
+        available_height = (
+            height - thumb_height
         )
 
-        thumb_top = max(
-            0,
+        scroll_range = (
+            1.0 - (self.last - self.first)
+        )
+
+        if scroll_range <= 0:
+            scroll_position = 0.0
+
+        else:
+            scroll_position = (
+                self.first
+                / scroll_range
+            )
+
+        scroll_position = max(
+            0.0,
             min(
-                thumb_top,
-                available_height
+                1.0,
+                scroll_position
             )
         )
 
+        thumb_top = (
+            scroll_position
+            * available_height
+        )
+
         thumb_bottom = (
-            thumb_top + thumb_height
+            thumb_top
+            + thumb_height
         )
 
         self.thumb_top = thumb_top
         self.thumb_bottom = thumb_bottom
 
-        center_x = self.winfo_width() / 2
+        center_x = (
+            self.winfo_width()
+            / 2
+        )
 
-        half_width = self.thumb_width / 2
+        half_width = (
+            self.thumb_width
+            / 2
+        )
 
         start_y = (
-            thumb_top + half_width
+            thumb_top
+            + half_width
         )
 
         end_y = (
-            thumb_bottom - half_width
+            thumb_bottom
+            - half_width
         )
 
-        # Prevent invalid line geometry
         if end_y < start_y:
+
             start_y = (
-                thumb_top + thumb_height / 2
+                thumb_top
+                + thumb_height / 2
             )
 
             end_y = start_y
 
-        # Outlook-style pill.
+        print(
+        "Canvas width:",
+        self.winfo_width(),
+        "Thumb width:",
+        self.thumb_width
+        )
+
         self.create_line(
             center_x,
             start_y,
@@ -196,7 +222,25 @@ class FlatScrollbar(tk.Canvas):
 
     def _button_press(self, event):
 
-        # Clicked directly on thumb.
+        height = self.winfo_height()
+
+        thumb_height = (
+            self.thumb_bottom
+            - self.thumb_top
+        )
+
+        available_height = (
+            height
+            - thumb_height
+        )
+
+        if available_height <= 0:
+            return
+
+        # --------------------------------------------------
+        # CLICKED ON THUMB
+        # --------------------------------------------------
+
         if (
             self.thumb_top
             <= event.y
@@ -215,25 +259,40 @@ class FlatScrollbar(tk.Canvas):
 
             return
 
-        # Clicked above thumb.
-        if event.y < self.thumb_top:
+        # --------------------------------------------------
+        # CLICKED OUTSIDE THUMB
+        # --------------------------------------------------
 
-            self.command(
-                "scroll",
-                -1,
-                "pages"
-            )
+        scroll_range = (
+            1.0
+            - (self.last - self.first)
+        )
 
+        if scroll_range <= 0:
             return
 
-        # Clicked below thumb.
-        if event.y > self.thumb_bottom:
+        target_position = (
+            (event.y - thumb_height / 2)
+            / available_height
+        )
 
-            self.command(
-                "scroll",
-                1,
-                "pages"
+        target_position = max(
+            0.0,
+            min(
+                1.0,
+                target_position
             )
+        )
+
+        new_position = (
+            target_position
+            * scroll_range
+        )
+
+        self.command(
+            "moveto",
+            new_position
+        )
 
     # --------------------------------------------------
     # DRAG
@@ -252,7 +311,8 @@ class FlatScrollbar(tk.Canvas):
         )
 
         available_height = (
-            height - thumb_height
+            height
+            - thumb_height
         )
 
         if available_height <= 0:
@@ -268,15 +328,23 @@ class FlatScrollbar(tk.Canvas):
             / available_height
         )
 
+        scroll_range = (
+            1.0
+            - (self.last - self.first)
+        )
+
         new_position = (
             self.drag_start_position
-            + position_delta
+            + (
+                position_delta
+                * scroll_range
+            )
         )
 
         new_position = max(
             0.0,
             min(
-                1.0,
+                scroll_range,
                 new_position
             )
         )

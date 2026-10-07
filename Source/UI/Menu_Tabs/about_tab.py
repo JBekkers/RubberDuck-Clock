@@ -10,7 +10,11 @@ def format_uptime(seconds):
 
 def build_about_tab(parent, settings, config, stats):
     scroll_container = tk.Frame(parent)
-    scroll_container.pack(fill="both", expand=True)
+
+    scroll_container.pack(
+        fill="both",
+        expand=True
+    )
 
     scroll_canvas = tk.Canvas(
         scroll_container,
@@ -19,20 +23,33 @@ def build_about_tab(parent, settings, config, stats):
         bd=0
     )
 
-    scrollbar = FlatScrollbar(
+    scrollbar_frame = tk.Frame(
         scroll_container,
+        width=style.SCROLLBAR_WIDTH,
+        bg=style.BACKGROUND
+    )
+
+    scrollbar_frame.pack(
+        side="right",
+        fill="y"
+    )
+
+    scrollbar_frame.pack_propagate(False)
+
+    scrollbar = FlatScrollbar(
+        scrollbar_frame,
         command=scroll_canvas.yview
+    )
+
+    scrollbar.pack(
+        fill="y",
+        expand=True
     )
 
     scroll_canvas.pack(
         side="left",
         fill="both",
         expand=True
-    )
-
-    scrollbar.pack(
-        side="right",
-        fill="y"
     )
 
     scroll_canvas.configure(
@@ -61,16 +78,17 @@ def build_about_tab(parent, settings, config, stats):
         canvas_height = scroll_canvas.winfo_height()
 
         if content_height > canvas_height:
-            if not scrollbar.winfo_manager():
-                scrollbar.pack(
-                    side="right",
-                    fill="y"
-                )
+            scrollbar_frame.configure(
+                width=style.SCROLLBAR_WIDTH
+            )
         else:
-            if scrollbar.winfo_manager():
-                scrollbar.pack_forget()
+            scrollbar_frame.configure(
+                width=0
+            )
 
             scroll_canvas.yview_moveto(0)
+
+        scroll_container.update_idletasks()
 
     def update_scroll_region(event=None):
         scroll_canvas.configure(
@@ -277,11 +295,14 @@ def build_about_tab(parent, settings, config, stats):
 
     rare_details_container = tk.Frame(
         about_frame,
+        height=style.RARE_PANEL_HEIGHT,
         bg=rare_panel_bg,
         highlightbackground=rare_border,
         highlightthickness=style.RARE_PANEL_BORDER_WIDTH,
         bd=0
     )
+
+    rare_details_container.pack_propagate(False)
 
     rare_header = tk.Frame(
         rare_details_container,
@@ -291,7 +312,7 @@ def build_about_tab(parent, settings, config, stats):
     rare_header.pack(
         fill="x",
         padx=10,
-        pady=(8, 3)
+        pady=(5, 2)
     )
 
     tk.Label(
@@ -313,12 +334,11 @@ def build_about_tab(parent, settings, config, stats):
         fill="both",
         expand=True,
         padx=8,
-        pady=(2, 8)
+        pady=(2, 5)
     )
 
     rare_canvas = tk.Canvas(
         rare_scroll_area,
-        height=style.RARE_LIST_HEIGHT,
         highlightthickness=0,
         bg=rare_panel_bg,
         bd=0
@@ -332,18 +352,18 @@ def build_about_tab(parent, settings, config, stats):
         thumb_color=style.SCROLLBAR_THUMB,
         hover_color=style.SCROLLBAR_THUMB_HOVER,
         thumb_width=style.RARE_SCROLLBAR_THUMB_WIDTH,
-        min_thumb_height=style.RARE_SCROLLBAR_MIN_THUMB_HEIGHT
+        thumb_height=style.RARE_SCROLLBAR_THUMB_HEIGHT
+    )
+
+    rare_scrollbar.pack(
+        side="right",
+        fill="y"
     )
 
     rare_canvas.pack(
         side="left",
         fill="both",
         expand=True
-    )
-
-    rare_scrollbar.pack(
-        side="right",
-        fill="y"
     )
 
     rare_canvas.configure(

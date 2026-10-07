@@ -132,12 +132,6 @@ def build_settings_tab(parent, settings, config, actions):
         bd=0
     )
 
-    scroll_canvas.pack(
-        side="left",
-        fill="both",
-        expand=True
-    )
-
     scrollbar = FlatScrollbar(
         scroll_container,
         command=scroll_canvas.yview
@@ -145,7 +139,13 @@ def build_settings_tab(parent, settings, config, actions):
 
     scrollbar.pack(
         side="right",
-        fill="y"
+        fill="y",
+    )
+
+    scroll_canvas.pack(
+        side="left",
+        fill="both",
+        expand=True
     )
 
     scroll_canvas.configure(
