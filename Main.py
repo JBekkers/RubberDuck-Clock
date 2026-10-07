@@ -97,6 +97,7 @@ root.report_callback_exception = handle_uncaught_exception
 
 set_mutex_release_callback(release_single_instance)
 
+load_font("Pxls-Bold.ttf")
 load_font("Pxls-Regular.ttf")
 
 config = load_config()

@@ -46,10 +46,10 @@ RARE_SCROLLBAR_THUMB_HEIGHT = 40
 # FONTS
 # ------------------------------------------------------------
 
-TITLE_FONT = ("Pxls", 12)
+TITLE_FONT = ("Pxls", 12, "bold")
 TEXT_FONT = ("Pxls", 10)
 
-MENU_TAB_FONT = ("Pxls", 9)
+MENU_TAB_FONT = ("Pxls", 12, "bold")
 SMALL_FONT = ("Pxls", 9)
 
 
