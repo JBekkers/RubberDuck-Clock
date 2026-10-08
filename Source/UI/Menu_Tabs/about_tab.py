@@ -152,7 +152,7 @@ def build_about_tab(parent, settings, config, stats):
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR
     ).pack(
-        pady=(14, 8)
+        pady=(10)
     )
 
     tk.Label(
