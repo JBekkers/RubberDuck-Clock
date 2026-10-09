@@ -16,6 +16,7 @@ def build_about_tab(parent, settings, config, stats):
         expand=True
     )
 
+
     scroll_canvas = tk.Canvas(
         scroll_container,
         highlightthickness=0,
@@ -25,7 +26,7 @@ def build_about_tab(parent, settings, config, stats):
 
     scrollbar_frame = tk.Frame(
         scroll_container,
-        width=style.SCROLLBAR_WIDTH,
+        width=style.SCROLLBAR_WIDTH + 4,
         bg=style.BACKGROUND
     )
 
@@ -41,10 +42,24 @@ def build_about_tab(parent, settings, config, stats):
         command=scroll_canvas.yview
     )
 
-    scrollbar.pack(
-        fill="y",
-        expand=True
+    scrollbar_frame.grid_rowconfigure(
+        0,
+        weight=1
     )
+
+    scrollbar_frame.grid_columnconfigure(
+        0,
+        weight=1
+    )
+
+    scrollbar.grid(
+        row=0,
+        column=0,
+        sticky="ns"
+    )
+
+    # Hide the scrollbar, but retain its grid settings.
+    scrollbar.grid_remove()
 
     scroll_canvas.pack(
         side="left",
@@ -70,6 +85,7 @@ def build_about_tab(parent, settings, config, stats):
     rare_panel_bg = style.RARE_PANEL_BACKGROUND
     rare_border = style.RARE_PANEL_BORDER
 
+
     def update_scrollbar():
         scroll_canvas.update_idletasks()
         about_frame.update_idletasks()
@@ -78,17 +94,13 @@ def build_about_tab(parent, settings, config, stats):
         canvas_height = scroll_canvas.winfo_height()
 
         if content_height > canvas_height:
-            scrollbar_frame.configure(
-                width=style.SCROLLBAR_WIDTH
-            )
+            if not scrollbar.winfo_manager():
+                scrollbar.grid()
         else:
-            scrollbar_frame.configure(
-                width=0
-            )
+            if scrollbar.winfo_manager():
+                scrollbar.grid_remove()
 
             scroll_canvas.yview_moveto(0)
-
-        scroll_container.update_idletasks()
 
     def update_scroll_region(event=None):
         scroll_canvas.configure(

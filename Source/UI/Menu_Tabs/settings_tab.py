@@ -637,7 +637,7 @@ def build_settings_tab(parent, settings, config, actions):
             parent,
             text=text,
             command=command,
-            font=style.TITLE_FONT,
+            font=style.BUTTON_FONT,
             bg=style.BUTTON_NORMAL,
             fg=style.TEXT_COLOR,
             activeforeground=style.TEXT_COLOR,
