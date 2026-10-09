@@ -47,8 +47,6 @@ def open_settings(root,settings,config,stats,actions):
     window.option_add("*Background", style.BACKGROUND)
     window.option_add("*Foreground", style.TEXT_COLOR)
 
-    window.option_add("*Checkbutton.ActiveBackground",style.SURFACE)
-
     window.option_add("*Button.Background", style.BUTTON_NORMAL)
     window.option_add("*Button.Foreground", style.TEXT_COLOR)
     window.option_add("*Button.ActiveBackground", style.BUTTON_CLICKED)
@@ -84,7 +82,6 @@ def open_settings(root,settings,config,stats,actions):
 
     content = tk.Frame(
         window,
-        bg=style.SURFACE
     )
 
     content.pack(
@@ -170,7 +167,7 @@ def open_settings(root,settings,config,stats,actions):
         fg="#FFFFFF",
         activebackground=style.CLOSE_BUTTON_HOVER,
         activeforeground="#FFFFFF",
-        font=("Segoe UI", 12, "bold"),
+        font=("Segoe UI", 14, "bold"),
         borderwidth=0,
         highlightthickness=0,
         cursor="hand2",

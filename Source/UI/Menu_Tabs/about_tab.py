@@ -164,7 +164,7 @@ def build_about_tab(parent, settings, config, stats):
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR
     ).pack(
-        pady=(10)
+        pady=(5)
     )
 
     tk.Label(
@@ -182,7 +182,7 @@ def build_about_tab(parent, settings, config, stats):
         justify="center"
     ).pack(
         padx=20,
-        pady=(0, 12)
+        pady=(0, 6)
     )
 
     tk.Label(
@@ -359,7 +359,7 @@ def build_about_tab(parent, settings, config, stats):
     rare_scrollbar = FlatScrollbar(
         rare_scroll_area,
         command=rare_canvas.yview,
-        bg=rare_panel_bg,
+        bg=style.SCROLLBAR_BACKGROUND,
         width=style.RARE_SCROLLBAR_WIDTH,
         thumb_color=style.SCROLLBAR_THUMB,
         hover_color=style.SCROLLBAR_THUMB_HOVER,

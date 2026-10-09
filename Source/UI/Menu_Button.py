@@ -39,7 +39,7 @@ def create_menu_button(open_menu):
         75 + style.MENU_OFFSET_Y,
         image=menu_image,
         anchor="center",
-        tags=("menu_button",)
+        tags=("menu_button"),
     )
 
     canvas.tag_bind(
@@ -51,11 +51,17 @@ def create_menu_button(open_menu):
     canvas.tag_bind(
         "menu_button",
         "<Enter>",
-        lambda e: canvas.itemconfig(menu_button, image=menu_hover)
+        lambda e: (
+            canvas.itemconfig(menu_button, image=menu_hover),
+            canvas.config(cursor="hand2")
+        )
     )
 
     canvas.tag_bind(
         "menu_button",
         "<Leave>",
-        lambda e: canvas.itemconfig(menu_button, image=menu_image)
+        lambda e: (
+            canvas.itemconfig(menu_button, image=menu_image),
+            canvas.config(cursor="")
+        )
     )

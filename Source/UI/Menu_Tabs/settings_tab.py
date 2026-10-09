@@ -134,7 +134,7 @@ def build_settings_tab(parent, settings, config, actions):
 
     scrollbar = FlatScrollbar(
         scroll_container,
-        command=scroll_canvas.yview
+        command=scroll_canvas.yview,
     )
 
     scrollbar.pack(
@@ -185,7 +185,8 @@ def build_settings_tab(parent, settings, config, actions):
             selectcolor=style.BACKGROUND,
             fg=style.TEXT_COLOR,
             activeforeground=style.TEXT_COLOR,
-            command=changed
+            command=changed,
+            cursor="hand2"
         ).pack(
             anchor="w",
             padx=style.CONTROL_PADDING_X,
@@ -245,7 +246,7 @@ def build_settings_tab(parent, settings, config, actions):
         text="Settings",
         font=style.TITLE_FONT
     ).pack(
-        pady=10
+        pady=5
     )
 
     tk.Label(
@@ -420,9 +421,16 @@ def build_settings_tab(parent, settings, config, actions):
     detected_timezone = get_detected_timezone()
 
     def update_timezone_dropdown():
-        timezone_dropdown.config(
-            state="disabled" if auto_timezone.get() else "readonly"
-        )
+        if auto_timezone.get():
+            timezone_dropdown.config(
+                state="disabled",
+                cursor=""
+            )
+        else:
+            timezone_dropdown.config(
+                state="readonly",
+                cursor="hand2"
+            )
 
     if auto_timezone.get():
         current_timezone = detected_timezone
@@ -450,7 +458,8 @@ def build_settings_tab(parent, settings, config, actions):
         activebackground=style.BACKGROUND,
         selectcolor=style.BACKGROUND,
         fg=style.TEXT_COLOR,
-        activeforeground=style.TEXT_COLOR
+        activeforeground=style.TEXT_COLOR,
+        cursor="hand2"
     )
 
     auto_timezone_check.pack(
@@ -478,11 +487,11 @@ def build_settings_tab(parent, settings, config, actions):
         fieldbackground=[
             (
                 "readonly",
-                style.BUTTON_NORMAL
+                style.BUTTON_NORMAL,
             ),
             (
                 "disabled",
-                style.DISABLED_BACKGROUND
+                style.DISABLED_BACKGROUND,
             )
         ],
         background=[
@@ -545,7 +554,7 @@ def build_settings_tab(parent, settings, config, actions):
         values=TIMEZONES,
         state="readonly",
         width=style.TIMEZONE_WIDTH,
-        style="Settings.TCombobox"
+        style="Settings.TCombobox",
     )
 
     timezone_dropdown.pack(
@@ -641,7 +650,8 @@ def build_settings_tab(parent, settings, config, actions):
             bg=style.BUTTON_NORMAL,
             fg=style.TEXT_COLOR,
             activeforeground=style.TEXT_COLOR,
-            activebackground=style.BUTTON_CLICKED
+            activebackground=style.BUTTON_CLICKED,
+            cursor="hand2"
         )
 
         button.pack(

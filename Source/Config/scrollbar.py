@@ -13,7 +13,10 @@ class FlatScrollbar(tk.Canvas):
         thumb_color=style.SCROLLBAR_THUMB,
         hover_color=style.SCROLLBAR_THUMB_HOVER,
         thumb_width=style.SCROLLBAR_THUMB_WIDTH,
-        thumb_height=style.SCROLLBAR_THUMB_HEIGHT
+        thumb_height=style.SCROLLBAR_THUMB_HEIGHT,
+        arrow_height=style.SCROLLBAR_ARROW_HEIGHT,
+        arrow_color=style.SCROLLBAR_ARROW_COLOR,
+        arrow_hover_color=style.SCROLLBAR_ARROW_HOVER,
     ):
 
         super().__init__(
@@ -34,6 +37,12 @@ class FlatScrollbar(tk.Canvas):
 
         self.thumb_width = thumb_width
         self.thumb_height = thumb_height
+
+        self.arrow_height = arrow_height
+        self.arrow_color = arrow_color
+        self.arrow_hover_color = arrow_hover_color
+        self.arrow_current_color = arrow_color
+        self.pressed_arrow = None
 
         self.first = 0.0
         self.last = 1.0
@@ -92,96 +101,101 @@ class FlatScrollbar(tk.Canvas):
     # DRAW
     # --------------------------------------------------
 
+    
     def _redraw(self, event=None):
-
         self.delete("all")
 
+        width = self.winfo_width()
         height = self.winfo_height()
 
-        if height <= 1:
+        if width <= 1 or height <= 1:
             return
 
+        center_x = width / 2
+        arrow_size = style.SCROLLBAR_ARROW_SIZE
+
+        # Use integer coordinates for consistent pixel alignment.
+        center_x = round(center_x)
+        arrow_size = round(arrow_size)
+
+        # Up arrow
+        up_center_y = round(self.arrow_height / 2)
+
+        self.create_polygon(
+            center_x,
+            up_center_y - arrow_size // 2,
+            center_x - arrow_size,
+            up_center_y + arrow_size // 2,
+            center_x + arrow_size,
+            up_center_y + arrow_size // 2,
+            fill=self.arrow_current_color,
+            outline="",
+            tags="up_arrow",
+        )
+
+        # Down arrow: mirror the up arrow vertically.
+        down_center_y = height - up_center_y
+
+        self.create_polygon(
+            center_x,
+            down_center_y + arrow_size // 2,
+            center_x - arrow_size,
+            down_center_y - arrow_size // 2,
+            center_x + arrow_size,
+            down_center_y - arrow_size // 2,
+            fill=self.arrow_current_color,
+            outline="",
+            tags="down_arrow",
+        )
+
+        # No thumb is needed when the content fits.
         if self.last - self.first >= 1.0:
+            return
+
+        track_top = self.arrow_height
+        track_bottom = height - self.arrow_height
+        track_height = track_bottom - track_top
+
+        if track_height <= 1:
             return
 
         thumb_height = min(
             self.thumb_height,
-            height
+            track_height
         )
 
-        available_height = (
-            height - thumb_height
-        )
+        available_height = track_height - thumb_height
 
-        scroll_range = (
-            1.0 - (self.last - self.first)
-        )
+        scroll_range = 1.0 - (self.last - self.first)
 
         if scroll_range <= 0:
             scroll_position = 0.0
-
         else:
-            scroll_position = (
-                self.first
-                / scroll_range
-            )
+            scroll_position = self.first / scroll_range
 
         scroll_position = max(
             0.0,
-            min(
-                1.0,
-                scroll_position
-            )
+            min(1.0, scroll_position)
         )
 
         thumb_top = (
-            scroll_position
-            * available_height
+            track_top
+            + scroll_position * available_height
         )
 
-        thumb_bottom = (
-            thumb_top
-            + thumb_height
-        )
+        thumb_bottom = thumb_top + thumb_height
 
         self.thumb_top = thumb_top
         self.thumb_bottom = thumb_bottom
 
-        center_x = (
-            self.winfo_width()
-            / 2
-        )
+        half_width = self.thumb_width / 2
 
-        half_width = (
-            self.thumb_width
-            / 2
-        )
-
-        start_y = (
-            thumb_top
-            + half_width
-        )
-
-        end_y = (
-            thumb_bottom
-            - half_width
-        )
+        start_y = thumb_top + half_width
+        end_y = thumb_bottom - half_width
 
         if end_y < start_y:
-
-            start_y = (
-                thumb_top
-                + thumb_height / 2
-            )
-
+            start_y = thumb_top + thumb_height / 2
             end_y = start_y
-
-        print(
-        "Canvas width:",
-        self.winfo_width(),
-        "Thumb width:",
-        self.thumb_width
-        )
 
         self.create_line(
             center_x,
@@ -193,15 +207,13 @@ class FlatScrollbar(tk.Canvas):
             capstyle=tk.ROUND,
             tags="thumb"
         )
-
     # --------------------------------------------------
     # MOUSE ENTER
     # --------------------------------------------------
 
     def _mouse_enter(self, event=None):
-
         self.current_color = self.hover_color
-
+        self.arrow_current_color = self.arrow_hover_color
         self._redraw()
 
     # --------------------------------------------------
@@ -209,91 +221,67 @@ class FlatScrollbar(tk.Canvas):
     # --------------------------------------------------
 
     def _mouse_leave(self, event=None):
-
         if not self.dragging:
-
             self.current_color = self.thumb_color
-
+            self.arrow_current_color = self.arrow_color
             self._redraw()
 
     # --------------------------------------------------
     # CLICK
     # --------------------------------------------------
 
+    
     def _button_press(self, event):
-
         height = self.winfo_height()
 
-        thumb_height = (
-            self.thumb_bottom
-            - self.thumb_top
-        )
+        if event.y < self.arrow_height:
+            self.command("scroll", -1, "units")
+            return
 
-        available_height = (
-            height
-            - thumb_height
-        )
+        if event.y >= height - self.arrow_height:
+            self.command("scroll", 1, "units")
+            return
+
+        if self.last - self.first >= 1.0:
+            return
+
+        thumb_height = self.thumb_bottom - self.thumb_top
+        track_top = self.arrow_height
+        track_bottom = height - self.arrow_height
+        track_height = track_bottom - track_top
+        available_height = track_height - thumb_height
 
         if available_height <= 0:
             return
 
-        # --------------------------------------------------
-        # CLICKED ON THUMB
-        # --------------------------------------------------
-
-        if (
-            self.thumb_top
-            <= event.y
-            <= self.thumb_bottom
-        ):
-
+        # Clicked on the thumb: start dragging.
+        if self.thumb_top <= event.y <= self.thumb_bottom:
             self.dragging = True
-
             self.drag_start_y = event.y
-
             self.drag_start_position = self.first
-
             self.current_color = self.hover_color
-
             self._redraw()
-
             return
 
-        # --------------------------------------------------
-        # CLICKED OUTSIDE THUMB
-        # --------------------------------------------------
-
-        scroll_range = (
-            1.0
-            - (self.last - self.first)
-        )
+        # Clicked on the track: jump to the clicked position.
+        scroll_range = 1.0 - (self.last - self.first)
 
         if scroll_range <= 0:
             return
 
         target_position = (
-            (event.y - thumb_height / 2)
-            / available_height
-        )
+            event.y - track_top - thumb_height / 2
+        ) / available_height
 
         target_position = max(
             0.0,
-            min(
-                1.0,
-                target_position
-            )
-        )
-
-        new_position = (
-            target_position
-            * scroll_range
+            min(1.0, target_position)
         )
 
         self.command(
             "moveto",
-            new_position
+            target_position * scroll_range
         )
-
     # --------------------------------------------------
     # DRAG
     # --------------------------------------------------
@@ -310,9 +298,14 @@ class FlatScrollbar(tk.Canvas):
             - self.thumb_top
         )
 
+        track_height = (
+            self.winfo_height()
+            - 2 * self.arrow_height
+        )
+
         available_height = (
-            height
-            - thumb_height
+            track_height
+            - (self.thumb_bottom - self.thumb_top)
         )
 
         if available_height <= 0:

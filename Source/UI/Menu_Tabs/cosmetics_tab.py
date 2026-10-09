@@ -11,7 +11,7 @@ def build_cosmetics_tab(parent, settings, config):
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR
     ).pack(
-        pady=(10)
+        pady=(5)
     )
 
     tk.Label(
