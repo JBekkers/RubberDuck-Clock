@@ -15,27 +15,27 @@ RARITIES = {
     "Common": {
         "folder": "Common",
         "weight": 60,
-        "color": "#808080",
+        "color": "#A1A1A1",
     },
     "Uncommon": {
         "folder": "Uncommon",
         "weight": 25,
-        "color": "#90D69A",
+        "color": "#6DBEA3",
     },
     "Rare": {
         "folder": "Rare",
         "weight": 10,
-        "color": "#438DE0",
+        "color": "#3A80CF",
     },
     "Ultra-rare": {
         "folder": "Ultra_Rare",
         "weight": 4,
-        "color": "#A46BE0",
+        "color": "#662AA7",
     },
     "Legendary": {
         "folder": "Legendary",
         "weight": 1,
-        "color": "#E89A39",
+        "color": "#CC7914",
     },
 }
 

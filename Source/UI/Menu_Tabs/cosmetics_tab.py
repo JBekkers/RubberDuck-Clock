@@ -61,6 +61,11 @@ def build_cosmetics_tab(
         command=canvas.yview
     )
 
+    scrollbar.pack(
+        side="right",
+        fill="y"
+    )
+
     grid = tk.Frame(
         canvas,
         bg=style.BACKGROUND
@@ -80,11 +85,6 @@ def build_cosmetics_tab(
         side="left",
         fill="both",
         expand=True
-    )
-
-    scrollbar.pack(
-        side="right",
-        fill="y"
     )
 
     photo_references = []
@@ -178,8 +178,8 @@ def build_cosmetics_tab(
             border = tk.Frame(
                 grid,
                 bg=rarity_color,
-                padx=2,
-                pady=2
+                padx=4,
+                pady=4
             )
 
             border.grid(
@@ -194,10 +194,14 @@ def build_cosmetics_tab(
                 border,
                 bg=style.BUTTON_NORMAL,
                 width=100,
-                height=112
+                height=100
             )
 
-            card.pack()
+            card.pack(
+                fill="both",
+                expand=True
+            )
+
             card.pack_propagate(False)
 
             try:
