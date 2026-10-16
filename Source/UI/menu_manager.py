@@ -11,25 +11,78 @@ from Source.clock import timezone_changed
 
 from Source.UI.app import reset_position, shutdown, restart_application
 from Source.UI.Menu_Tabs.tab_loader import open_settings
-from Source.UI.Menu_Button import create_menu_button
+
+from Source.hats import HatManager
+from Source.UI.Menu_Button import (
+    create_menu_button,
+    set_reward_claim_callback,
+    set_reward_available,
+)
+
+hat_manager = None
+reward_timer_running = False
 
 settings = None
 config = None
 particle_system = None
 stats = None
 
+def check_hat_reward():
+    if hat_manager is None:
+        return
+
+    available = hat_manager.is_drop_available()
+
+    set_reward_available(available)
+
+    root.after(
+        1000,
+        check_hat_reward
+    )
+
+
+def claim_hat_reward():
+    if hat_manager is None:
+        return
+
+    hat = hat_manager.claim_drop()
+
+    if hat is None:
+        return
+
+    set_reward_available(False)
+
+    from tkinter import messagebox
+
+    messagebox.showinfo(
+        "Hat unlocked!",
+        f"You received: {hat['name']}\n"
+        f"Rarity: {hat['rarity']}"
+    )
+
 def setup_menu(
     app_settings,
     app_config,
     app_stats,
-    app_particle_system
+    app_particle_system,
+    app_hat_manager
 ):
-    global settings, config, stats, particle_system
+    global settings, config, stats, particle_system, hat_manager
 
     settings = app_settings
     config = app_config
     stats = app_stats
     particle_system = app_particle_system
+    hat_manager = app_hat_manager
+
+    set_reward_claim_callback(
+        claim_hat_reward
+    )
+
+    root.after(
+        1000,
+        check_hat_reward
+    )
 
     create_tray_icon()
 
@@ -110,7 +163,8 @@ def toggle_menu(event=None):
         settings,
         config,
         stats,
-        actions
+        actions,
+        hat_manager
     )
     
 create_menu_button(toggle_menu)

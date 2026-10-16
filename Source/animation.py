@@ -1,6 +1,7 @@
 from Source.Config.style import CENTER_X, CENTER_Y
 from Source.Window_Manager import root, canvas
 from Source.Config.paths import SPRITES_DIR, DATA_DIR
+from Source.hats import RARITIES
 
 from dataclasses import dataclass
 
@@ -16,6 +17,26 @@ from Source.Config.effects import EffectManager
 
 
 SPRITE_SIZE = (150, 150)
+
+HAT_ANCHOR_X = 88
+HAT_ANCHOR_Y = 10
+
+hat_manager = None
+hat_images = {}
+hat_photo = None
+hat_photo_size = None
+
+
+# Create one persistent canvas item for the equipped hat.
+hat_canvas_id = canvas.create_image(
+    CENTER_X,
+    CENTER_Y,
+    anchor="s",
+    tags=("hat",),
+    state="hidden"
+)
+
+canvas.tag_raise(hat_canvas_id)
 
 ANIMATION_FILE = os.path.join(DATA_DIR, "animations.json")
 
@@ -171,6 +192,83 @@ sprite_id = canvas.create_image(
 
 canvas.image = initial_photo
 
+def set_hat_manager(manager):
+    global hat_manager
+
+    hat_manager = manager
+
+
+def get_hat_image(hat_id):
+    if hat_id not in hat_images:
+        hat = hat_manager.catalog[hat_id]
+
+        image = Image.open(
+            hat["path"]
+        ).convert("RGBA")
+
+        hat_images[hat_id] = image
+
+    return hat_images[hat_id]
+
+def update_hat(x, y, scale):
+    global hat_photo
+    global hat_photo_size
+
+    if hat_manager is None or hat_manager.equipped is None:
+        canvas.itemconfig(
+            hat_canvas_id,
+            state="hidden"
+        )
+        return
+
+    hat_id = hat_manager.equipped
+    hat = hat_manager.catalog.get(hat_id)
+
+    if hat is None:
+        canvas.itemconfig(
+            hat_canvas_id,
+            state="hidden"
+        )
+        return
+
+    image = get_hat_image(hat_id)
+
+    if hat_photo_size != hat_id:
+        hat_photo = ImageTk.PhotoImage(image)
+        hat_photo_size = hat_id
+
+        canvas.itemconfig(
+            hat_canvas_id,
+            image=hat_photo
+        )
+
+    hat_x = (
+        x
+        + HAT_ANCHOR_X
+        - SPRITE_SIZE[0] / 2
+        + hat["offset_x"]
+    )
+
+    hat_y = (
+        y
+        + HAT_ANCHOR_Y
+        - SPRITE_SIZE[1] / 2
+        + hat["offset_y"]
+    )
+
+    canvas.coords(
+        hat_canvas_id,
+        hat_x,
+        hat_y
+    )
+
+    canvas.itemconfig(
+        hat_canvas_id,
+        state="normal"
+    )
+
+    canvas.tag_raise(hat_canvas_id)
+
 def animate_sprite():
 
     global current_animation
@@ -191,6 +289,8 @@ def animate_sprite():
         canvas.winfo_height()
         - (SPRITE_SIZE[1] * scale) / 2
     )
+
+    update_hat(x, y, scale)
 
     canvas.coords(
         sprite_id,

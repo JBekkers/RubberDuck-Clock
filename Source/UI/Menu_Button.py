@@ -9,6 +9,27 @@ menu_image = None
 menu_hover = None
 menu_button = None
 
+reward_indicator = None
+reward_claim_callback = None
+reward_available = False
+
+def set_reward_claim_callback(callback):
+    global reward_claim_callback
+    reward_claim_callback = callback
+
+
+def set_reward_available(available):
+    global reward_available
+
+    reward_available = available
+
+    if reward_indicator is None:
+        return
+
+    canvas.itemconfig(
+        reward_indicator,
+        state="normal" if available else "hidden"
+    )
 
 def create_menu_button(open_menu):
 
@@ -65,3 +86,43 @@ def create_menu_button(open_menu):
             canvas.config(cursor="")
         )
     )
+    
+    global reward_indicator
+
+    reward_indicator = canvas.create_oval(
+        75 + style.MENU_OFFSET_X + 14,
+        75 + style.MENU_OFFSET_Y - 12,
+        75 + style.MENU_OFFSET_X + 34,
+        75 + style.MENU_OFFSET_Y + 8,
+        fill="#E89A39",
+        outline="#49391F",
+        width=2,
+        tags=("hat_reward",),
+        state="hidden"
+    )
+
+    canvas.tag_bind(
+        "hat_reward",
+        "<Button-1>",
+        lambda event: (
+            reward_claim_callback()
+            if reward_claim_callback is not None
+            else None
+        )
+    )
+
+    canvas.tag_bind(
+        "hat_reward",
+        "<Enter>",
+        lambda event: canvas.config(cursor="hand2")
+    )
+
+    canvas.tag_bind(
+        "hat_reward",
+        "<Leave>",
+        lambda event: canvas.config(cursor="")
+    )
+
+    canvas.tag_raise(reward_indicator)
+
+    

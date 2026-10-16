@@ -85,7 +85,8 @@ from Source.UI.app import load_font, start_uptime_autosave, schedule_pos_save, s
 from Source.Config.config import load_config
 from Source.Config.stats import load_stats, start_session
 
-from Source.animation import animate_sprite, choose_random_animation, duck_clicked, set_config
+from Source.hats import HatManager
+from Source.animation import animate_sprite, choose_random_animation, duck_clicked, set_config, set_hat_manager
 from Source.UI.menu_manager import setup_menu
 from Source.Window_Manager import root, canvas, set_position, start_move, move_window, set_always_on_top
 from Source.clock import setup_clock, start_clock
@@ -105,6 +106,9 @@ stats = load_stats()
 
 settings = config["settings"]
 
+hat_manager = HatManager()
+set_hat_manager(hat_manager)
+
 start_session(stats)
 set_config(config, stats)
 
@@ -120,7 +124,8 @@ setup_menu(
     settings,
     config,
     stats,
-    particle_system
+    particle_system,
+    hat_manager
 )
 
 

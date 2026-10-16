@@ -22,7 +22,14 @@ def close_menu():
         window = None
         set_menu_window(None)
 
-def open_settings(root,settings,config,stats,actions):
+def open_settings(
+    root,
+    settings,
+    config,
+    stats,
+    actions,
+    hat_manager
+):
 
     global window
 
@@ -152,11 +159,21 @@ def open_settings(root,settings,config,stats,actions):
         frames.append(frame)
 
         if builder is build_settings_tab:
-            builder(frame,settings,config,actions)
+            builder(frame, settings, config, actions)
+
         elif builder is build_about_tab:
-            builder(frame,settings,config,stats)
+            builder(frame, settings, config, stats)
+
+        elif builder is build_cosmetics_tab:
+            builder(
+                frame,
+                settings,
+                config,
+                hat_manager
+            )
+
         else:
-            builder(frame,settings,config)
+            builder(frame, settings, config)
 
     close_button = tk.Button(
         tab_bar,
