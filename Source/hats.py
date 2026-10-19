@@ -51,7 +51,9 @@ INVENTORY_VERSION = 1
 
 HAT_OFFSETS = {
     "afro": (0, 20),
-    "diving_goggles": (15, 50),
+    "rainbow_afro": (0, 20),
+    "tophat": (0, 10),
+    "diving_goggles": (15, 48),
 }
 
 def load_hat_catalog():

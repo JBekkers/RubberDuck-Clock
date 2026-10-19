@@ -3,6 +3,7 @@ from PIL import Image, ImageTk
 
 from Source.Config import style
 from Source.hats import RARITIES, RARITY_ORDER
+from Source.Config.scrollbar import FlatScrollbar
 
 
 def build_cosmetics_tab(
@@ -55,10 +56,18 @@ def build_cosmetics_tab(
         highlightthickness=0
     )
 
-    scrollbar = tk.Scrollbar(
+    scrollbar = FlatScrollbar(
         container,
-        orient="vertical",
-        command=canvas.yview
+        command=canvas.yview,
+        bg=style.SCROLLBAR_BACKGROUND,
+        width=style.SCROLLBAR_WIDTH,
+        thumb_color=style.SCROLLBAR_THUMB,
+        hover_color=style.SCROLLBAR_THUMB_HOVER,
+        thumb_width=style.SCROLLBAR_THUMB_WIDTH,
+        thumb_height=style.SCROLLBAR_THUMB_HEIGHT,
+        arrow_height=style.SCROLLBAR_ARROW_HEIGHT,
+        arrow_color=style.SCROLLBAR_ARROW_COLOR,
+        arrow_hover_color=style.SCROLLBAR_ARROW_HOVER
     )
 
     scrollbar.pack(
@@ -190,9 +199,15 @@ def build_cosmetics_tab(
                 sticky="nsew"
             )
 
+            selected_background = (
+                "#FCE9AD"
+                if equipped
+                else style.BUTTON_NORMAL
+            )
+
             card = tk.Frame(
                 border,
-                bg=style.BUTTON_NORMAL,
+                bg=selected_background,
                 width=100,
                 height=100
             )
@@ -203,6 +218,21 @@ def build_cosmetics_tab(
             )
 
             card.pack_propagate(False)
+
+
+            image_slot = tk.Frame(
+                card,
+                bg=selected_background,
+                height=64
+            )
+
+            image_slot.pack(
+                fill="x",
+                padx=2,
+                pady=(4, 2)
+            )
+
+            image_slot.pack_propagate(False)
 
             try:
                 image = Image.open(
@@ -219,21 +249,35 @@ def build_cosmetics_tab(
                 photo_references.append(photo)
 
                 image_label = tk.Label(
-                    card,
+                    image_slot,
                     image=photo,
-                    bg=style.BUTTON_NORMAL
+                    bg=selected_background
                 )
 
                 image_label.pack(
-                    pady=(5, 2)
+                    expand=True
                 )
+
+            except (OSError, ValueError):
+                image_label = tk.Label(
+                    image_slot,
+                    text="Image unavailable",
+                    font=style.SMALL_FONT,
+                    bg=selected_background,
+                    fg=style.TEXT_COLOR
+                )
+
+                image_label.pack(
+                    expand=True
+                )
+
 
             except (OSError, ValueError):
                 image_label = tk.Label(
                     card,
                     text="Image\nunavailable",
                     font=style.SMALL_FONT,
-                    bg=style.BUTTON_NORMAL,
+                    bg=selected_background,
                     fg=style.TEXT_COLOR
                 )
 
@@ -245,7 +289,7 @@ def build_cosmetics_tab(
                 card,
                 text=hat["name"],
                 font=style.SMALL_FONT,
-                bg=style.BUTTON_NORMAL,
+                bg=selected_background,
                 fg=style.TEXT_COLOR,
                 wraplength=90
             )
@@ -255,22 +299,13 @@ def build_cosmetics_tab(
                 padx=2
             )
 
-            if equipped:
-                status = tk.Label(
-                    card,
-                    text="EQUIPPED",
-                    font=style.SMALL_FONT,
-                    bg=style.BUTTON_NORMAL,
-                    fg=style.UNLOCKED_COLOR
-                )
-            else:
-                status = tk.Label(
-                    card,
-                    text=hat["rarity"],
-                    font=style.SMALL_FONT,
-                    bg=style.BUTTON_NORMAL,
-                    fg=style.MUTED_TEXT
-                )
+            status = tk.Label(
+                card,
+                text=hat["rarity"],
+                font=style.SMALL_FONT,
+                bg=selected_background,
+                fg=style.MUTED_TEXT
+            )
 
             status.pack(
                 fill="x",
@@ -286,6 +321,7 @@ def build_cosmetics_tab(
             for widget in (
                 border,
                 card,
+                image_slot,
                 image_label,
                 name,
                 status
