@@ -108,7 +108,6 @@ def open_settings(
     frames = []
     buttons =[]
 
-
     def show_tab(index):
         for i, frame in enumerate(frames):
             frame.pack_forget()

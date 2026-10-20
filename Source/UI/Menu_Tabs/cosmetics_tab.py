@@ -4,7 +4,7 @@ from PIL import Image, ImageTk
 from Source.Config import style
 from Source.hats import RARITIES, RARITY_ORDER
 from Source.Config.scrollbar import FlatScrollbar
-
+import time
 
 def build_cosmetics_tab(
     parent,
@@ -26,21 +26,48 @@ def build_cosmetics_tab(
 
     tk.Label(
         header,
-        text="Your Hats",
+        text="Inventory:",
         font=style.TITLE_FONT,
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR
     ).pack(side="left")
 
-    equipped_text = tk.Label(
+    droptimer_text = tk.Label(
         header,
-        text="",
+        text="Next drop in: --",
         font=style.SMALL_FONT,
         bg=style.BACKGROUND,
         fg=style.MUTED_TEXT
     )
-    equipped_text.pack(side="right")
+    droptimer_text.pack(side="right")
 
+    def update_drop_timer():
+        if not droptimer_text.winfo_exists():
+            return
+
+        remaining = max(
+            0,
+            int(hat_manager.next_drop_at - time.time() + 0.999)
+        )
+
+        if remaining == 0:
+            droptimer_text.config(
+                text="Next drop: Available!"
+            )
+        else:
+            minutes, seconds = divmod(remaining, 60)
+
+            droptimer_text.config(
+                text=f"Next drop in: {minutes}m {seconds:02d}s"
+            )
+
+        droptimer_text.after(
+            1000,
+            update_drop_timer
+        )
+
+    update_drop_timer()
+    
     container = tk.Frame(
         parent,
         bg=style.BACKGROUND
@@ -142,25 +169,8 @@ def build_cosmetics_tab(
                 pady=30
             )
 
-            equipped_text.config(
-                text="No hat equipped"
-            )
-
             update_scroll_region()
             return
-
-        if hat_manager.equipped:
-            equipped_name = hat_manager.catalog[
-                hat_manager.equipped
-            ]["name"]
-
-            equipped_text.config(
-                text=f"Equipped: {equipped_name}"
-            )
-        else:
-            equipped_text.config(
-                text="No hat equipped"
-            )
 
         columns = 3
 
@@ -332,6 +342,9 @@ def build_cosmetics_tab(
                     callback()
                 )
 
+    
+
         update_scroll_region()
 
     render_inventory()
+
