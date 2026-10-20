@@ -358,3 +358,54 @@ class FlatScrollbar(tk.Canvas):
         self.current_color = self.hover_color
 
         self._redraw()
+
+# Shared mouse-wheel handling for scrollable canvases.
+
+scroll_canvases = {}
+wheel_bound_roots = set()
+
+
+def enable_mousewheel(canvas):
+    root = canvas.winfo_toplevel()
+    root_key = str(root)
+    canvas_key = str(canvas)
+
+    scroll_canvases.setdefault(root_key, {})[canvas_key] = canvas
+
+    if root_key in wheel_bound_roots:
+        return
+
+    def scroll_with_mousewheel(event):
+        widget = event.widget
+
+        # Find the registered canvas containing the pointer.
+        while widget is not None:
+            key = str(widget)
+            canvas = scroll_canvases.get(root_key, {}).get(key)
+
+            if canvas is not None:
+                if not canvas.winfo_exists():
+                    return
+
+                if event.num == 4:
+                    direction = -1
+                elif event.num == 5:
+                    direction = 1
+                else:
+                    delta = getattr(event, "delta", 0)
+
+                    if delta == 0:
+                        return
+
+                    direction = -1 if delta > 0 else 1
+
+                canvas.yview_scroll(direction, "units")
+                return
+
+            widget = getattr(widget, "master", None)
+
+    root.bind_all("<MouseWheel>", scroll_with_mousewheel, add="+")
+    root.bind_all("<Button-4>", scroll_with_mousewheel, add="+")
+    root.bind_all("<Button-5>", scroll_with_mousewheel, add="+")
+
+    wheel_bound_roots.add(root_key)

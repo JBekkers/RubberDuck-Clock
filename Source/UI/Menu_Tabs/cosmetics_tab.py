@@ -3,7 +3,7 @@ from PIL import Image, ImageTk
 
 from Source.Config import style
 from Source.hats import RARITIES, RARITY_ORDER
-from Source.Config.scrollbar import FlatScrollbar
+from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
 import time
 
 def build_cosmetics_tab(
@@ -67,7 +67,7 @@ def build_cosmetics_tab(
         )
 
     update_drop_timer()
-    
+
     container = tk.Frame(
         parent,
         bg=style.BACKGROUND
@@ -82,6 +82,8 @@ def build_cosmetics_tab(
         bg=style.BACKGROUND,
         highlightthickness=0
     )
+
+    enable_mousewheel(canvas)
 
     scrollbar = FlatScrollbar(
         container,

@@ -2,7 +2,7 @@ import tkinter as tk
 
 from Source.Config import style
 from Source.animation import animations, set_rare_animation_callback
-from Source.Config.scrollbar import FlatScrollbar
+from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
 
 def format_uptime(seconds):
     hours = seconds / 3600
@@ -41,6 +41,8 @@ def build_about_tab(parent, settings, config, stats):
         scrollbar_frame,
         command=scroll_canvas.yview
     )
+
+    enable_mousewheel(scroll_canvas)
 
     scrollbar_frame.grid_rowconfigure(
         0,
@@ -125,36 +127,6 @@ def build_about_tab(parent, settings, config, stats):
     scroll_canvas.bind(
         "<Configure>",
         resize_about_frame
-    )
-
-    def mouse_wheel(event):
-        if about_frame.winfo_reqheight() <= scroll_canvas.winfo_height():
-            return
-
-        scroll_canvas.yview_scroll(
-            int(-1 * (event.delta / 120)),
-            "units"
-        )
-
-    def enable_mousewheel(event):
-        scroll_canvas.bind_all(
-            "<MouseWheel>",
-            mouse_wheel
-        )
-
-    def disable_mousewheel(event):
-        scroll_canvas.unbind_all(
-            "<MouseWheel>"
-        )
-
-    scroll_canvas.bind(
-        "<Enter>",
-        enable_mousewheel
-    )
-
-    scroll_canvas.bind(
-        "<Leave>",
-        disable_mousewheel
     )
 
     tk.Label(

@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from Source.Config import style
 from Source.Config.config import save_config
-from Source.Config.scrollbar import FlatScrollbar
+from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
 from Source.sound import set_sound_volume, play_sound
 from tzlocal import get_localzone_name
 
@@ -163,6 +163,8 @@ def build_settings_tab(parent, settings, config, actions):
         anchor="nw"
     )
 
+    enable_mousewheel(scroll_canvas)
+
     def add_setting_checkbox(parent, settings, config, actions, key, text):
         variable = tk.BooleanVar(value=settings.get(key, False))
 
@@ -212,33 +214,6 @@ def build_settings_tab(parent, settings, config, actions):
     scroll_canvas.bind(
         "<Configure>",
         resize_settings_frame
-    )
-
-    def mouse_wheel(event):
-        scroll_canvas.yview_scroll(
-            int(-1 * (event.delta / 120)),
-            "units"
-        )
-
-    def enable_mousewheel(event):
-        scroll_canvas.bind_all(
-            "<MouseWheel>",
-            mouse_wheel
-        )
-
-    def disable_mousewheel(event):
-        scroll_canvas.unbind_all(
-            "<MouseWheel>"
-        )
-
-    scroll_canvas.bind(
-        "<Enter>",
-        enable_mousewheel
-    )
-
-    scroll_canvas.bind(
-        "<Leave>",
-        disable_mousewheel
     )
 
     tk.Label(
