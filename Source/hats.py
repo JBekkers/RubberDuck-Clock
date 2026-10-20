@@ -104,6 +104,7 @@ def load_hat_catalog():
 
     return catalog
 
+
 class HatManager:
     def __init__(self):
         os.makedirs(CONFIG_DIR, exist_ok=True)
@@ -116,6 +117,7 @@ class HatManager:
         self.catalog = load_hat_catalog()
         self.owned = []
         self.equipped = None
+        self._next_instance_id = 1
 
         self.next_drop_at = (
             time.time() + DROP_INTERVAL_SECONDS
@@ -139,28 +141,82 @@ class HatManager:
             if not isinstance(data, dict):
                 raise ValueError("Invalid inventory format")
 
-            if data.get("version") != INVENTORY_VERSION:
+            if data.get("version") not in (1, 2):
                 raise ValueError("Unsupported inventory version")
 
-            owned = data.get("owned", [])
+            raw_owned = data.get("owned", [])
 
-            if not isinstance(owned, list):
+            if not isinstance(raw_owned, list):
                 raise ValueError("Invalid owned list")
 
-            self.owned = [
-                hat_id
-                for hat_id in owned
-                if isinstance(hat_id, str)
-                and hat_id in self.catalog
-            ]
+            self.owned = []
+            used_instance_ids = set()
 
+            for index, item in enumerate(raw_owned):
+                if isinstance(item, str):
+                    # Migrate an old inventory entry.
+                    hat_id = item
+                    instance_id = f"hat_{index + 1}"
+
+                elif isinstance(item, dict):
+                    hat_id = item.get("hat_id")
+                    instance_id = item.get("instance_id")
+
+                    if not isinstance(instance_id, str):
+                        instance_id = f"hat_{index + 1}"
+
+                else:
+                    continue
+
+                if hat_id not in self.catalog:
+                    continue
+
+                if instance_id in used_instance_ids:
+                    instance_id = f"hat_{index + 1}"
+
+                    suffix = 1
+                    while instance_id in used_instance_ids:
+                        suffix += 1
+                        instance_id = f"hat_{index + 1}_{suffix}"
+
+                used_instance_ids.add(instance_id)
+
+                self.owned.append({
+                    "instance_id": instance_id,
+                    "hat_id": hat_id,
+                })
+
+            # Keep equipped selections compatible with both
+            # the old and new inventory formats.
             equipped = data.get("equipped")
 
-            if (
-                isinstance(equipped, str)
-                and equipped in self.owned
-            ):
-                self.equipped = equipped
+            if isinstance(equipped, dict):
+                equipped = equipped.get("instance_id")
+
+            if isinstance(equipped, str):
+                # New format: equipped is an instance ID.
+                matching = next(
+                    (
+                        item for item in self.owned
+                        if item["instance_id"] == equipped
+                    ),
+                    None
+                )
+
+                if matching is not None:
+                    self.equipped = equipped
+                else:
+                    # Old format: equipped was a catalog hat ID.
+                    matching = next(
+                        (
+                            item for item in self.owned
+                            if item["hat_id"] == equipped
+                        ),
+                        None
+                    )
+
+                    if matching is not None:
+                        self.equipped = matching["instance_id"]
 
             next_drop = data.get("next_drop_at")
 
@@ -173,6 +229,8 @@ class HatManager:
                     next_drop
                 )
 
+            self._next_instance_id = len(self.owned) + 1
+
         except (
             OSError,
             ValueError,
@@ -184,6 +242,7 @@ class HatManager:
 
             self.owned = []
             self.equipped = None
+            self._next_instance_id = 1
 
             self.next_drop_at = (
                 time.time() + DROP_INTERVAL_SECONDS
@@ -193,7 +252,7 @@ class HatManager:
 
     def save_inventory(self):
         data = {
-            "version": INVENTORY_VERSION,
+            "version": 2,
             "owned": self.owned,
             "equipped": self.equipped,
             "next_drop_at": self.next_drop_at,
@@ -230,29 +289,41 @@ class HatManager:
                 f"Unknown hat ID: {hat_id}"
             )
 
-        self.owned.append(hat_id)
-        self.save_inventory()
+        instance_id = f"hat_{self._next_instance_id}"
+        self._next_instance_id += 1
 
-    def toggle_hat(self, hat_id):
-        if hat_id not in self.owned:
+        self.owned.append({
+            "instance_id": instance_id,
+            "hat_id": hat_id,
+        })
+
+        self.save_inventory()
+        return instance_id
+
+    def toggle_hat(self, instance_id):
+        if not any(
+            item["instance_id"] == instance_id
+            for item in self.owned
+        ):
             return False
 
-        if self.equipped == hat_id:
+        if self.equipped == instance_id:
             self.equipped = None
         else:
-            self.equipped = hat_id
+            self.equipped = instance_id
 
         self.save_inventory()
         return True
 
     def get_sorted_inventory(self):
         return sorted(
-            enumerate(self.owned),
+            self.owned,
             key=lambda item: (
                 RARITY_ORDER.index(
-                    self.catalog[item[1]]["rarity"]
+                    self.catalog[item["hat_id"]]["rarity"]
                 ),
-                item[0]
+                self.catalog[item["hat_id"]]["name"].casefold(),
+                item["instance_id"],
             )
         )
 
@@ -298,7 +369,7 @@ class HatManager:
         if hat is None:
             return None
 
-        self.owned.append(hat["id"])
+        self.add_hat(hat["id"])
 
         self.next_drop_at = (
             time.time() + DROP_INTERVAL_SECONDS

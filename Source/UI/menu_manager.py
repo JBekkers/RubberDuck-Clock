@@ -12,7 +12,6 @@ from Source.clock import timezone_changed
 from Source.UI.app import reset_position, shutdown, restart_application
 from Source.UI.Menu_Tabs.tab_loader import open_settings
 
-from Source.hats import HatManager
 from Source.UI.Menu_Button import (
     create_menu_button,
     set_reward_claim_callback,

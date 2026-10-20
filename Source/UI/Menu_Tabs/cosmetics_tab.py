@@ -41,6 +41,23 @@ def build_cosmetics_tab(
     )
     droptimer_text.pack(side="right")
 
+    
+    def update_selection():
+        for instance_id, widgets in inventory_cards.items():
+            selected = hat_manager.equipped == instance_id
+
+            background = (
+                "#FCE9AD"
+                if selected
+                else style.BUTTON_NORMAL
+            )
+
+            widgets["card"].configure(bg=background)
+            widgets["image_slot"].configure(bg=background)
+            widgets["image_label"].configure(bg=background)
+            widgets["name"].configure(bg=background)
+            widgets["status"].configure(bg=background)
+
     def update_drop_timer():
         if not droptimer_text.winfo_exists():
             return
@@ -126,6 +143,7 @@ def build_cosmetics_tab(
     )
 
     photo_references = []
+    inventory_cards = {}
 
     def update_scroll_region(event=None):
         canvas.configure(
@@ -153,6 +171,7 @@ def build_cosmetics_tab(
             widget.destroy()
 
         photo_references.clear()
+        inventory_cards.clear()
 
         owned = hat_manager.get_sorted_inventory()
 
@@ -181,8 +200,12 @@ def build_cosmetics_tab(
                 column,
                 weight=1
             )
+        
+        for position, item in enumerate(owned):
+            instance_id = item["instance_id"]
+            hat_id = item["hat_id"]
 
-        for position, (inventory_index, hat_id) in enumerate(owned):
+            # Get the hat belonging to this inventory card.
             hat = hat_manager.catalog[hat_id]
 
             row = position // columns
@@ -191,10 +214,6 @@ def build_cosmetics_tab(
             rarity_color = RARITIES[
                 hat["rarity"]
             ]["color"]
-
-            equipped = (
-                hat_manager.equipped == hat_id
-            )
 
             border = tk.Frame(
                 grid,
@@ -213,7 +232,7 @@ def build_cosmetics_tab(
 
             selected_background = (
                 "#FCE9AD"
-                if equipped
+                if hat_manager.equipped == instance_id
                 else style.BUTTON_NORMAL
             )
 
@@ -230,7 +249,6 @@ def build_cosmetics_tab(
             )
 
             card.pack_propagate(False)
-
 
             image_slot = tk.Frame(
                 card,
@@ -256,8 +274,7 @@ def build_cosmetics_tab(
                     Image.Resampling.NEAREST
                 )
 
-                photo = ImageTk.PhotoImage(image)
-
+                photo = ImageTk.PhotoImage(image, master=grid)
                 photo_references.append(photo)
 
                 image_label = tk.Label(
@@ -265,10 +282,8 @@ def build_cosmetics_tab(
                     image=photo,
                     bg=selected_background
                 )
-
-                image_label.pack(
-                    expand=True
-                )
+                image_label.image = photo
+                image_label.pack(expand=True)
 
             except (OSError, ValueError):
                 image_label = tk.Label(
@@ -279,23 +294,7 @@ def build_cosmetics_tab(
                     fg=style.TEXT_COLOR
                 )
 
-                image_label.pack(
-                    expand=True
-                )
-
-
-            except (OSError, ValueError):
-                image_label = tk.Label(
-                    card,
-                    text="Image\nunavailable",
-                    font=style.SMALL_FONT,
-                    bg=selected_background,
-                    fg=style.TEXT_COLOR
-                )
-
-                image_label.pack(
-                    pady=(5, 2)
-                )
+                image_label.pack(expand=True)
 
             name = tk.Label(
                 card,
@@ -324,11 +323,25 @@ def build_cosmetics_tab(
                 padx=2
             )
 
-            def select_hat(selected_id=hat_id):
-                hat_manager.toggle_hat(
-                    selected_id
+            inventory_cards[instance_id] = {
+                "border": border,
+                "card": card,
+                "image_slot": image_slot,
+                "image_label": image_label,
+                "name": name,
+                "status": status,
+            }
+
+            def select_hat(event, selected_instance_id=instance_id):
+                hat_manager.toggle_hat(selected_instance_id)
+                update_selection()
+
+            def bind_click(widget, selected_instance_id):
+                widget.bind(
+                    "<Button-1>",
+                    lambda event, hat_instance=selected_instance_id:
+                        select_hat(event, hat_instance)
                 )
-                render_inventory()
 
             for widget in (
                 border,
@@ -338,13 +351,7 @@ def build_cosmetics_tab(
                 name,
                 status
             ):
-                widget.bind(
-                    "<Button-1>",
-                    lambda event, callback=select_hat:
-                    callback()
-                )
-
-    
+                bind_click(widget, instance_id)
 
         update_scroll_region()
 

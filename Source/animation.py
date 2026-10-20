@@ -210,25 +210,34 @@ def get_hat_image(hat_id):
 
     return hat_images[hat_id]
 
+
 def update_hat(x, y, scale):
     global hat_photo
     global hat_photo_size
 
     if hat_manager is None or hat_manager.equipped is None:
-        canvas.itemconfig(
-            hat_canvas_id,
-            state="hidden"
-        )
+        canvas.itemconfig(hat_canvas_id, state="hidden")
         return
 
-    hat_id = hat_manager.equipped
+    # Find the equipped inventory item by its instance ID.
+    equipped_item = next(
+        (
+            item for item in hat_manager.owned
+            if item["instance_id"] == hat_manager.equipped
+        ),
+        None
+    )
+
+    if equipped_item is None:
+        canvas.itemconfig(hat_canvas_id, state="hidden")
+        return
+
+    # Convert the inventory instance ID into the actual catalog hat ID.
+    hat_id = equipped_item["hat_id"]
     hat = hat_manager.catalog.get(hat_id)
 
     if hat is None:
-        canvas.itemconfig(
-            hat_canvas_id,
-            state="hidden"
-        )
+        canvas.itemconfig(hat_canvas_id, state="hidden")
         return
 
     image = get_hat_image(hat_id)
@@ -236,11 +245,7 @@ def update_hat(x, y, scale):
     if hat_photo_size != hat_id:
         hat_photo = ImageTk.PhotoImage(image)
         hat_photo_size = hat_id
-
-        canvas.itemconfig(
-            hat_canvas_id,
-            image=hat_photo
-        )
+        canvas.itemconfig(hat_canvas_id, image=hat_photo)
 
     hat_x = (
         x
@@ -256,18 +261,10 @@ def update_hat(x, y, scale):
         + hat["offset_y"]
     )
 
-    canvas.coords(
-        hat_canvas_id,
-        hat_x,
-        hat_y
-    )
-
-    canvas.itemconfig(
-        hat_canvas_id,
-        state="normal"
-    )
-
+    canvas.coords(hat_canvas_id, hat_x, hat_y)
+    canvas.itemconfig(hat_canvas_id, state="normal")
     canvas.tag_raise(hat_canvas_id)
+
 
 def animate_sprite():
 
