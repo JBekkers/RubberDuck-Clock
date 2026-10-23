@@ -10,7 +10,9 @@ The application displays the current time and date inside a simple rubber duck w
 
 - Accuratly Displays the current time and date
 - Custom menu with customization settings.
-- Cute animations and lots of hats to collect
+- Collect hats to customize your duck!
+- Exchange hats to upgrade to a higher rarity!
+- Cute animations to give the duck personality
 - Lightweight and simple
 - Tracks uptime/session count
 
@@ -54,10 +56,6 @@ Some ideas I'd like to add in the future:
 - More animated events/rare animated events
 
 - link with google agenda - show notifications for meetings etc
-
-- hat packages -> get a random hat ever 30m with different rarities (common, uncommon, rare, ulra rare, legendary) (maybe also have a timer somewhere)
-- new hat drop -> bubble forms with a unknown hat icon in it -> user clicks bubble (bubble pop animation plays) new hat is given
-- exchange -> sacrifice x amount of hats of same rarity to get a new hat from a higher rarity
 
 - automatically detect seasons like Christmas, new year, Easter etc and have special events related hats that only drop during special season time.
 - seasonal particle effects like snow, fireworks, easter, eggs falling that play during special seasons only (option in settings to toggle seasonal effects - if not default to bubbles)
