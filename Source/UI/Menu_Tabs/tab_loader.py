@@ -163,7 +163,7 @@ def open_settings(
         elif builder is build_about_tab:
             builder(frame, settings, config, stats)
 
-        elif builder is build_cosmetics_tab:
+        elif builder is build_cosmetics_tab or builder is build_exchange_tab:
             builder(
                 frame,
                 settings,
