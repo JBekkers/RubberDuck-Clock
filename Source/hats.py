@@ -9,7 +9,7 @@ from Source.Config.paths import CONFIG_DIR, HATS_DIR
 
 logger = logging.getLogger(__name__)
 
-DROP_INTERVAL_SECONDS = 15 * 60
+DROP_INTERVAL_SECONDS = 20 * 60
 
 RARITIES = {
     "Common": {
