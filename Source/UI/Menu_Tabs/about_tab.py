@@ -142,10 +142,9 @@ def build_about_tab(parent, settings, config, stats):
     tk.Label(
         about_frame,
         text=(
-            "Duck Clock is a simple, lightweight clock with a cute "
-            "duck-themed design. It started as a small Python project "
-            "but quickly became a passion project combining my love "
-            "of coding and collecting ducks."
+            "Duck Clock is a simple, lightweight clock with a cute duck-themed design."
+            "It started as a small Python project because the clock on my PC stopped working "
+            "but it quickly turned into an out-of-hand passion project combining my interest in coding with my love for collecting rubber ducks."
         ),
         font=style.TEXT_FONT,
         bg=style.BACKGROUND,

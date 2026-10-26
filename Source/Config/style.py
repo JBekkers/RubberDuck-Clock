@@ -71,7 +71,7 @@ CENTER_Y = WINDOW_HEIGHT // 2
 # ------------------------------------------------------------
 
 MENU_WIDTH = 400
-MENU_HEIGHT = 450
+MENU_HEIGHT = 500
 
 MENU_PADDING = 10
 
