@@ -55,8 +55,6 @@ def build_cosmetics_tab(
             widgets["card"].configure(bg=background)
             widgets["image_slot"].configure(bg=background)
             widgets["image_label"].configure(bg=background)
-            widgets["name"].configure(bg=background)
-            widgets["status"].configure(bg=background)
 
     def update_drop_timer():
         if not droptimer_text.winfo_exists():
@@ -186,14 +184,14 @@ def build_cosmetics_tab(
             ).grid(
                 row=0,
                 column=0,
-                columnspan=3,
+                columnspan=4,
                 pady=30
             )
 
             update_scroll_region()
             return
 
-        columns = 3
+        columns = 4
 
         for column in range(columns):
             grid.columnconfigure(
@@ -218,8 +216,8 @@ def build_cosmetics_tab(
             border = tk.Frame(
                 grid,
                 bg=rarity_color,
-                padx=4,
-                pady=4
+                padx=3,
+                pady=3
             )
 
             border.grid(
@@ -239,8 +237,8 @@ def build_cosmetics_tab(
             card = tk.Frame(
                 border,
                 bg=selected_background,
-                width=100,
-                height=100
+                width=70,
+                height=70
             )
 
             card.pack(
@@ -253,13 +251,11 @@ def build_cosmetics_tab(
             image_slot = tk.Frame(
                 card,
                 bg=selected_background,
-                height=64
+                height=70
             )
 
             image_slot.pack(
                 fill="x",
-                padx=2,
-                pady=(4, 2)
             )
 
             image_slot.pack_propagate(False)
@@ -270,7 +266,7 @@ def build_cosmetics_tab(
                 ).convert("RGBA")
 
                 image.thumbnail(
-                    (64, 58),
+                    (68,68),
                     Image.Resampling.NEAREST
                 )
 
@@ -296,40 +292,11 @@ def build_cosmetics_tab(
 
                 image_label.pack(expand=True)
 
-            name = tk.Label(
-                card,
-                text=hat["name"],
-                font=style.SMALL_FONT,
-                bg=selected_background,
-                fg=style.TEXT_COLOR,
-                wraplength=90
-            )
-
-            name.pack(
-                fill="x",
-                padx=2
-            )
-
-            status = tk.Label(
-                card,
-                text=hat["rarity"],
-                font=style.SMALL_FONT,
-                bg=selected_background,
-                fg=style.MUTED_TEXT
-            )
-
-            status.pack(
-                fill="x",
-                padx=2
-            )
-
             inventory_cards[instance_id] = {
                 "border": border,
                 "card": card,
                 "image_slot": image_slot,
                 "image_label": image_label,
-                "name": name,
-                "status": status,
             }
 
             def select_hat(event, selected_instance_id=instance_id):
@@ -348,8 +315,6 @@ def build_cosmetics_tab(
                 card,
                 image_slot,
                 image_label,
-                name,
-                status
             ):
                 bind_click(widget, instance_id)
 

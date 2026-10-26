@@ -38,7 +38,7 @@ def build_exchange_tab(parent, settings, config, hat_manager):
     slots_frame.pack(fill="x", pady=(0, 6))
 
     for column in range(5):
-        slots_frame.columnconfigure(column, weight=1)
+        slots_frame.columnconfigure(column, weight=1, uniform="slot")
 
     def remove_from_slot(instance_id):
         if instance_id in selected_instances:
@@ -46,21 +46,14 @@ def build_exchange_tab(parent, settings, config, hat_manager):
             update_exchange_view()
 
     for slot_index in range(SLOT_COUNT):
-        button = tk.Button(
+        border = tk.Frame(
             slots_frame,
-            text=f"Slot {slot_index + 1}\nEmpty",
-            font=style.SMALL_FONT,
             bg=style.DISABLED_BACKGROUND,
-            fg=style.TEXT_COLOR,
-            activebackground=style.BUTTON_CLICKED,
-            relief="flat",
-            wraplength=65,
-            height=3,
-            state="disabled",
-            cursor="arrow"
+            padx=3,
+            pady=3
         )
 
-        button.grid(
+        border.grid(
             row=slot_index // 5,
             column=slot_index % 5,
             padx=3,
@@ -68,7 +61,24 @@ def build_exchange_tab(parent, settings, config, hat_manager):
             sticky="nsew"
         )
 
-        slot_buttons.append(button)
+        button = tk.Button(
+            border,
+            text="Empty",
+            font=style.SMALL_FONT,
+            bg=style.DISABLED_BACKGROUND,
+            fg=style.TEXT_COLOR,
+            activebackground=style.BUTTON_CLICKED,
+            relief="flat",
+            width=10,
+            height=5,
+            state="disabled",
+            cursor="arrow"
+        )
+        button.pack(fill="both", expand=True)
+        border.config(width=64, height=64)
+        border.pack_propagate(False)
+
+        slot_buttons.append((border, button))
 
     status_label = tk.Label(
         parent,
@@ -234,7 +244,7 @@ def build_exchange_tab(parent, settings, config, hat_manager):
             ]["rarity"]
 
         # Update the 10 slots.
-        for slot_index, button in enumerate(slot_buttons):
+        for slot_index, (border, button) in enumerate(slot_buttons):
             if slot_index < len(selected_instances):
                 instance_id = selected_instances[slot_index]
 
@@ -244,24 +254,51 @@ def build_exchange_tab(parent, settings, config, hat_manager):
                 )
                 hat = hat_manager.catalog[item["hat_id"]]
 
-                button.config(
-                    text=f"{slot_index + 1}. {hat['name']}",
-                    bg=RARITIES[hat["rarity"]]["color"],
-                    fg="#FFFFFF",
-                    state="normal",
-                    cursor="hand2",
-                    command=lambda selected_id=instance_id:
-                        remove_from_slot(selected_id)
-                )
+                try:
+                    image = Image.open(hat["path"]).convert("RGBA")
+                    image.thumbnail((50, 50), Image.Resampling.NEAREST)
+
+                    photo = ImageTk.PhotoImage(image, master=button)
+                    button.image = photo
+
+                    button.config(
+                        image=photo,
+                        bg=style.BUTTON_NORMAL,
+                        fg=style.TEXT_COLOR,
+                        state="normal",
+                        cursor="hand2",
+                        command=lambda selected_id=instance_id:
+                            remove_from_slot(selected_id)
+                    )
+                    button.image = photo
+
+                except (OSError, ValueError):
+                    button.config(
+                        image="",
+                        bg=style.BUTTON_NORMAL,
+                        fg=style.TEXT_COLOR,
+                        state="normal",
+                        cursor="hand2",
+                        command=lambda selected_id=instance_id:
+                            remove_from_slot(selected_id)
+                    )
+                    button.image = None
+
+                border.config(bg=RARITIES[hat["rarity"]]["color"])
+
             else:
+                border.config(bg=style.DISABLED_BACKGROUND)
+
                 button.config(
-                    text=f"Slot {slot_index + 1}\nEmpty",
+                    text="Empty",
+                    image="",
                     bg=style.DISABLED_BACKGROUND,
-                    fg=style.TEXT_COLOR,
+                    fg=style.DISABLED_BACKGROUND,
                     state="disabled",
                     cursor="arrow",
                     command=lambda: None
                 )
+                button.image = None
 
         # Enable Exchange only when all 10 slots are filled.
         ready = len(selected_instances) == SLOT_COUNT
@@ -330,10 +367,16 @@ def build_exchange_tab(parent, settings, config, hat_manager):
             )
 
             for widget in widgets:
-                widget.config(
-                    bg=background,
-                    cursor="arrow" if locked and not selected else "hand2"
-                )
+                if widget is inventory_cards[instance_id][0]:
+                    widget.config(
+                        bg=RARITIES[rarity]["color"],
+                        cursor="arrow" if locked and not selected else "hand2"
+                    )
+                else:
+                    widget.config(
+                        bg=background,
+                        cursor="arrow" if locked and not selected else "hand2"
+                    )
 
                 if isinstance(widget, tk.Label):
                     widget.config(fg=foreground)
@@ -417,7 +460,7 @@ def build_exchange_tab(parent, settings, config, hat_manager):
             update_exchange_view()
             return
 
-        columns = 3
+        columns = 5
 
         for column in range(columns):
             grid.columnconfigure(column, weight=1)
@@ -447,15 +490,15 @@ def build_exchange_tab(parent, settings, config, hat_manager):
             card = tk.Frame(
                 border,
                 bg=style.BUTTON_NORMAL,
-                width=92,
-                height=84
+                width=60,
+                height=60
             )
             card.pack(fill="both", expand=True)
             card.pack_propagate(False)
 
             try:
                 image = Image.open(hat["path"]).convert("RGBA")
-                image.thumbnail((48, 42), Image.Resampling.NEAREST)
+                image.thumbnail((50, 50), Image.Resampling.NEAREST)
 
                 photo = ImageTk.PhotoImage(image, master=grid)
                 photo_references.append(photo)
@@ -478,31 +521,10 @@ def build_exchange_tab(parent, settings, config, hat_manager):
                 )
                 image_label.pack(expand=True)
 
-            name_label = tk.Label(
-                card,
-                text=hat["name"],
-                font=style.SMALL_FONT,
-                bg=style.BUTTON_NORMAL,
-                fg=style.TEXT_COLOR,
-                wraplength=84
-            )
-            name_label.pack(fill="x", padx=2)
-
-            rarity_label = tk.Label(
-                card,
-                text=rarity,
-                font=style.SMALL_FONT,
-                bg=style.BUTTON_NORMAL,
-                fg=style.TEXT_COLOR
-            )
-            rarity_label.pack(fill="x", padx=2, pady=(0, 2))
-
             inventory_cards[instance_id] = (
                 border,
                 card,
                 image_label,
-                name_label,
-                rarity_label
             )
 
             # Bind the same selection action to the whole card.
