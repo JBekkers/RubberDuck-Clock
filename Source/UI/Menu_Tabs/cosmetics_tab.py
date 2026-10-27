@@ -320,5 +320,26 @@ def build_cosmetics_tab(
 
         update_scroll_region()
 
+    def refresh_inventory():
+        if parent.winfo_exists():
+            render_inventory()
+
+
+    unsubscribe_inventory = hat_manager.subscribe_inventory(
+        refresh_inventory
+    )
+
+
+    def cleanup_inventory_listener(event):
+        if event.widget is parent:
+            unsubscribe_inventory()
+
+
+    parent.bind(
+        "<Destroy>",
+        cleanup_inventory_listener,
+        add="+"
+    )
+
     render_inventory()
 

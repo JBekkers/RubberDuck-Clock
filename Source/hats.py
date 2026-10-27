@@ -114,6 +114,7 @@ class HatManager:
             "hat_inventory.json"
         )
 
+        self._inventory_listeners = []
         self.catalog = load_hat_catalog()
         self.owned = []
         self.equipped = None
@@ -298,6 +299,8 @@ class HatManager:
         })
 
         self.save_inventory()
+        self.notify_inventory_changed()
+
         return instance_id
 
     def toggle_hat(self, instance_id):
@@ -378,3 +381,21 @@ class HatManager:
         self.save_inventory()
 
         return hat
+
+    def subscribe_inventory(self, callback):
+        if callback not in self._inventory_listeners:
+            self._inventory_listeners.append(callback)
+
+        def unsubscribe():
+            if callback in self._inventory_listeners:
+                self._inventory_listeners.remove(callback)
+
+        return unsubscribe
+
+
+    def notify_inventory_changed(self):
+        for callback in tuple(self._inventory_listeners):
+            callback()
+
+    
+    

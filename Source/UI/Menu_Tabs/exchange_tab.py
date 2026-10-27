@@ -423,15 +423,16 @@ def build_exchange_tab(parent, settings, config, hat_manager):
         if hat_manager.equipped in consumed_ids:
             hat_manager.equipped = None
 
-        # Add the reward using the existing inventory manager.
-        # add_hat() creates a new instance ID and saves the inventory.
-        hat_manager.add_hat(reward["id"])
-
+        # Clear the selection before refreshing the inventory.
         selected_instances.clear()
         selected_rarity = None
 
-        render_inventory()
-        update_exchange_view()
+        # Save the completed inventory change and notify both tabs.
+        hat_manager.save_inventory()
+        hat_manager.notify_inventory_changed()
+
+        # Add the reward as a separate inventory change.
+        hat_manager.add_hat(reward["id"])
 
         status_label.config(
             text=f"Received {reward['name']} ({target_rarity})!",
@@ -537,5 +538,23 @@ def build_exchange_tab(parent, settings, config, hat_manager):
 
         update_scroll_region()
         update_exchange_view()
+
+    def refresh_inventory():
+        if parent.winfo_exists():
+            render_inventory()
+
+    unsubscribe_inventory = hat_manager.subscribe_inventory(
+        refresh_inventory
+    )
+
+    def cleanup_inventory_listener(event):
+        if event.widget is parent:
+            unsubscribe_inventory()
+
+    parent.bind(
+        "<Destroy>",
+        cleanup_inventory_listener,
+        add="+"
+    )
 
     render_inventory()
