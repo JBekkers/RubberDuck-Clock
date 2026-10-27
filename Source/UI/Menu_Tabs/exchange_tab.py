@@ -427,10 +427,6 @@ def build_exchange_tab(parent, settings, config, hat_manager):
         selected_instances.clear()
         selected_rarity = None
 
-        # Save the completed inventory change and notify both tabs.
-        hat_manager.save_inventory()
-        hat_manager.notify_inventory_changed()
-
         # Add the reward as a separate inventory change.
         hat_manager.add_hat(reward["id"])
 

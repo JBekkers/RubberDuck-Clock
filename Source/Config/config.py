@@ -30,30 +30,51 @@ DEFAULT_CONFIG = {
 }
 
 def load_config():
-
     try:
-        with open(CONFIG_FILE, "r") as f:
+        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
             config = json.load(f)
 
-        # Add missing top-level sections/settings
-        for section, default_value in DEFAULT_CONFIG.items():
+        if not isinstance(config, dict):
+            raise ValueError(
+                "Configuration root must be a JSON object."
+            )
 
-            if section not in config:
-                config[section] = copy.deepcopy(default_value)
+        for section, defaults in DEFAULT_CONFIG.items():
+            section_data = config.get(section)
 
-            elif isinstance(default_value, dict):
-                for key, value in default_value.items():
+            if not isinstance(section_data, dict):
+                config[section] = copy.deepcopy(defaults)
+                continue
 
-                    if key not in config[section]:
-                        config[section][key] = copy.deepcopy(value)
+            for key, default_value in defaults.items():
+                if key not in section_data:
+                    section_data[key] = copy.deepcopy(default_value)
+
+        # Validate position coordinates.
+        position = config["position"]
+
+        for key in ("x", "y"):
+            value = position.get(key)
+
+            if (
+                not isinstance(value, int)
+                or isinstance(value, bool)
+            ):
+                position[key] = DEFAULT_CONFIG["position"][key]
+
+        # Validate setting value types against defaults.
+        settings_data = config["settings"]
+
+        for key, default_value in DEFAULT_CONFIG["settings"].items():
+            value = settings_data.get(key)
+
+            if not isinstance(value, type(default_value)):
+                settings_data[key] = copy.deepcopy(default_value)
 
         return config
 
-    except Exception:
-        logger.exception(
-            "Failed to load configuration."
-        )
-
+    except (OSError, ValueError, TypeError):
+        logger.exception("Failed to load configuration.")
         return copy.deepcopy(DEFAULT_CONFIG)
 
 

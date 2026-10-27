@@ -26,20 +26,53 @@ DEFAULT_STATS = {
 
 def load_stats():
     try:
-        with open(STATS_FILE, "r") as f:
+        with open(STATS_FILE, "r", encoding="utf-8") as f:
             stats = json.load(f)
 
+        if not isinstance(stats, dict):
+            raise ValueError(
+                "Statistics root must be a JSON object."
+            )
+
         for key, default_value in DEFAULT_STATS.items():
+            value = stats.get(key)
+
             if key not in stats:
                 stats[key] = copy.deepcopy(default_value)
+                continue
+
+            if key in (
+                "session_count",
+                "total_uptime",
+                "rare_animations_seen",
+            ):
+                if (
+                    not isinstance(value, (int, float))
+                    or isinstance(value, bool)
+                    or value < 0
+                ):
+                    stats[key] = copy.deepcopy(default_value)
+
+            elif key == "rare_animations_discovered":
+                if not isinstance(value, list):
+                    stats[key] = copy.deepcopy(default_value)
+
+            elif key == "rare_animation_counts":
+                if (
+                    not isinstance(value, dict)
+                    or any(
+                        not isinstance(v, int)
+                        or isinstance(v, bool)
+                        or v < 0
+                        for v in value.values()
+                    )
+                ):
+                    stats[key] = copy.deepcopy(default_value)
 
         return stats
 
-    except Exception:
-        logger.exception(
-            "Failed to load statistics."
-        )
-
+    except (OSError, ValueError, TypeError):
+        logger.exception("Failed to load statistics.")
         return copy.deepcopy(DEFAULT_STATS)
 
 

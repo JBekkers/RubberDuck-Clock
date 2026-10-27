@@ -27,7 +27,9 @@ def prepare_shutdown(config, stats, icon=None):
         try:
             icon.stop()
         except Exception:
-            pass
+            logger.exception(
+                "Failed to stop the system tray icon."
+            )
 
 def save_current_pos(config):
     config["position"]["x"] = root.winfo_x()

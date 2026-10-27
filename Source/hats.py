@@ -230,7 +230,18 @@ class HatManager:
                     next_drop
                 )
 
-            self._next_instance_id = len(self.owned) + 1
+            used_numbers = []
+
+            for item in self.owned:
+                instance_id = item["instance_id"]
+
+                if instance_id.startswith("hat_"):
+                    suffix = instance_id[4:]
+
+                    if suffix.isdigit():
+                        used_numbers.append(int(suffix))
+
+            self._next_instance_id = max(used_numbers, default=0) + 1
 
         except (
             OSError,
@@ -395,7 +406,12 @@ class HatManager:
 
     def notify_inventory_changed(self):
         for callback in tuple(self._inventory_listeners):
-            callback()
+            try:
+                callback()
+            except Exception:
+                logger.exception(
+                    "Inventory change listener failed."
+                )
 
     
     
