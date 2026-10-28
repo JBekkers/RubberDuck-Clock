@@ -3,7 +3,6 @@
         "frame_width": 128,
         "frame_height": 120
     },
-
     "animations": {
         "Idle": {
             "speed": 120,
@@ -29,13 +28,19 @@
             "weight": 0,
             "sound": "quack.wav"
         },
+        "Happy_Quack": {
+            "speed": 200,
+            "looping": true,
+            "loop_time": 20,
+            "next": "Idle",
+            "weight": 0
+        },
 
         "Sleeping_Start": {
             "speed": 1000,
             "next": "Sleeping_Loop",
             "weight": 1
         },
-
         "Sleeping_Loop": {
             "speed": 400,
             "looping": true,
@@ -43,7 +48,6 @@
             "next": "Sleeping_End",
             "weight": 0
         },
-
         "Sleeping_End": {
             "speed": 300,
             "next": "Idle",
@@ -55,7 +59,6 @@
             "next": "Mad_Loop",
             "weight": 0
         },
-
         "Mad_Loop": {
             "speed": 200,
             "looping": true,
@@ -63,7 +66,6 @@
             "next": "Mad_End",
             "weight": 0
         },
-
         "Mad_End": {
             "speed": 500,
             "looping": true,
@@ -78,7 +80,6 @@
             "next": "Idle",
             "isRare": true
         },
-
         "Grow": {
             "speed": 350,
             "next": "Idle",

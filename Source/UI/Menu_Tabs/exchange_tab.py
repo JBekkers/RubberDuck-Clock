@@ -287,13 +287,13 @@ def build_exchange_tab(parent, settings, config, hat_manager):
                 border.config(bg=RARITIES[hat["rarity"]]["color"])
 
             else:
-                border.config(bg=style.DISABLED_BACKGROUND)
+                border.config(bg=style.EXCHANGE_PREVIEW)
 
                 button.config(
                     text="Empty",
                     image="",
-                    bg=style.DISABLED_BACKGROUND,
-                    fg=style.DISABLED_BACKGROUND,
+                    bg=style.EXCHANGE_PREVIEW,
+                    fg=style.EXCHANGE_PREVIEW,
                     state="disabled",
                     cursor="arrow",
                     command=lambda: None
@@ -357,7 +357,7 @@ def build_exchange_tab(parent, settings, config, hat_manager):
 
             background = (
                 "#FCE9AD" if selected
-                else style.DISABLED_BACKGROUND if locked
+                else style.BLOCKED_BACKGROUND if locked
                 else style.BUTTON_NORMAL
             )
 
