@@ -55,7 +55,9 @@ Some ideas I'd like to add in the future:
 
 - More animated events/rare animated events
 
-- link with google agenda - show notifications for meetings etc
+- notification/reminder system - Make a reminder by putting in a date, time and text that will pop up a notification on the set date/time
+
+- link with google agenda - show notifications for planned meetings etc
 
 - automatically detect seasons like Christmas, new year, Easter etc and have special events related hats that only drop during special season time.
 - seasonal particle effects like snow, fireworks, easter, eggs falling that play during special seasons only (option in settings to toggle seasonal effects - if not default to bubbles)

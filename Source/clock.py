@@ -13,7 +13,7 @@ import ntplib
 
 TIMEZONE = ZoneInfo("Europe/Amsterdam") 
 SYNC_INTERVAL = 1800   
-CLOCK_Y_OFFSET = 55
+CLOCK_Y_OFFSET = 5
 
 last_hour_quacked = None
 network_time = None

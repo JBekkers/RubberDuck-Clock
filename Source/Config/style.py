@@ -62,8 +62,8 @@ SMALL_FONT = ("Pxls", 9)
 # MAIN DUCK WINDOW
 # ------------------------------------------------------------
 
-WINDOW_WIDTH = 250
-WINDOW_HEIGHT = 300
+WINDOW_WIDTH = 600
+WINDOW_HEIGHT = 200
 
 CENTER_X = WINDOW_WIDTH // 2
 CENTER_Y = WINDOW_HEIGHT // 2
@@ -78,12 +78,12 @@ MENU_HEIGHT = 500
 
 MENU_PADDING = 10
 
-MENU_OFFSET_X = 130
-MENU_OFFSET_Y = 200
+MENU_OFFSET_X = 293
+MENU_OFFSET_Y = 100
 
 MENU_HEADER_HEIGHT = 38
-MENU_TAB_PADDING_X = 4
-MENU_TAB_PADDING_Y = 8
+MENU_TAB_PADDING_X = 5
+MENU_TAB_PADDING_Y = 9
 
 
 # ------------------------------------------------------------

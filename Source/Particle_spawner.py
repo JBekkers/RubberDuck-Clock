@@ -6,7 +6,7 @@ import os
 import math
 
 
-PARTICLE_SPAWN_PADDING = 20
+PARTICLE_SPAWN_PADDING = 200
 
 
 def load_particle_images(folder_name):

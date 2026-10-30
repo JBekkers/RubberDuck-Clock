@@ -1,8 +1,9 @@
 import pystray
-from Source.Window_Manager import root, set_always_on_top
-from Source.Config.paths import ASSETS_DIR
+from Source.Window_Manager import root, canvas, set_always_on_top
+from Source.Config.paths import ASSETS_DIR, UI_DIR
 
-from PIL import Image
+from PIL import Image, ImageTk
+from Source.hats import RARITIES
 
 import os
 import threading
@@ -21,10 +22,242 @@ from Source.UI.Menu_Button import (
 hat_manager = None
 reward_timer_running = False
 
+reward_popup_items = []
+reward_popup_images = []
+
+reward_popup_hide_job = None
+reward_popup_visible = False
+
 settings = None
 config = None
 particle_system = None
 stats = None
+
+def create_speech_bubble(image, size):
+    image = image.convert("RGBA")
+
+    target_width, target_height = size
+
+    source_width, source_height = image.size
+
+    # Fixed corner dimensions from the original bubble.
+    left = 22
+    right = 18
+    top = 16
+    bottom = 22
+
+    source_x = [
+        0,
+        left,
+        source_width - right,
+        source_width
+    ]
+
+    source_y = [
+        0,
+        top,
+        source_height - bottom,
+        source_height
+    ]
+
+    target_x = [
+        0,
+        left,
+        target_width - right,
+        target_width
+    ]
+
+    target_y = [
+        0,
+        top,
+        target_height - bottom,
+        target_height
+    ]
+
+    result = Image.new(
+        "RGBA",
+        size,
+        (0, 0, 0, 0)
+    )
+
+    for row in range(3):
+        for column in range(3):
+
+            patch = image.crop((
+                source_x[column],
+                source_y[row],
+                source_x[column + 1],
+                source_y[row + 1]
+            ))
+
+            patch_width = (
+                target_x[column + 1]
+                - target_x[column]
+            )
+
+            patch_height = (
+                target_y[row + 1]
+                - target_y[row]
+            )
+
+            if patch.size != (
+                patch_width,
+                patch_height
+            ):
+                patch = patch.resize(
+                    (patch_width, patch_height),
+                    Image.Resampling.NEAREST
+                )
+
+            result.alpha_composite(
+                patch,
+                (
+                    target_x[column],
+                    target_y[row]
+                )
+            )
+
+    return result
+
+def show_hat_reward(hat):
+
+    global reward_popup_items
+    global reward_popup_images
+    global reward_popup_hide_job
+    global reward_popup_visible
+
+    # Cancel an existing notification timer.
+    if reward_popup_hide_job is not None:
+        root.after_cancel(reward_popup_hide_job)
+        reward_popup_hide_job = None
+
+    # Hide an existing notification.
+    if reward_popup_items:
+        for item in reward_popup_items:
+            canvas.itemconfig(item, state="hidden")
+
+    reward_popup_images.clear()
+
+    bubble_path = os.path.join(
+        UI_DIR,
+        "Speech_Bubble.png"
+    )
+
+    bubble = Image.open(
+        bubble_path
+    ).convert("RGBA")
+
+    bubble = create_speech_bubble(
+        bubble,
+        (170, 70)
+    )
+
+    bubble_photo = ImageTk.PhotoImage(
+        bubble,
+        master=root
+    )
+
+    reward_popup_images.append(bubble_photo)
+
+    hat_image = Image.open(
+        hat["path"]
+    ).convert("RGBA")
+
+    hat_image.thumbnail(
+        (34,34),
+        Image.Resampling.NEAREST
+    )
+
+    hat_photo = ImageTk.PhotoImage(
+        hat_image,
+        master=root
+    )
+
+    reward_popup_images.append(hat_photo)
+
+    ## was 150
+    bubble_x = 465
+    bubble_y = 70
+
+    bubble_item = canvas.create_image(
+        bubble_x,
+        bubble_y,
+        image=bubble_photo,
+        anchor="center",
+        tags=("hat_reward_popup",)
+    )
+
+    hat_item = canvas.create_image(
+        415,
+        65,
+        image=hat_photo,
+        anchor="center",
+        tags=("hat_reward_popup",)
+    )
+
+    heading_item = canvas.create_text(
+        441,
+        45,
+        text="You got a new hat!",
+        anchor="nw",
+        fill="#222222",
+        font=("Pxls SemiBold", 8),
+        tags=("hat_reward_popup",)
+    )
+
+    name_item = canvas.create_text(
+        441,
+        66,
+        text=hat["name"],
+        anchor="nw",
+        fill="#222222",
+        font=("Pxls SemiBold", 8),
+        width=112,
+        tags=("hat_reward_popup",)
+    )
+
+    rarity_color = RARITIES[hat["rarity"]]["color"]
+
+    rarity_item = canvas.create_text(
+        441,
+        80,
+        text=hat["rarity"],
+        anchor="nw",
+        fill=rarity_color,
+        font=("Pxls SemiBold", 6),
+        tags=("hat_reward_popup",)
+    )
+
+    reward_popup_items = [
+        bubble_item,
+        hat_item,
+        heading_item,
+        name_item,
+        rarity_item
+    ]
+
+    # Make sure the entire notification appears above the duck.
+    canvas.tag_raise("hat_reward_popup")
+
+    reward_popup_visible = True
+
+    def hide_reward_popup():
+        global reward_popup_hide_job
+        global reward_popup_visible
+
+        for item in reward_popup_items:
+            canvas.itemconfig(
+                item,
+                state="hidden"
+            )
+
+        reward_popup_hide_job = None
+        reward_popup_visible = False
+
+    reward_popup_hide_job = root.after(
+        5000,
+        hide_reward_popup
+    )
 
 def check_hat_reward():
     if hat_manager is None:
@@ -51,13 +284,11 @@ def claim_hat_reward():
 
     set_reward_available(False)
 
-    from tkinter import messagebox
+    from Source.animation import play_animation
 
-    messagebox.showinfo(
-        "Hat unlocked!",
-        f"You received: {hat['name']}\n"
-        f"Rarity: {hat['rarity']}"
-    )
+    show_hat_reward(hat)
+
+    play_animation("Happy_Quack")
 
 def setup_menu(
     app_settings,

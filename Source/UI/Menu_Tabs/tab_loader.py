@@ -215,7 +215,6 @@ def position_menu(root):
 
     menu_x = duck_x + (duck_width // 2) - (menu_width // 2)
     menu_y = duck_y + duck_height
-
     if menu_y + menu_height > screen_height:
         menu_y = duck_y - menu_height
 

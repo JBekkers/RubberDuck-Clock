@@ -31,7 +31,7 @@
         "Happy_Quack": {
             "speed": 200,
             "looping": true,
-            "loop_time": 20,
+            "loop_time": 5,
             "next": "Idle",
             "weight": 0
         },
