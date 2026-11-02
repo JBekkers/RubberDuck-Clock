@@ -35,6 +35,29 @@
             "next": "Idle",
             "weight": 0
         },
+        "random_dialogue": {
+            "speed": 9001,
+            "next": "Idle",
+            "looping": true,
+            "loop_time": 5,
+            "weight": 1,
+            "bubble": [
+                "Just another day being adorable.",
+                "I like it here.",
+                "Do ducks dream of bread?",
+                "I could really go for some bread.",
+                "This is my professional duck face.",
+                "Do not trust the geese.",
+                "I could beat a goose in a staring contest.",
+                "I tried to think today. Bad idea.",
+                "My last brain cell is on vacation.",
+                "Who's that clicking around?",
+                "I know you're procrastinating.",
+                "I'm all ears. And feathers.",
+                "Keep calm and quack on."
+            ]
+        },
+        
 
         "Sleeping_Start": {
             "speed": 1000,
@@ -44,7 +67,11 @@
                 "I'm sleepy...",
                 "I Need a nap...",
                 "I'm Getting tired...",
-                "Time for a rest..."
+                "So... sleepy...",
+                "Time for a rest...",
+                "Wake me up when there's bread.",
+                "A little nap wouldn't hurt...",
+                "Maybe I'll just close my eyes..."
             ]
         },
         "Sleeping_Loop": {
