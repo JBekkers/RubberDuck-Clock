@@ -36,7 +36,7 @@
             "weight": 0
         },
         "random_dialogue": {
-            "speed": 9001,
+            "speed": 200,
             "next": "Idle",
             "looping": true,
             "loop_time": 5,
