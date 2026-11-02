@@ -14,6 +14,7 @@ from Source.sound import play_sound
 import time
 
 from Source.Config.effects import EffectManager
+from Source.UI import speech_bubble
 
 
 SPRITE_SIZE = (150, 150)
@@ -54,6 +55,7 @@ class Animation:
     isRare: bool = False
     sound: str | None = None
     effect: str | None = None
+    bubble: str | None = None
     current_loop_time: float = 0
 
 animations: dict[str, Animation] = {}
@@ -119,6 +121,7 @@ def load_animation(
     sound=None,
     isRare=False,
     effect=None,
+    bubble=None,
 ):
 
     sheet = Image.open(
@@ -154,6 +157,7 @@ def load_animation(
         sound=sound,
         isRare=isRare,
         effect=effect,
+        bubble=bubble,
     )
 
 with open(ANIMATION_FILE, "r") as f:
@@ -176,6 +180,7 @@ for name, data in animation_data["animations"].items():
         sound=data.get("sound"),
         isRare=data.get("isRare", False),
         effect=data.get("effect"),
+        bubble=data.get("bubble"),
     )
 
 initial_frame = animations[current_animation].frames[0]
@@ -464,11 +469,18 @@ def play_animation(name):
     current_animation = name
     current_frame = 0
 
+    animation = animations[name]
+
+    if animation.bubble:
+        speech_bubble.show_animation_bubble(
+            animation.bubble
+        )
+    else:
+        speech_bubble.clear_animation_bubble()
+
     record_rare_animation(name)
 
     loop_start_time = time.monotonic()
-
-    animation = animations[current_animation]
 
     if animation.looping:
 

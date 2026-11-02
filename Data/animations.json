@@ -39,14 +39,26 @@
         "Sleeping_Start": {
             "speed": 1000,
             "next": "Sleeping_Loop",
-            "weight": 1
+            "weight": 1,
+            "bubble": [
+                "I'm sleepy...",
+                "I Need a nap...",
+                "I'm Getting tired...",
+                "Time for a rest..."
+            ]
         },
         "Sleeping_Loop": {
             "speed": 400,
             "looping": true,
             "loop_time": [5, 20],
             "next": "Sleeping_End",
-            "weight": 0
+            "weight": 0,
+            "bubble": [
+                "Zzz...",
+                "Zzzzzzz...",
+                "Zzzzz...",
+                "**Snores**"
+            ]
         },
         "Sleeping_End": {
             "speed": 300,
@@ -57,14 +69,25 @@
         "Mad_Start": {
             "speed": 500,
             "next": "Mad_Loop",
-            "weight": 0
+            "weight": 0,
+            "bubble": [
+                "Let me sleep!",
+                "Leave me alone!",
+                "What do you want!?",
+                "What the Quack are you doing?!"
+            ]
         },
         "Mad_Loop": {
             "speed": 200,
             "looping": true,
             "loop_time": [10,20],
             "next": "Mad_End",
-            "weight": 0
+            "weight": 0,
+            "bubble": [
+                "#$%?!$#$?%#",
+                "GRRRRRRR!!!!",
+                "**Angry duck noises**"
+            ]
         },
         "Mad_End": {
             "speed": 500,
