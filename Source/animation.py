@@ -394,6 +394,13 @@ def choose_random_animation():
 
         return
 
+    dialogue_enabled = (
+        app_config is None
+        or app_config.get("settings", {}).get(
+            "show_dialogue",
+            True
+        )
+    )
     # --------------------------------------------------
     # RARE POOL
     # --------------------------------------------------
@@ -423,7 +430,7 @@ def choose_random_animation():
 
         for name, anim in animations.items():
 
-            if not anim.isRare and anim.weight > 0:
+            if not anim.isRare and anim.weight > 0 and (name != "random_dialogue" or dialogue_enabled):
 
                 normal_choices.append(name)
                 normal_weights.append(anim.weight)
@@ -471,7 +478,15 @@ def play_animation(name):
 
     animation = animations[name]
 
-    if animation.bubble:
+    dialogue_enabled = (
+        app_config is None
+        or app_config.get("settings", {}).get(
+            "show_dialogue",
+            True
+        )
+    )
+
+    if dialogue_enabled and animation.bubble:
         speech_bubble.show_animation_bubble(
             animation.bubble
         )

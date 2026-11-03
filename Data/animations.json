@@ -39,7 +39,7 @@
             "speed": 200,
             "next": "Idle",
             "looping": true,
-            "loop_time": 5,
+            "loop_time": 7,
             "weight": 1,
             "bubble": [
                 "Just another day being adorable.",

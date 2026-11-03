@@ -22,6 +22,7 @@ DEFAULT_CONFIG = {
         "hourly_quack": False,
         "always_on_top": True,
         "disable_particles": False,
+        "show_dialogue": True,
 
         "auto_timezone": True,
         "timezone": "Europe/Amsterdam",

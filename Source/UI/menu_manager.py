@@ -158,6 +158,10 @@ def toggle_menu(event=None):
                 disabled
             ),
 
+        "show_dialogue": lambda enabled:
+        speech_bubble.clear_animation_bubble()
+        if not enabled else None,
+
         "always_on_top": set_always_on_top,
         "sound_volume": 100,
 

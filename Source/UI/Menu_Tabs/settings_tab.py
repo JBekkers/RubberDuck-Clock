@@ -53,6 +53,10 @@ OTHER_SETTINGS = [
     (
         "disable_particles",
         "Disable Particles"
+    ),
+    (
+        "show_dialogue",
+        "Show Dialogue"
     )
 ]
 

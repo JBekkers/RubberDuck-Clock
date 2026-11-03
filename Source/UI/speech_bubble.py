@@ -49,12 +49,12 @@ NINE_SLICE = {
 # STATE
 # --------------------------------------------------
 
-_items = []
-_images = []
+items = []
+images = []
 
-_hide_job = None
-_current_priority = -1
-_current_animation_text = None
+hide_job = None
+current_priority = -1
+current_animation_text = None
 
 
 # --------------------------------------------------
@@ -120,46 +120,46 @@ def resize_nine_slice(image, size):
 # INTERNAL HELPERS
 # --------------------------------------------------
 
-def _clear():
+def clear():
 
-    global _items, _images
+    global items, images
 
-    for item in _items:
+    for item in items:
         try:
             canvas.delete(item)
         except Exception:
             pass
 
-    _items.clear()
-    _images.clear()
+    items.clear()
+    images.clear()
 
 
-def _cancel_hide_timer():
+def cancel_hide_timer():
 
-    global _hide_job
+    global hide_job
 
-    if _hide_job is not None:
+    if hide_job is not None:
         try:
-            root.after_cancel(_hide_job)
+            root.after_cancel(hide_job)
         except Exception:
             pass
 
-        _hide_job = None
+        hide_job = None
 
 
 def hide():
 
-    global _current_priority
-    global _current_animation_text
+    global current_priority
+    global current_animation_text
 
-    _cancel_hide_timer()
-    _clear()
+    cancel_hide_timer()
+    clear()
 
-    _current_priority = -1
-    _current_animation_text = None
+    current_priority = -1
+    current_animation_text = None
 
 
-def _wrap_text(text, font, max_width):
+def wrap_text(text, font, max_width):
 
     words = str(text).split()
     lines = []
@@ -228,16 +228,16 @@ def show(
         Optional bubble centre coordinates.
     """
 
-    global _hide_job
-    global _current_priority
+    global hide_job
+    global current_priority
 
-    if priority < _current_priority:
+    if priority < current_priority:
         return
 
-    _cancel_hide_timer()
-    _clear()
+    cancel_hide_timer()
+    clear()
 
-    _current_priority = priority
+    current_priority = priority
 
     # --------------------------------------------------
     # FONT AND TEXT MEASUREMENT
@@ -267,7 +267,7 @@ def show(
 
     text_max_width = MAX_TEXT_WIDTH
 
-    main_lines = _wrap_text(
+    main_lines = wrap_text(
         text,
         main_font,
         text_max_width
@@ -276,7 +276,7 @@ def show(
     subtitle_lines = []
 
     if subtitle:
-        subtitle_lines = _wrap_text(
+        subtitle_lines = wrap_text(
             subtitle,
             subtitle_font,
             text_max_width
@@ -371,7 +371,7 @@ def show(
         master=root
     )
 
-    _images.append(bubble_photo)
+    images.append(bubble_photo)
 
     x = BUBBLE_X
     y = BUBBLE_Y
@@ -388,7 +388,7 @@ def show(
         tags=("speech_bubble",)
     )
 
-    _items.append(bubble_item)
+    items.append(bubble_item)
 
     # --------------------------------------------------
     # CONTENT POSITIONS
@@ -420,7 +420,7 @@ def show(
             master=root
         )
 
-        _images.append(preview_photo)
+        images.append(preview_photo)
 
         image_item = canvas.create_image(
             content_left + HAT_PREVIEW_SIZE[0] / 2,
@@ -430,7 +430,7 @@ def show(
             tags=("speech_bubble",)
         )
 
-        _items.append(image_item)
+        items.append(image_item)
 
         content_left += image_width
 
@@ -450,7 +450,7 @@ def show(
         tags=("speech_bubble",)
     )
 
-    _items.append(main_item)
+    items.append(main_item)
 
     text_y += main_height
 
@@ -472,7 +472,7 @@ def show(
             tags=("speech_bubble",)
         )
 
-        _items.append(subtitle_item)
+        items.append(subtitle_item)
 
         text_y += subtitle_height
 
@@ -499,7 +499,7 @@ def show(
             tags=("speech_bubble",)
         )
 
-        _items.append(rarity_item)
+        items.append(rarity_item)
 
     # Keep the complete bubble above the duck.
     canvas.tag_raise("speech_bubble")
@@ -511,12 +511,12 @@ def show(
     if duration is not None:
 
         def timed_hide():
-            global _hide_job
+            global hide_job
 
-            _hide_job = None
+            hide_job = None
             hide()
 
-        _hide_job = root.after(
+        hide_job = root.after(
             int(duration),
             timed_hide
         )
@@ -528,7 +528,7 @@ def show(
 
 def show_animation_bubble(text):
 
-    global _current_animation_text
+    global current_animation_text
 
     if not text:
         clear_animation_bubble()
@@ -545,7 +545,7 @@ def show_animation_bubble(text):
     else:
         selected_text = text
 
-    _current_animation_text = selected_text
+    current_animation_text = selected_text
 
     show(
         selected_text,
@@ -555,8 +555,8 @@ def show_animation_bubble(text):
 
 
 def clear_animation_bubble():
-    global _current_priority
-    global _current_animation_text
+    global current_priority
+    global current_animation_text
 
-    if _current_priority <= 1:
+    if current_priority <= 1:
         hide()
