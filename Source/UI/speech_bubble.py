@@ -201,32 +201,6 @@ def show(
     subtitle_size=SUBTITLE_SIZE,
     rarity_size=RARITY_SIZE
 ):
-    """
-    Display a speech bubble.
-
-    text:
-        Main message.
-
-    subtitle:
-        Optional second line, e.g. a hat name.
-
-    image:
-        Optional image path to display on the left.
-
-    rarity:
-        Optional rarity name. Uses the rarity colour.
-
-    duration:
-        Time in milliseconds. None means stay visible
-        until hide() is called.
-
-    priority:
-        Higher priority notifications can replace
-        lower priority notifications.
-
-    x, y:
-        Optional bubble centre coordinates.
-    """
 
     global hide_job
     global current_priority

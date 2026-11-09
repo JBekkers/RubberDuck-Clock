@@ -1,7 +1,6 @@
 from Source.Config.style import CENTER_X, CENTER_Y
 from Source.Window_Manager import root, canvas
 from Source.Config.paths import SPRITES_DIR, DATA_DIR
-from Source.hats import RARITIES
 
 from dataclasses import dataclass
 
@@ -15,6 +14,7 @@ import time
 
 from Source.Config.effects import EffectManager
 from Source.UI import speech_bubble
+from functools import lru_cache
 
 
 SPRITE_SIZE = (150, 150)
@@ -73,6 +73,24 @@ effect_manager = None
 def get_current_animation():
     return current_animation
 
+@lru_cache(maxsize=64)
+def get_sprite_photo(animation_name, frame_index, width, height):
+
+    frame = animations[animation_name].frames[frame_index]
+
+    if frame.size == (width, height):
+        resized_frame = frame
+    else:
+        resized_frame = frame.resize(
+            (width, height),
+            Image.Resampling.NEAREST
+        )
+
+    return ImageTk.PhotoImage(
+        resized_frame,
+        master=root
+    )
+
 def start_effect(effect_name):
 
     if effect_manager is None:
@@ -124,9 +142,10 @@ def load_animation(
     bubble=None,
 ):
 
-    sheet = Image.open(
+    with Image.open(
         os.path.join(SPRITES_DIR, f"{name}.png")
-    ).convert("RGBA")
+    ) as source:
+        sheet = source.convert("RGBA")
 
     frames = []
 
@@ -183,9 +202,12 @@ for name, data in animation_data["animations"].items():
         bubble=data.get("bubble"),
     )
 
-initial_frame = animations[current_animation].frames[0]
-
-initial_photo = ImageTk.PhotoImage(initial_frame)
+initial_photo = get_sprite_photo(
+    current_animation,
+    0,
+    SPRITE_SIZE[0],
+    SPRITE_SIZE[1]
+)
 
 sprite_id = canvas.create_image(
     CENTER_X,
@@ -207,9 +229,8 @@ def get_hat_image(hat_id):
     if hat_id not in hat_images:
         hat = hat_manager.catalog[hat_id]
 
-        image = Image.open(
-            hat["path"]
-        ).convert("RGBA")
+        with Image.open(hat["path"]) as source:
+            image = source.convert("RGBA")
 
         hat_images[hat_id] = image
 
@@ -328,20 +349,11 @@ def animate_sprite():
         int(frame.height * scale)
     )
 
-    if scale == 1.0:
-
-        resized_frame = frame
-
-    else:
-
-        resized_frame = frame.resize(
-            (width, height),
-            Image.Resampling.NEAREST
-        )
-
-
-    photo = ImageTk.PhotoImage(
-        resized_frame
+    photo = get_sprite_photo(
+        current_animation,
+        current_frame,
+        width,
+        height
     )
 
     canvas.itemconfig(
@@ -349,7 +361,6 @@ def animate_sprite():
         image=photo
     )
 
-    canvas.image = photo
     current_frame += 1
 
     if current_frame >= len(frames):
