@@ -1,10 +1,10 @@
 import tkinter as tk
-from PIL import Image, ImageTk
 
 from Source.Config import style
-from Source.hats import RARITIES, RARITY_ORDER
+from Source.hats import RARITIES
 from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
 import time
+from Source.Config.image_cache import get_hat_thumbnail
 
 def build_cosmetics_tab(
     parent,
@@ -261,16 +261,11 @@ def build_cosmetics_tab(
             image_slot.pack_propagate(False)
 
             try:
-                image = Image.open(
-                    hat["path"]
-                ).convert("RGBA")
-
-                image.thumbnail(
-                    (68,68),
-                    Image.Resampling.NEAREST
+                photo = get_hat_thumbnail(
+                    hat["path"],
+                    (68, 68)
                 )
 
-                photo = ImageTk.PhotoImage(image, master=grid)
                 photo_references.append(photo)
 
                 image_label = tk.Label(

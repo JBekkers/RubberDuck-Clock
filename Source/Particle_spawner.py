@@ -203,7 +203,7 @@ class ParticleManager:
         ]
 
 
-        canvas.after(30,self.update)
+        canvas.after(40,self.update)
 
 
     def auto_spawn(self):

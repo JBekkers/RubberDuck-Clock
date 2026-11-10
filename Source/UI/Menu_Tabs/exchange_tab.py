@@ -1,11 +1,11 @@
 
 import random
 import tkinter as tk
-from PIL import Image, ImageTk
 
 from Source.Config import style
 from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
 from Source.hats import RARITIES, RARITY_ORDER
+from Source.Config.image_cache import get_hat_thumbnail
 
 UPGRADE_ORDER = list(reversed(RARITY_ORDER))
 
@@ -255,10 +255,10 @@ def build_exchange_tab(parent, settings, config, hat_manager):
                 hat = hat_manager.catalog[item["hat_id"]]
 
                 try:
-                    image = Image.open(hat["path"]).convert("RGBA")
-                    image.thumbnail((50, 50), Image.Resampling.NEAREST)
-
-                    photo = ImageTk.PhotoImage(image, master=button)
+                    photo = get_hat_thumbnail(
+                        hat["path"],
+                        (50, 50)
+                    )
                     button.image = photo
 
                     button.config(
@@ -494,10 +494,10 @@ def build_exchange_tab(parent, settings, config, hat_manager):
             card.pack_propagate(False)
 
             try:
-                image = Image.open(hat["path"]).convert("RGBA")
-                image.thumbnail((50, 50), Image.Resampling.NEAREST)
-
-                photo = ImageTk.PhotoImage(image, master=grid)
+                photo = get_hat_thumbnail(
+                    hat["path"],
+                    (50, 50)
+                )
                 photo_references.append(photo)
 
                 image_label = tk.Label(

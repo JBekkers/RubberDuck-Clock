@@ -73,7 +73,7 @@ effect_manager = None
 def get_current_animation():
     return current_animation
 
-@lru_cache(maxsize=64)
+@lru_cache(maxsize=32)
 def get_sprite_photo(animation_name, frame_index, width, height):
 
     frame = animations[animation_name].frames[frame_index]
@@ -341,12 +341,12 @@ def animate_sprite():
 
     width = max(
         1,
-        int(frame.width * scale)
+        round(frame.width * scale / 4) * 4
     )
 
     height = max(
         1,
-        int(frame.height * scale)
+        round(frame.height * scale / 4) * 4
     )
 
     photo = get_sprite_photo(
