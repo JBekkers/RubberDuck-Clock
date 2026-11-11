@@ -4,7 +4,7 @@ from Source.Config import style
 from Source.hats import RARITIES
 from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
 import time
-from Source.Config.image_cache import get_hat_thumbnail
+from Source.Config.image_handler import get_hat_thumbnail
 
 def build_cosmetics_tab(
     parent,

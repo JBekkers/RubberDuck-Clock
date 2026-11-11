@@ -49,13 +49,6 @@ RARITY_ORDER = [
 
 INVENTORY_VERSION = 1
 
-HAT_OFFSETS = {
-    "afro": (0, 20),
-    "rainbow_afro": (0, 20),
-    "tophat": (0, 10),
-    "diving_goggles": (15, 48),
-}
-
 def load_hat_catalog():
     catalog = {}
 
@@ -83,18 +76,11 @@ def load_hat_catalog():
                     f"Duplicate hat ID: {hat_id}"
                 )
 
-            offset_x, offset_y = HAT_OFFSETS.get(
-                hat_id,
-                (0, 0)
-            )
-
             catalog[hat_id] = {
                 "id": hat_id,
                 "name": hat_id.replace("_", " ").title(),
                 "rarity": rarity,
                 "path": os.path.join(folder, filename),
-                "offset_x": offset_x,
-                "offset_y": offset_y,
             }
 
     if not catalog:

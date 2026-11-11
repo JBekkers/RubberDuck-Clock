@@ -213,10 +213,6 @@ def show(
 
     current_priority = priority
 
-    # --------------------------------------------------
-    # FONT AND TEXT MEASUREMENT
-    # --------------------------------------------------
-
     main_font = tkfont.Font(
         root=root,
         family=FONT_FAMILY,
@@ -378,12 +374,24 @@ def show(
     # OPTIONAL IMAGE
     # --------------------------------------------------
 
+
+    # --------------------------------------------------
+    # OPTIONAL IMAGE
+    # --------------------------------------------------
+
     if has_image:
 
         preview = Image.open(
             image
         ).convert("RGBA")
 
+        # Remove transparent margins around the hat.
+        bbox = preview.getbbox()
+
+        if bbox:
+            preview = preview.crop(bbox)
+
+        # Resize the cropped image to fit the notification.
         preview.thumbnail(
             HAT_PREVIEW_SIZE,
             Image.Resampling.NEAREST
@@ -407,6 +415,7 @@ def show(
         items.append(image_item)
 
         content_left += image_width
+
 
     # --------------------------------------------------
     # MAIN TEXT

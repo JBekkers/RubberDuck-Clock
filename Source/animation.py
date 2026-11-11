@@ -18,9 +18,15 @@ from functools import lru_cache
 
 
 SPRITE_SIZE = (150, 150)
+HAT_DEFAULT_OFFSET = (12,10)
+##was 13,10
 
-HAT_ANCHOR_X = 88
-HAT_ANCHOR_Y = 10
+HAT_OFFSETS = {
+    "tophat": (0, 7),
+    "afro": (-4, 20),
+    "rainbow_afro": (-4, 20),
+    "diving_goggles": (13, 38),
+}
 
 hat_manager = None
 hat_images = {}
@@ -33,11 +39,9 @@ hat_canvas_id = canvas.create_image(
     CENTER_X,
     CENTER_Y,
     anchor="s",
-    tags=("hat",),
+    tags=("hat", "draggable"),
     state="hidden"
 )
-
-canvas.tag_raise(hat_canvas_id)
 
 ANIMATION_FILE = os.path.join(DATA_DIR, "animations.json")
 
@@ -217,6 +221,7 @@ sprite_id = canvas.create_image(
     tags=("draggable",)
 )
 
+canvas.tag_raise(hat_canvas_id, sprite_id)
 canvas.image = initial_photo
 
 def set_hat_manager(manager):
@@ -237,6 +242,7 @@ def get_hat_image(hat_id):
     return hat_images[hat_id]
 
 
+
 def update_hat(x, y, scale):
     global hat_photo
     global hat_photo_size
@@ -245,7 +251,7 @@ def update_hat(x, y, scale):
         canvas.itemconfig(hat_canvas_id, state="hidden")
         return
 
-    # Find the equipped inventory item by its instance ID.
+    # Find the equipped inventory item.
     equipped_item = next(
         (
             item for item in hat_manager.owned
@@ -258,39 +264,73 @@ def update_hat(x, y, scale):
         canvas.itemconfig(hat_canvas_id, state="hidden")
         return
 
-    # Convert the inventory instance ID into the actual catalog hat ID.
     hat_id = equipped_item["hat_id"]
-    hat = hat_manager.catalog.get(hat_id)
 
-    if hat is None:
+    if hat_id not in hat_manager.catalog:
         canvas.itemconfig(hat_canvas_id, state="hidden")
         return
 
     image = get_hat_image(hat_id)
 
-    if hat_photo_size != hat_id:
-        hat_photo = ImageTk.PhotoImage(image)
-        hat_photo_size = hat_id
-        canvas.itemconfig(hat_canvas_id, image=hat_photo)
-
-    hat_x = (
-        x
-        + HAT_ANCHOR_X
-        - SPRITE_SIZE[0] / 2
-        + hat["offset_x"]
+    # Calculate exactly the same display dimensions as the duck.
+    width = max(
+        1,
+        round(SPRITE_SIZE[0] * scale / 4) * 4
     )
 
-    hat_y = (
-        y
-        + HAT_ANCHOR_Y
-        - SPRITE_SIZE[1] / 2
-        + hat["offset_y"]
+    height = max(
+        1,
+        round(SPRITE_SIZE[1] * scale / 4) * 4
     )
 
-    canvas.coords(hat_canvas_id, hat_x, hat_y)
-    canvas.itemconfig(hat_canvas_id, state="normal")
-    canvas.tag_raise(hat_canvas_id)
+    # Cache the resized image.
+    cache_key = (hat_id, width, height)
 
+    if hat_photo_size != cache_key:
+
+        resized_image = image.resize(
+            (width, height),
+            Image.Resampling.NEAREST
+        )
+
+        hat_photo = ImageTk.PhotoImage(
+            resized_image,
+            master=root
+        )
+
+        hat_photo_size = cache_key
+
+        canvas.itemconfig(
+            hat_canvas_id,
+            image=hat_photo
+        )
+
+    default_x, default_y = HAT_DEFAULT_OFFSET
+
+    extra_x, extra_y = HAT_OFFSETS.get(
+        hat_id,
+        (0, 0)
+    )
+
+    offset_x = default_x + extra_x
+    offset_y = default_y + extra_y
+
+    scale_x = width / 128
+    scale_y = height / 120
+
+    hat_x = x + offset_x * scale_x
+    hat_y = y - (height / 2) + offset_y * scale_y
+
+    canvas.coords(
+        hat_canvas_id,
+        hat_x,
+        hat_y
+    )
+
+    canvas.itemconfig(
+        hat_canvas_id,
+        state="normal"
+    )
 
 def animate_sprite():
 
