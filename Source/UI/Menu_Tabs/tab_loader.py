@@ -5,6 +5,7 @@ from Source.Window_Manager import set_menu_window, set_menu_callback
 from Source.UI.Menu_Tabs.cosmetics_tab import build_cosmetics_tab
 from Source.UI.Menu_Tabs.settings_tab import build_settings_tab
 from Source.UI.Menu_Tabs.about_tab import build_about_tab
+from Source.UI.Menu_Tabs.planning_tab import build_planning_tab
 from Source.UI.Menu_Tabs.exchange_tab import build_exchange_tab
 
 window = None
@@ -101,6 +102,7 @@ def open_settings(
     tabs = [
         ("Cosmetics", build_cosmetics_tab),
         ("Exchange", build_exchange_tab),
+        ("Planning", build_planning_tab),
         ("Settings", build_settings_tab),
         ("About", build_about_tab),
     ]
@@ -164,12 +166,10 @@ def open_settings(
             builder(frame, settings, config, stats)
 
         elif builder is build_cosmetics_tab or builder is build_exchange_tab:
-            builder(
-                frame,
-                settings,
-                config,
-                hat_manager
-            )
+            builder(frame, settings, config, hat_manager)
+
+        elif builder is build_planning_tab:
+            builder(frame, settings, config, hat_manager)
 
         else:
             builder(frame, settings, config)

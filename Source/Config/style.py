@@ -54,7 +54,7 @@ TITLE_FONT = ("Pxls SemiBold", 12)
 TEXT_FONT = ("Pxls", 10)
 BUTTON_FONT = ("Pxls", 13)
 
-MENU_TAB_FONT = ("Pxls SemiBold", 13)
+MENU_TAB_FONT = ("Pxls SemiBold", 12)
 SMALL_FONT = ("Pxls", 9)
 
 
