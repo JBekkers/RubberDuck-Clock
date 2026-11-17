@@ -7,6 +7,11 @@ from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
 from Source.hats import RARITIES, RARITY_ORDER
 from Source.Config.image_handler import get_hat_thumbnail
 
+from Source.UI.Menu_Tabs.inventory_controls import (
+    create_inventory_controls,
+    get_filtered_inventory,
+)
+
 UPGRADE_ORDER = list(reversed(RARITY_ORDER))
 
 SLOT_COUNT = 10
@@ -103,14 +108,25 @@ def build_exchange_tab(parent, settings, config, hat_manager):
     )
     exchange_button.pack(fill="x", pady=(0, 8))
 
-    inventory_heading = tk.Label(
+    inventory_heading_frame = tk.Frame(
         parent,
+        bg=style.BACKGROUND
+    )
+
+    inventory_heading_frame.pack(
+        fill="x",
+        pady=(0, 3)
+    )
+
+    inventory_heading = tk.Label(
+        inventory_heading_frame,
         text="Inventory",
         font=style.TEXT_FONT,
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR
     )
-    inventory_heading.pack(anchor="w", pady=(0, 3))
+
+    inventory_heading.pack(side="left")
 
     inventory_container = tk.Frame(
         parent,
@@ -428,7 +444,9 @@ def build_exchange_tab(parent, settings, config, hat_manager):
         selected_rarity = None
 
         # Add the reward as a separate inventory change.
-        hat_manager.add_hat(reward["id"])
+        hat_manager.add_hat(reward["id"], count_as_collected=False)
+
+        hat_manager.record_exchange(1)
 
         status_label.config(
             text=f"Received {reward['name']} ({target_rarity})!",
@@ -442,12 +460,20 @@ def build_exchange_tab(parent, settings, config, hat_manager):
         photo_references.clear()
         inventory_cards.clear()
 
-        owned = hat_manager.get_sorted_inventory()
+        owned = get_filtered_inventory(
+            hat_manager,
+            sort_var.get(),
+            rarity_filter_var.get()
+        )
 
         if not owned:
             tk.Label(
                 grid,
-                text="No hats in your inventory.",
+                text=(
+                    "No hats in your inventory."
+                    if not hat_manager.owned
+                    else "No hats match this filter."
+                ),
                 font=style.TEXT_FONT,
                 bg=style.BACKGROUND,
                 fg=style.MUTED_TEXT
@@ -551,6 +577,13 @@ def build_exchange_tab(parent, settings, config, hat_manager):
         "<Destroy>",
         cleanup_inventory_listener,
         add="+"
+    )
+
+    sort_var, rarity_filter_var = create_inventory_controls(
+        parent,
+        lambda: render_inventory(),
+        inventory_heading_frame,
+        inventory_container
     )
 
     render_inventory()

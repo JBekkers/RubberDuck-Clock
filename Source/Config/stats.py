@@ -20,7 +20,10 @@ DEFAULT_STATS = {
     "total_uptime": 0,
     "rare_animations_seen": 0,
     "rare_animations_discovered": [],
-    "rare_animation_counts": {}
+    "rare_animation_counts": {},
+
+    "total_hats_collected": 0,
+    "hats_exchanged": 0
 }
 
 
@@ -45,6 +48,8 @@ def load_stats():
                 "session_count",
                 "total_uptime",
                 "rare_animations_seen",
+                "total_hats_collected",
+                "hats_exchanged",
             ):
                 if (
                     not isinstance(value, (int, float))
@@ -146,5 +151,26 @@ def record_rare_animation(stats, name):
     )
 
     counts[name] = counts.get(name, 0) + 1
+
+    save_stats(stats)
+
+def record_hat_collected(stats, amount=1):
+    if amount <= 0:
+        return
+
+    stats["total_hats_collected"] = (
+        stats.get("total_hats_collected") + amount
+    )
+
+    save_stats(stats)
+
+
+def record_hats_exchanged(stats, amount=1):
+    if amount <= 0:
+        return
+
+    stats["hats_exchanged"] = (
+        stats.get("hats_exchanged") + amount
+    )
 
     save_stats(stats)

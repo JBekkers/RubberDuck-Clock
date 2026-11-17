@@ -6,6 +6,11 @@ from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
 import time
 from Source.Config.image_handler import get_hat_thumbnail
 
+from Source.UI.Menu_Tabs.inventory_controls import (
+    create_inventory_controls,
+    get_filtered_inventory,
+)
+
 def build_cosmetics_tab(
     parent,
     settings,
@@ -24,13 +29,25 @@ def build_cosmetics_tab(
         pady=(0, 8)
     )
 
-    tk.Label(
-        header,
-        text="Inventory:",
+    inventory_heading_frame = tk.Frame(
+        parent,
+        bg=style.BACKGROUND
+    )
+
+    inventory_heading_frame.pack(
+        fill="x",
+        pady=(0, 6)
+    )
+
+    inventory_heading = tk.Label(
+        inventory_heading_frame,
+        text="Inventory",
         font=style.TITLE_FONT,
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR
-    ).pack(side="left")
+    )
+
+    inventory_heading.pack(side="left")
 
     droptimer_text = tk.Label(
         header,
@@ -40,7 +57,6 @@ def build_cosmetics_tab(
         fg=style.MUTED_TEXT
     )
     droptimer_text.pack(side="right")
-
     
     def update_selection():
         for instance_id, widgets in inventory_cards.items():
@@ -90,6 +106,13 @@ def build_cosmetics_tab(
     container.pack(
         fill="both",
         expand=True
+    )
+
+    sort_var, rarity_filter_var = create_inventory_controls(
+        parent,
+        lambda: render_inventory(),
+        inventory_heading_frame,
+        container
     )
 
     canvas = tk.Canvas(
@@ -171,12 +194,20 @@ def build_cosmetics_tab(
         photo_references.clear()
         inventory_cards.clear()
 
-        owned = hat_manager.get_sorted_inventory()
+        owned = get_filtered_inventory(
+            hat_manager,
+            sort_var.get(),
+            rarity_filter_var.get()
+        )
 
         if not owned:
             tk.Label(
                 grid,
-                text="No hats yet.\nCheck back for a reward!",
+                text=(
+                    "No hats yet.\nCheck back for a reward!"
+                    if not hat_manager.owned
+                    else "No hats match this filter."
+                ),
                 font=style.TEXT_FONT,
                 bg=style.BACKGROUND,
                 fg=style.MUTED_TEXT,

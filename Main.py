@@ -106,7 +106,7 @@ stats = load_stats()
 
 settings = config["settings"]
 
-hat_manager = HatManager()
+hat_manager = HatManager(stats)
 set_hat_manager(hat_manager)
 
 start_session(stats)

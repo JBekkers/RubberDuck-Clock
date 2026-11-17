@@ -169,6 +169,7 @@ def build_about_tab(parent, settings, config, stats):
     uptime_display = tk.StringVar()
     session_display = tk.StringVar()
     rare_display = tk.StringVar()
+    hat_stats_display = tk.StringVar()
 
     def update_rare_summary():
         discovered = len(
@@ -194,6 +195,13 @@ def build_about_tab(parent, settings, config, stats):
         f"{stats.get('session_count', 0)}"
     )
 
+    hat_stats_display.set(
+        f"Total Hats Collected: "
+        f"{stats.get('total_hats_collected')}\n"
+        f"Exchanges Performed: "
+        f"{stats.get('hats_exchanged')}"
+    )
+
     tk.Label(
         about_frame,
         textvariable=uptime_display,
@@ -209,7 +217,18 @@ def build_about_tab(parent, settings, config, stats):
         bg=style.BACKGROUND,
         fg=style.TEXT_COLOR
     ).pack(
-        pady=(12, 0)
+        pady=(8, 0)
+    )
+
+    tk.Label(
+        about_frame,
+        textvariable=hat_stats_display,
+        font=style.TEXT_FONT,
+        bg=style.BACKGROUND,
+        fg=style.TEXT_COLOR,
+        justify="center"
+    ).pack(
+        pady=(8, 0)
     )
 
     rare_title_frame = tk.Frame(

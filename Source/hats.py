@@ -5,6 +5,10 @@ import time
 import logging
 
 from Source.Config.paths import CONFIG_DIR, HATS_DIR
+from Source.Config.stats import (
+    record_hat_collected,
+    record_hats_exchanged,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -92,7 +96,8 @@ def load_hat_catalog():
 
 
 class HatManager:
-    def __init__(self):
+    def __init__(self, stats=None):
+        self.stats = stats
         os.makedirs(CONFIG_DIR, exist_ok=True)
 
         self.inventory_file = os.path.join(
@@ -281,7 +286,7 @@ class HatManager:
             )
             raise
 
-    def add_hat(self, hat_id):
+    def add_hat(self, hat_id, count_as_collected=True):
         if hat_id not in self.catalog:
             raise ValueError(
                 f"Unknown hat ID: {hat_id}"
@@ -296,9 +301,20 @@ class HatManager:
         })
 
         self.save_inventory()
+
+        if self.stats is not None and count_as_collected:
+            record_hat_collected(self.stats)
+
         self.notify_inventory_changed()
 
         return instance_id
+
+    def record_exchange(self, amount):
+        if self.stats is not None:
+            record_hats_exchanged(
+                self.stats,
+                amount
+            )
 
     def toggle_hat(self, instance_id):
         if not any(
