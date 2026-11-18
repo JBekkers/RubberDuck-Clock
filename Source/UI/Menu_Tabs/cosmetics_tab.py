@@ -112,7 +112,9 @@ def build_cosmetics_tab(
         parent,
         lambda: render_inventory(),
         inventory_heading_frame,
-        container
+        container,
+        config,
+        "cosmetics_filters"
     )
 
     canvas = tk.Canvas(
@@ -197,7 +199,7 @@ def build_cosmetics_tab(
         owned = get_filtered_inventory(
             hat_manager,
             sort_var.get(),
-            rarity_filter_var.get()
+            rarity_filter_var
         )
 
         if not owned:

@@ -463,7 +463,7 @@ def build_exchange_tab(parent, settings, config, hat_manager):
         owned = get_filtered_inventory(
             hat_manager,
             sort_var.get(),
-            rarity_filter_var.get()
+            rarity_filter_var
         )
 
         if not owned:
@@ -583,7 +583,9 @@ def build_exchange_tab(parent, settings, config, hat_manager):
         parent,
         lambda: render_inventory(),
         inventory_heading_frame,
-        inventory_container
+        inventory_container,
+        config,
+        "exchange_filters"
     )
 
     render_inventory()
