@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from Source.Config import style
 from Source.Config.config import save_config
-from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
+from Source.UI.scrollbar import FlatScrollbar, enable_mousewheel
 from Source.sound import set_sound_volume, play_sound
 from tzlocal import get_localzone_name
 

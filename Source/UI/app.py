@@ -1,4 +1,4 @@
-from Source.Window_Manager import root
+from Source.UI.window_manager import root
 from Source.Config.style import WINDOW_HEIGHT, WINDOW_WIDTH
 from Source.UI.Menu_Tabs.tab_loader import position_menu
 from Source.Config.stats import save_stats, get_session_uptime

@@ -1,7 +1,7 @@
 from PIL import Image, ImageTk
 import os
 
-from Source.Window_Manager import canvas
+from Source.UI.window_manager import canvas
 from Source.Config.paths import UI_DIR
 from Source.Config import style
 

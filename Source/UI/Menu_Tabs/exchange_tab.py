@@ -3,7 +3,7 @@ import random
 import tkinter as tk
 
 from Source.Config import style
-from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
+from Source.UI.scrollbar import FlatScrollbar, enable_mousewheel
 from Source.hats import RARITIES, RARITY_ORDER
 from Source.Config.image_handler import get_hat_thumbnail
 

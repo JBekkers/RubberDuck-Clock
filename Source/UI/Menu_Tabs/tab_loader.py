@@ -1,6 +1,6 @@
 import tkinter as tk
 from Source.Config import style
-from Source.Window_Manager import set_menu_window, set_menu_callback
+from Source.UI.window_manager import set_menu_window, set_menu_callback
 
 from Source.UI.Menu_Tabs.cosmetics_tab import build_cosmetics_tab
 from Source.UI.Menu_Tabs.settings_tab import build_settings_tab
@@ -108,14 +108,15 @@ def open_settings(
     ]
 
     frames = []
-    buttons =[]
+    buttons = []
+
 
     def show_tab(index):
-        for i, frame in enumerate(frames):
+        for index, frame in enumerate(frames):
             frame.pack_forget()
-            buttons[i].config(
+            buttons[index].config(
                 bg=style.BUTTON_NORMAL,
-                relief="flat"
+                relief="flat",
             )
 
         buttons[index].config(

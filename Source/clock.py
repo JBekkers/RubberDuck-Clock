@@ -1,5 +1,5 @@
 from Source.Config.style import CENTER_X, CENTER_Y
-from Source.Window_Manager import root, canvas
+from Source.UI.window_manager import root, canvas
 from Source.animation import play_animation, is_idle
 
 from datetime import datetime, timedelta, timezone

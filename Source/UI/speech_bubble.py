@@ -4,7 +4,7 @@ import tkinter.font as tkfont
 
 from PIL import Image, ImageTk
 
-from Source.Window_Manager import root, canvas
+from Source.UI.window_manager import root, canvas
 from Source.Config.paths import UI_DIR
 from Source.hats import RARITIES
 import random

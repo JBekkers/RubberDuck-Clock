@@ -2,7 +2,7 @@ import tkinter as tk
 
 from Source.Config import style
 from Source.hats import RARITIES
-from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
+from Source.UI.scrollbar import FlatScrollbar, enable_mousewheel
 import time
 from Source.Config.image_handler import get_hat_thumbnail
 

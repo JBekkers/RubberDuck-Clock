@@ -2,7 +2,7 @@ import tkinter as tk
 
 from Source.Config import style
 from Source.animation import animations, set_rare_animation_callback
-from Source.Config.scrollbar import FlatScrollbar, enable_mousewheel
+from Source.UI.scrollbar import FlatScrollbar, enable_mousewheel
 
 def format_uptime(seconds):
     hours = seconds / 3600

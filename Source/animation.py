@@ -1,5 +1,5 @@
 from Source.Config.style import CENTER_X, CENTER_Y
-from Source.Window_Manager import root, canvas
+from Source.UI.window_manager import root, canvas
 from Source.Config.paths import SPRITES_DIR, DATA_DIR
 
 from dataclasses import dataclass
@@ -12,7 +12,7 @@ from PIL import Image, ImageTk
 from Source.sound import play_sound
 import time
 
-from Source.Config.effects import EffectManager
+from Source.Effects.effects import EffectManager
 from Source.UI import speech_bubble
 from functools import lru_cache
 

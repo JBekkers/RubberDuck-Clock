@@ -88,11 +88,11 @@ from Source.Config.stats import load_stats, start_session
 from Source.hats import HatManager
 from Source.animation import animate_sprite, choose_random_animation, duck_clicked, set_config, set_hat_manager
 from Source.UI.menu_manager import setup_menu
-from Source.Window_Manager import root, canvas, set_position, start_move, move_window, set_always_on_top
+from Source.UI.window_manager import root, canvas, set_position, start_move, move_window, set_always_on_top
 from Source.clock import setup_clock, start_clock
 from Source.sound import set_sound_volume
 
-from Source.Particle_spawner import ParticleSystem
+from Source.particles import ParticleSystem
 
 root.report_callback_exception = handle_uncaught_exception
 

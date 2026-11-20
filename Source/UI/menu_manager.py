@@ -1,6 +1,6 @@
 import pystray
-from Source.Window_Manager import root, canvas, set_always_on_top
-from Source.Config.paths import ASSETS_DIR, UI_DIR
+from Source.UI.window_manager import root, set_always_on_top
+from Source.Config.paths import ASSETS_DIR
 
 from PIL import Image
 from Source.UI import speech_bubble
@@ -13,7 +13,7 @@ from Source.clock import timezone_changed
 from Source.UI.app import reset_position, shutdown, restart_application
 from Source.UI.Menu_Tabs.tab_loader import open_settings
 
-from Source.UI.Menu_Button import (
+from Source.UI.menu_button import (
     create_menu_button,
     set_reward_claim_callback,
     set_reward_available,

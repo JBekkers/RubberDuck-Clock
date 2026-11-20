@@ -1,5 +1,5 @@
 import random
-from Source.Window_Manager import canvas
+from Source.UI.window_manager import canvas
 from Source.Config.paths import PARTICLES_DIR
 from PIL import Image, ImageTk
 import os
