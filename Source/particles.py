@@ -3,6 +3,7 @@ from Source.UI.window_manager import canvas
 from Source.Config.paths import PARTICLES_DIR
 from PIL import Image, ImageTk
 import os
+import tkinter
 import math
 
 
@@ -164,6 +165,13 @@ class ParticleManager:
             return
 
 
+        try:
+            if not canvas.winfo_exists():
+                return
+            canvas_width = canvas.winfo_width()
+        except tkinter.TclError:
+            return
+
         canvas_width = canvas.winfo_width()
 
 
@@ -213,7 +221,6 @@ class ParticleManager:
 
 
         self.spawn()
-
 
         canvas.after(
             random.randint(300,1000),

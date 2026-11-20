@@ -111,20 +111,21 @@ def open_settings(
     buttons = []
 
 
-    def show_tab(index):
-        for index, frame in enumerate(frames):
+    def show_tab(selected_index):
+        for tab_index, frame in enumerate(frames):
             frame.pack_forget()
-            buttons[index].config(
+
+            buttons[tab_index].config(
                 bg=style.BUTTON_NORMAL,
                 relief="flat",
             )
 
-        buttons[index].config(
+        buttons[selected_index].config(
             bg=style.BUTTON_SELECTED,
             relief="flat"
         )
 
-        frames[index].pack(
+        frames[selected_index].pack(
             fill="both",
             expand=True,
         )

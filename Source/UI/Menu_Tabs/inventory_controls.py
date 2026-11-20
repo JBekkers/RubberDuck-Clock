@@ -412,12 +412,16 @@ def create_inventory_controls(
         # Save preferences and refresh inventory
         apply_change()
 
+
     def toggle_rarity_popup():
 
-        if rarity_popup.winfo_viewable():
-            rarity_popup.withdraw()
+        try:
+            if not rarity_popup.winfo_exists():
+                return
 
-        else:
+            if rarity_popup.winfo_viewable():
+                rarity_popup.withdraw()
+                return
 
             x = rarity_dropdown.winfo_rootx()
             y = (
@@ -425,19 +429,15 @@ def create_inventory_controls(
                 + rarity_dropdown.winfo_height()
             )
 
-            rarity_popup.geometry(
-                f"+{x}+{y}"
-            )
-
+            rarity_popup.geometry(f"+{x}+{y}")
             rarity_popup.deiconify()
-
-            # Raise popup above the application window
             rarity_popup.lift(main_window)
             rarity_popup.lift()
             rarity_popup.focus_force()
 
+        except tk.TclError:
+            return
 
-    # Store references to checkmark labels
     rarity_checkmarks = {}
 
     for rarity in RARITIES:
@@ -501,26 +501,58 @@ def create_inventory_controls(
         command=toggle_rarity_popup
     )
 
-    # Close popup when clicking elsewhere
     def close_rarity_popup(event):
+        try:
+            if not rarity_popup.winfo_exists():
+                return
 
-        if not rarity_popup.winfo_viewable():
+            if not rarity_popup.winfo_viewable():
+                return
+
+            widget = event.widget
+
+            if widget == rarity_dropdown:
+                return
+
+            if widget.winfo_toplevel() == rarity_popup:
+                return
+
+            rarity_popup.withdraw()
+
+        except tk.TclError:
             return
 
-        widget = event.widget
-
-        if widget == rarity_dropdown:
-            return
-
-        if widget.winfo_toplevel() == rarity_popup:
-            return
-
-        rarity_popup.withdraw()
-
-
-    parent.bind_all(
+    # Register the global click handler once.
+    close_binding_id = parent.bind_all(
         "<Button-1>",
         close_rarity_popup,
+        add="+"
+    )
+
+    def cleanup_rarity_popup(event):
+        if event.widget != parent:
+            return
+
+        # Remove only this popup's global click handler.
+        try:
+            if close_binding_id:
+                parent._unbind(
+                    ("bind", "all", "<Button-1>"),
+                    close_binding_id
+                )
+        except tk.TclError:
+            pass
+
+        # Destroy the popup when its tab is destroyed.
+        try:
+            if rarity_popup.winfo_exists():
+                rarity_popup.destroy()
+        except tk.TclError:
+            pass
+
+    parent.bind(
+        "<Destroy>",
+        cleanup_rarity_popup,
         add="+"
     )
 

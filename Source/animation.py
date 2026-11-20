@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import random
 import json
 import os
+import tkinter
 
 from PIL import Image, ImageTk
 from Source.sound import play_sound
@@ -345,6 +346,13 @@ def animate_sprite():
         if effect_manager is not None
         else 1.0
     )
+
+    try:
+        if not canvas.winfo_exists():
+            return
+        x = canvas.winfo_width() // 2
+    except tkinter.TclError:
+        return
 
     x = canvas.winfo_width() // 2
 
